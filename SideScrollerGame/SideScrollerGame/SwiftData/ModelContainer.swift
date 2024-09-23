@@ -18,4 +18,13 @@ extension ModelContainer {
         }
     }()
     
+    static let testContainer: ModelContainer = {
+        do {
+            let container = try ModelContainer(for: KeymapModel.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+            return container
+        } catch {
+            fatalError("Could not load model container: \(error)")
+        }
+    }()
+    
 }

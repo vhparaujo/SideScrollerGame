@@ -13,10 +13,10 @@ import Combine
 
 // Updated GameController using KeymapModel from SwiftData
 @MainActor
-@Observable class GameController: ControllerProtocol {
+@Observable class GameController {
     
-    private var keyPressPublisher = PassthroughSubject<GameActions, Never>()
-    private var keyReleasePublisher = PassthroughSubject<GameActions, Never>()
+    var keyPressPublisher = PassthroughSubject<GameActions, Never>()
+    var keyReleasePublisher = PassthroughSubject<GameActions, Never>()
     
     //swiftData manager
     private var dataManager: SwiftDataManager = SwiftDataManager(conteiner: .appContainer)
@@ -107,5 +107,9 @@ import Combine
         }
         
         keymapModel.updateKeyMap(with: keymap)
+    }
+    
+    func getKeymap() -> [UInt16: GameActions] {
+        return keymapModel.getKeyMap()
     }
 }
