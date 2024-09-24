@@ -1,0 +1,26 @@
+name: Build and Test
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on:
+  pull_request:
+    branches:
+      - Development
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.3.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.2
+
+      - name: Install fastlane
+        run: gem install fastlane
+
+      - name: Run Tests
+        run: cd SideScrollerGame; fastlane test
