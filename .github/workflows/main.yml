@@ -6,7 +6,7 @@ on:
       - Development
 jobs:
   Explore-GitHub-Actions:
-    runs-on: macos-latest
+    runs-on: macOS-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
