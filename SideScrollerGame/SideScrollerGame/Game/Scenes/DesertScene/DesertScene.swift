@@ -11,7 +11,7 @@ import SpriteKit
 class DesertScene: SKScene {
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
-        self.backgroundColor = .red
+        self.backgroundColor = .blue
         // Set up your DesertScene here
     }
 }
