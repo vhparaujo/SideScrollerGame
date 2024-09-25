@@ -2,42 +2,75 @@
 //  SwiftDataManager.swift
 //  SideScrollerGame
 //
-//  Created by Eduardo on 20/09/24.
+//  Created by Eduardo on 23/09/24.
 //
 
 import Foundation
-import Observation
 import SwiftData
+import SwiftUI
 
+// SwiftDataManager: Manages SwiftData operations for specific models
 @MainActor
-@Observable class SwiftDataManager {
+class SwiftDataManager {
     
-    var conteiner: ModelContainer
+    static let shared = SwiftDataManager()
     
-    init(conteiner: ModelContainer) {
-        self.conteiner = conteiner
+    private let container: ModelContainer
+    
+    private init(container: ModelContainer = .testContainer) {
+        // Initialize the SwiftData model container with all relevant models
+        self.container = container
     }
     
-    func save() {
+    // Provide access to the main context for performing operations
+    var context: ModelContext {
+        return container.mainContext
+    }
+    
+    // MARK: - KeymapModel Operations
+    
+    // Fetch all KeymapModels
+    func fetchAllKeymaps() -> [KeymapModel]? {
+        let fetchRequest = FetchDescriptor<KeymapModel>()
         do {
-            try conteiner.mainContext.save()
+            return try context.fetch(fetchRequest)
         } catch {
-            fatalError("Error saving context: \(error)")
+            print("Failed to fetch keymaps: \(error.localizedDescription)")
+            return nil
         }
     }
     
-    func createFetchDescriptor<T: Codable>(
-        predicate: Predicate<T>? = nil,
-        sortDescriptors: [SortDescriptor<T>] = []
-    ) -> FetchDescriptor<T> {
-        FetchDescriptor<T>(predicate: predicate, sortBy: sortDescriptors)
+    // Fetch the first KeymapModel
+    func fetchFirstKeymap() -> KeymapModel? {
+        return fetchAllKeymaps()?.first
     }
-
-    func fetch<T: Codable>(_ fetchDescriptor: FetchDescriptor<T>) -> [T] {
+    
+    // Insert a new KeymapModel
+    func insertKeymap(_ keymap: KeymapModel) {
+        context.insert(keymap)
+        saveContext()
+    }
+    
+    // Update a KeymapModel
+    func updateKeymap(_ keymap: KeymapModel, changes: (KeymapModel) -> Void) {
+        changes(keymap)
+        saveContext()
+    }
+    
+    // Delete a KeymapModel
+    func deleteKeymap(_ keymap: KeymapModel) {
+        context.delete(keymap)
+        saveContext()
+    }
+    
+    // MARK: - Common Save Context
+    
+    // Save the current context state
+    private func saveContext() {
         do {
-            return try conteiner.mainContext.fetch(fetchDescriptor)
+            try context.save()
         } catch {
-            fatalError("Fetch error: \(error)")
+            print("Failed to save context: \(error.localizedDescription)")
         }
     }
 }

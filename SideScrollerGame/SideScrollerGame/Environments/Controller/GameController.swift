@@ -18,15 +18,11 @@ import Combine
     var keyPressPublisher = PassthroughSubject<GameActions, Never>()
     var keyReleasePublisher = PassthroughSubject<GameActions, Never>()
     
-    //swiftData manager
-    private var dataManager: SwiftDataManager = SwiftDataManager(conteiner: .appContainer)
-    
-    // Use SwiftData model for the key map
-    private var keymapModel: KeymapModel
+    var keymapModel: KeymapModel
     
     init() {
-        // Initialize the keymapModel with the default key map
-        var keymap: [UInt16: GameActions] {
+        
+        let keyMapDefault: [UInt16: GameActions] = {
             return [
                 13: .climb,     // W key
                 0:  .moveLeft,  // A key
@@ -34,40 +30,28 @@ import Combine
                 49: .jump,      // Space key
                 14: .grab       // E key
             ]
-        }
-        self.keymapModel = KeymapModel(keyMap: keymap)
+        }()
         
-        if let savedKeymap = fetchSavedKeymap() {
-            print("use the saved key map")
-            self.keymapModel = savedKeymap
-        } else {
-            print("Save the default key map")
-            saveKeymapModel()
+        if let keymap = SwiftDataManager.shared.fetchFirstKeymap() {
+            keymapModel = keymap
+        }else {
+            keymapModel = KeymapModel(keyMap: keyMapDefault)
+            SwiftDataManager.shared.insertKeymap(keymapModel)
         }
         
         // Monitor for key press and release events
-        NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
-            self?.handleKeyEvent(event)
-            return nil
+        NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { event in
+            let keyMap = self.keymapModel.getKeyMap()
+            if keyMap.keys.contains(event.keyCode) {
+                self.handleKeyEvent(event)
+                return event  // Suppress default behavior
+            }
+            return event  // Allow other events to be processed normally
         }
     }
     
-    // Fetch saved KeymapModel from SwiftData
-    private func fetchSavedKeymap() -> KeymapModel? {
-        let fetchDescriptor: FetchDescriptor = dataManager.createFetchDescriptor(predicate: nil) as FetchDescriptor<KeymapModel>
-        let results: [KeymapModel] = dataManager.fetch(fetchDescriptor)
-        
-        return results.first // Return the first saved key map if any exist
-    }
-    
-    // Save the current KeymapModel to SwiftData
-    private func saveKeymapModel() {
-        dataManager.save()
-    }
-    
     private func handleKeyEvent(_ event: NSEvent) {
-        let keyMap = keymapModel.getKeyMap() // Fetch current key map
-        
+        let keyMap = keymapModel.getKeyMap()
         if let action = keyMap[event.keyCode] {
             if event.type == .keyDown {
                 keyPressPublisher.send(action)
@@ -79,24 +63,30 @@ import Combine
     
     // Function to change the key mapping
     func changeKey(forAction action: GameActions, toKeyCode newKeyCode: UInt16) {
-        var keyMap = keymapModel.getKeyMap() // Fetch the current key map
+        var currentKeyMap = keymapModel.getKeyMap()
         
-        // Remove the current mapping for the given action, if it exists
-        if let oldKeyCode = keyMap.first(where: { $0.value == action })?.key {
-            keyMap.removeValue(forKey: oldKeyCode)
+        // Remove any existing mapping for the new key code
+        if let oldAction = currentKeyMap[newKeyCode], oldAction != action {
+            currentKeyMap[newKeyCode] = nil
         }
         
-        // Assign the new key code to the action
-        keyMap[newKeyCode] = action
+        // Find and remove the old key mapping for the action
+        if let oldKeyCode = currentKeyMap.first(where: { $0.value == action })?.key {
+            currentKeyMap.removeValue(forKey: oldKeyCode)
+        }
         
-        // Update the SwiftData model with the new key map
-        keymapModel.updateKeyMap(with: keyMap)
+        // Add the new key mapping
+        currentKeyMap[newKeyCode] = action
         
-        print("Key mapping updated: \(action) is now mapped to keyCode \(newKeyCode)")
+        // Update the keymap model and save it
+        SwiftDataManager.shared.updateKeymap(keymapModel) { updatedKeymap in
+            updatedKeymap.setKeyMap(currentKeyMap)
+        }
     }
     
+    // Reset the key mappings to the default configuration
     func resetKeyMapping() {
-        var keymap: [UInt16: GameActions] {
+        let keyMapDefault: [UInt16: GameActions] = {
             return [
                 13: .climb,     // W key
                 0:  .moveLeft,  // A key
@@ -104,9 +94,13 @@ import Combine
                 49: .jump,      // Space key
                 14: .grab       // E key
             ]
+        }()
+        
+        // Reset the keymap model to default and save it
+        SwiftDataManager.shared.updateKeymap(keymapModel) { updatedKeymap in
+            updatedKeymap.setKeyMap(keyMapDefault)
         }
         
-        keymapModel.updateKeyMap(with: keymap)
     }
     
     func getKeymap() -> [UInt16: GameActions] {
