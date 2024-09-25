@@ -22,15 +22,6 @@ struct Message: Identifiable {
 }
 
 // MARK: Game Data Objects
-
-//struct GameData: Codable {
-//    var matchName: String
-//    var playerName: String
-//    var score: Int?
-//    var message: String?
-//    var outcome: String?
-//}
-
 struct PlayerInfo: Codable{
     var position: CGPoint
 }
