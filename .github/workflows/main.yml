@@ -23,4 +23,4 @@ jobs:
           bundle exec pod install
 
       - name: Run Tests
-        run: cd SideScrollerGame; bundle exec fastlane scan --scheme "SideScrollerGame"
+        run: bundle exec fastlane scan --scheme "SideScrollerGame"
