@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @Bindable var managerMP = MultiplayerManager()
     var body: some View {
-        GameView()
+        if managerMP.playingGame {
+            GameView()
+        }else{
+            JoinGameView(managerMP: managerMP)
+        }
     }
 }
 
