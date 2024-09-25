@@ -16,7 +16,7 @@ class ParallaxBackground: SKNode {
     
     let backgroundImages: [String]
     var background: [[SKSpriteNode]]
-    let parallaxFactors: [CGFloat] = [0.8, 0.6, 0.4, 0.2] // Closest to furthest
+    let parallaxFactors: [CGFloat] = [0.2, 0.4, 0.6, 0.8] // Furthest to closest
     
     
     init(screenSize: CGSize, backgroundImages: [String]) {

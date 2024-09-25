@@ -9,27 +9,28 @@ import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
-    
-    var parallaxBackground: ParallaxBackground?
     let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
     
     private var playerNode: PlayerNode!
+    private var parallaxBackground: ParallaxBackground!
+    var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
     private let box2 = BoxNode()
+    
+    var previousCameraXPosition: CGFloat = 0.0
     
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
         self.backgroundColor = .black
-
-        setupBackground()
         
         physicsWorld.contactDelegate = self
         
-        
-        
+        setupBackground()
         playerNode = PlayerNode(playerEra: .present)
         playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(playerNode)
+        
+        setupCamera()
         
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
@@ -60,6 +61,15 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         playerNode.update(deltaTime: currentTime)
+        
+        cameraNode.position.x = playerNode.position.x
+        
+        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+        
+        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+        self.previousCameraXPosition = cameraNode.position.x
+        print(playerNode.position.x)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -83,6 +93,13 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         if  otherCategory == PhysicsCategories.box {
             playerNode.boxRef = nil
         }
+    }
+    
+    func setupCamera() {
+        self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        self.addChild(self.cameraNode)
+        self.camera = cameraNode
+        self.previousCameraXPosition = cameraNode.position.x
     }
 
     func setupBackground() {
