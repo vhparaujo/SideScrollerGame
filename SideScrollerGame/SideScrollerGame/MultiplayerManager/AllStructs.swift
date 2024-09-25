@@ -24,4 +24,11 @@ struct Message: Identifiable {
 // MARK: Game Data Objects
 struct PlayerInfo: Codable{
     var position: CGPoint
+    
+    var isMovingLeft = false
+    var isMovingRight = false
+    var isGrounded = true
+    var groundContactCount = 0 // Tracks number of ground contacts
+    
+    var facingRight = true // Tracks the orientation
 }
