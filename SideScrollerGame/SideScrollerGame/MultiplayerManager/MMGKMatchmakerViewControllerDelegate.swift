@@ -18,7 +18,7 @@ extension MultiplayerManager: GKMatchmakerViewControllerDelegate {
 
         // Start the game with the player.
         if !playingGame && match.expectedPlayerCount == 0 {
-            startMyMatchWith(match: match)
+            startMatch(match: match)
         }
     }
     

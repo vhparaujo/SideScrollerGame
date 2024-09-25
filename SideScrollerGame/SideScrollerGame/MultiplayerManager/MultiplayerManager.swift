@@ -107,7 +107,7 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     /// - Parameter match: The object that represents the real-time match.
     /// - Tag:startMyMatchWith
-    func startMyMatchWith(match: GKMatch) {
+    func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
         playingGame = true
         myMatch = match
@@ -116,7 +116,7 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match, cleans up resources, and returns to the main interface.
     /// - Tag:stopGame
-    func stopGame() {
+    func endMatch() {
         // If there's a match ongoing, end it
         if let match = myMatch {
             match.disconnect()
