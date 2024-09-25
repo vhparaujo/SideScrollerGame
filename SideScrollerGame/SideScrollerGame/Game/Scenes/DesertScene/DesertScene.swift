@@ -81,5 +81,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         if  otherCategory == PhysicsCategories.box {
             playerNode.boxRef = nil
         }
+
     }
 }
