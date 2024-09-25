@@ -1,20 +1,21 @@
 name: Build and Test
-run-name: ${{ github.actor }} is testing out GitHub Actions
-on:
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
   pull_request:
-    branches:
+    branches: 
+      - main
       - Development
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: macos-latest
+  build:
+    runs-on: macos-15
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Select Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode_15.3.app
-
-      - name: Setup Ruby
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+        
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.0.2
@@ -22,5 +23,5 @@ jobs:
       - name: Install fastlane
         run: gem install fastlane
 
-      - name: Run Tests
-        run: cd SideScrollerGame; fastlane test
+      - name: Run tests
+        run: cd SideScrollerGame/; fastlane test
