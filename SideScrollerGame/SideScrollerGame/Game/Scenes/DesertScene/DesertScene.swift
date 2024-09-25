@@ -19,7 +19,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
 
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
-        self.backgroundColor = .black
+        self.backgroundColor = .blue
         
         physicsWorld.contactDelegate = self
         
