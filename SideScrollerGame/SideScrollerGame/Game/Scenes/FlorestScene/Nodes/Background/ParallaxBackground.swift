@@ -11,104 +11,59 @@ import SwiftUI
 import SpriteKit
 
 class ParallaxBackground: SKNode {
-    let antiFlickering:CGFloat = 0.05
-    var backgroundSize: CGSize
-    var backgrounds: Array<SKSpriteNode>
-    var clonedBackgrounds: Array<SKSpriteNode>
-    var numberOfBackgrounds: Int
-    let scrollingDirection: ScrollingDirection
-    var speeds:[CGFloat]
+    var background: [[SKSpriteNode]] = [[], [], [], []]
+    let screenWidth: CGFloat
+    let screenHeight: CGFloat
     
-    enum ScrollingDirection {
-        case left
-        case right
-    }
-    
-    init(backgroundImages: Array<String>, backgroundSize: CGSize) {
-        self.backgroundSize = backgroundSize
-        self.backgrounds = []
-        self.clonedBackgrounds = []
-        self.numberOfBackgrounds = backgroundImages.count
-        self.scrollingDirection = .left
-        self.speeds = []
+    init(screenSize: CGSize) {
+        self.screenWidth = screenSize.width
+        self.screenHeight = screenSize.height
         
         super.init()
-        
-        
-        let zPos = 1.0 / CGFloat(numberOfBackgrounds)
-        
-        self.zPosition = -100
-    
-        for (index, image) in backgroundImages.enumerated() {
-            let background = BackgroundNode(image)
-
-            background.zPosition = self.zPosition - (zPos + (zPos * CGFloat(index)))
-            background.position = CGPointMake(0, 0)
-            
-            let clonedBackground = BackgroundNode(image)
-            var clonedBackgroundX = background.position.x
-            var clonedBackgroundY = background.position.y
-            
-            switch (scrollingDirection) {
-            case .right:
-                clonedBackgroundX = -background.size.width
-            case .left:
-                clonedBackgroundX = background.size.width
-            default:
-                break
-            }
-
-            var currentSpeed = CGFloat(2.0)
-            
-            clonedBackground.position = CGPointMake(clonedBackgroundX, clonedBackgroundY);
-            backgrounds.append(background)
-            clonedBackgrounds.append(clonedBackground)
-            speeds.append(currentSpeed)
-            
-            self.addChild(background)
-            self.addChild(clonedBackground)
-        }
     }
     
-    func moveBackGround() {
-        for i in 0..<numberOfBackgrounds {
-            var speed = self.speeds[i]
+    func setupParallaxBackground() {
+        for i in -1...1 {
+            let bg = SKSpriteNode(imageNamed: "background")
+            bg.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            bg.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+            bg.zPosition = -4
+            bg.size = CGSize(width: screenWidth, height: screenHeight)
+            addChild(bg)
+            background[0].append(bg)
+        }
 
-            var background = self.backgrounds[i]
-            var clonedBackground = self.clonedBackgrounds[i]
-        
-            var adjustedBackgroundX = background.position.x
-            var adjustedBackgroundY = background.position.y
-            var adjustedClonedBackgroundX = clonedBackground.position.x
-            var adjustedClonedBackgroundY = clonedBackground.position.y
-            
-            switch (self.scrollingDirection) {
-            case .right:
-                adjustedBackgroundX += speed
-                adjustedClonedBackgroundX += speed
-                if (adjustedBackgroundX >= background.size.width) {
-                    adjustedBackgroundX = adjustedBackgroundX - 2 * background.size.width + antiFlickering
-                }
-                if (adjustedClonedBackgroundX >= clonedBackground.size.width) {
-                    adjustedClonedBackgroundX = adjustedClonedBackgroundX - 2 * clonedBackground.size.width + antiFlickering
-                }
-            case .left:
-                adjustedBackgroundX -= speed
-                adjustedClonedBackgroundX -= speed
+        // Far Trees Layer
+        for i in -1...1 {
+            let farTrees = SKSpriteNode(imageNamed: "far-trees")
+            farTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            farTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+            farTrees.zPosition = -3
+            farTrees.size = CGSize(width: screenWidth, height: screenHeight)
+            addChild(farTrees)
+            background[1].append(farTrees)
+        }
 
-                if (adjustedBackgroundX <= -self.backgroundSize.width) {
-                    adjustedBackgroundX = adjustedBackgroundX + 2 * self.backgroundSize.width - antiFlickering
-                }
-                if (adjustedClonedBackgroundX <= -self.scene!.size.width) {
-                    adjustedClonedBackgroundX = adjustedClonedBackgroundX + 2 * self.backgroundSize.width - antiFlickering
-                }
-            default:
-                break
-            }
-    
-            // update positions with the right coordinates.
-            background.position = CGPointMake(adjustedBackgroundX, adjustedBackgroundY)
-            clonedBackground.position = CGPointMake(adjustedClonedBackgroundX, adjustedClonedBackgroundY)
+        // Mid Trees Layer
+        for i in -1...1 {
+            let midTrees = SKSpriteNode(imageNamed: "mid-trees")
+            midTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            midTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+            midTrees.zPosition = -2
+            midTrees.size = CGSize(width: screenWidth, height: screenHeight)
+            addChild(midTrees)
+            background[2].append(midTrees)
+        }
+
+        // Close Trees Layer
+        for i in -1...1 {
+            let closeTrees = SKSpriteNode(imageNamed: "close-trees")
+            closeTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            closeTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+            closeTrees.zPosition = -1
+            closeTrees.size = CGSize(width: screenWidth, height: screenHeight)
+            addChild(closeTrees)
+            background[3].append(closeTrees)
         }
     }
     
