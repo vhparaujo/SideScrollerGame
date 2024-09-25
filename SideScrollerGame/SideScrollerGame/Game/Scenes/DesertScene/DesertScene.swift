@@ -62,14 +62,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         playerNode.update(deltaTime: currentTime)
         
-        cameraNode.position.x = playerNode.position.x
-        
-        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
-        
-        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
-        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
-        self.previousCameraXPosition = cameraNode.position.x
-        print(playerNode.position.x)
+        self.cameraAndBackgroundUpdate()
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -93,6 +86,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         if  otherCategory == PhysicsCategories.box {
             playerNode.boxRef = nil
         }
+    }
+    
+    func cameraAndBackgroundUpdate() {
+        cameraNode.position.x = playerNode.position.x
+        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+        self.previousCameraXPosition = cameraNode.position.x
     }
     
     func setupCamera() {
