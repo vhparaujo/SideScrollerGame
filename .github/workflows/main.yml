@@ -14,13 +14,13 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.3.app
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.0.2
-
-      - name: Install fastlane
-        run: gem install fastlane
+      - name: Bundle Install
+        run: bundle install
+        
+      - name: Dependencies
+        run: |
+          carthage bootstrap --no-use-binaries --platform iOS --cache-builds
+          bundle exec pod install
 
       - name: Run Tests
-        run: cd SideScrollerGame; fastlane test
+        run: bundle exec fastlane scan --scheme "SideScrollerGame"
