@@ -48,10 +48,10 @@ class MultiplayerManager: NSObject {
     }
     
     var rootViewController: NSViewController? {
-        guard let keyWindow = NSApplication.shared.windows.first else {
+        guard let window = NSApplication.shared.windows.first else {
             return nil
         }
-        return keyWindow.contentViewController
+        return window.contentViewController
     }
     
     /// Authenticates the local player, initiates a multiplayer game, and adds the access point.
