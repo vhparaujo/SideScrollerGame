@@ -11,9 +11,9 @@ import SpriteKit
 
 class BackgroundNode: SKSpriteNode {
     
-    init(_ textureName: String) {
+    init(_ textureName: String, screenSize: CGSize) {
         let texture = SKTexture(imageNamed: textureName)
-        super.init(texture: texture, color: .clear, size: texture.size())
+        super.init(texture: texture, color: .clear, size: screenSize)
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
     }
     

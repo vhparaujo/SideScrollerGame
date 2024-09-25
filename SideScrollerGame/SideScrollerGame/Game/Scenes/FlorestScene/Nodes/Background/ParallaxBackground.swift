@@ -11,59 +11,61 @@ import SwiftUI
 import SpriteKit
 
 class ParallaxBackground: SKNode {
-    var background: [[SKSpriteNode]] = [[], [], [], []]
     let screenWidth: CGFloat
     let screenHeight: CGFloat
     
-    init(screenSize: CGSize) {
+    let backgroundImages: [String]
+    var background: [[SKSpriteNode]]
+    let parallaxFactors: [CGFloat] = [0.8, 0.6, 0.4, 0.2] // Closest to furthest
+    
+    
+    init(screenSize: CGSize, backgroundImages: [String]) {
         self.screenWidth = screenSize.width
         self.screenHeight = screenSize.height
         
+        self.backgroundImages = backgroundImages
+        self.background = Array(repeating: [SKSpriteNode](), count: backgroundImages.count)
+        
         super.init()
+        
+        setupParallaxBackground()
     }
     
     func setupParallaxBackground() {
-        for i in -1...1 {
-            let bg = SKSpriteNode(imageNamed: "background")
-            bg.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            bg.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
-            bg.zPosition = -4
-            bg.size = CGSize(width: screenWidth, height: screenHeight)
-            addChild(bg)
-            background[0].append(bg)
+        for (backgroundIndex, backgroundImageName) in backgroundImages.enumerated() {
+            for i in -1...1 {
+                let bg = BackgroundNode(backgroundImageName, screenSize: CGSize(width: screenWidth, height: screenHeight))
+                bg.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+                bg.zPosition = CGFloat(-backgroundIndex)
+                self.addChild(bg)
+                self.background[backgroundIndex].append(bg)
+            }
         }
-
-        // Far Trees Layer
-        for i in -1...1 {
-            let farTrees = SKSpriteNode(imageNamed: "far-trees")
-            farTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            farTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
-            farTrees.zPosition = -3
-            farTrees.size = CGSize(width: screenWidth, height: screenHeight)
-            addChild(farTrees)
-            background[1].append(farTrees)
+    }
+    
+    func moveParallaxBackground(cameraMovementX: CGFloat) {
+        // For each layer
+        for (backgroundIndex, backgroundLayer) in background.enumerated() {
+            // For each page
+            for bgPage in backgroundLayer {
+                bgPage.position.x += cameraMovementX * parallaxFactors[backgroundIndex]
+            }
         }
+    }
+    
+    func paginateBackgroundLayers(cameraNode: SKCameraNode) {
+        // For each layer
+        for backgroundLayer in background {
+            for bgPage in backgroundLayer {
+                let bgWidth = bgPage.size.width
 
-        // Mid Trees Layer
-        for i in -1...1 {
-            let midTrees = SKSpriteNode(imageNamed: "mid-trees")
-            midTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            midTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
-            midTrees.zPosition = -2
-            midTrees.size = CGSize(width: screenWidth, height: screenHeight)
-            addChild(midTrees)
-            background[2].append(midTrees)
-        }
-
-        // Close Trees Layer
-        for i in -1...1 {
-            let closeTrees = SKSpriteNode(imageNamed: "close-trees")
-            closeTrees.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            closeTrees.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
-            closeTrees.zPosition = -1
-            closeTrees.size = CGSize(width: screenWidth, height: screenHeight)
-            addChild(closeTrees)
-            background[3].append(closeTrees)
+                // Reposition horizontally
+                if bgPage.position.x + bgWidth / 2 < cameraNode.position.x - screenWidth / 2 {
+                    bgPage.position.x += bgWidth * CGFloat(backgroundLayer.count)
+                } else if bgPage.position.x - bgWidth / 2 > cameraNode.position.x + screenWidth / 2 {
+                    bgPage.position.x -= bgWidth * CGFloat(backgroundLayer.count)
+                }
+            }
         }
     }
     

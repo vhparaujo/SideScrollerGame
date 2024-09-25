@@ -19,17 +19,11 @@ class DesertScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
-//        if let background = self.parallaxBackground {
-//            background.moveBackGround()
-//        }
     }
     
     func setupBackground() {
-//        let images: [String] = ["close-trees", "mid-trees", "far-trees", "background"]
-        self.parallaxBackground = ParallaxBackground(screenSize: self.size)
-        
-//        self.parallaxBackground!.position = CGPoint(x: self.size.width * 0.5, y: self.size.height * 0.5)
-        self.parallaxBackground!.setupParallaxBackground()
+        let images: [String] = ["close-trees", "mid-trees", "far-trees", "background"]
+        self.parallaxBackground = ParallaxBackground(screenSize: self.size, backgroundImages: images)
         
         self.addChild(parallaxBackground!)
     }
