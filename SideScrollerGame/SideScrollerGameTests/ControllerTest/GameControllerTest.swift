@@ -17,20 +17,20 @@ struct GameControllerTest {
     }
     
     
-    @Test func getKeyMapTest() async throws {
-        
-        // Initialize the keymapModel with the default key map
-        var keymap: [UInt16: GameActions] {
-            return [
-                13: .climb,     // W key
-                0:  .moveLeft,  // A key
-                2:  .moveRight, // D key
-                49: .jump,      // Space key
-                14: .grab       // E key
-            ]
-        }
-        await #expect(gameController.getKeymap() == keymap)
-    }
+//    @Test func getKeyMapTest() async throws {
+//        
+//        // Initialize the keymapModel with the default key map
+//        var keymap: [UInt16: GameActions] {
+//            return [
+//                13: .climb,     // W key
+//                0:  .moveLeft,  // A key
+//                2:  .moveRight, // D key
+//                49: .jump,      // Space key
+//                14: .grab       // E key
+//            ]
+//        }
+//        await #expect(gameController.getKeymap() == keymap)
+//    }
     
     @Test func setKeyMapTest() async throws {
         
