@@ -10,13 +10,10 @@ import SwiftData
 
 @main
 struct SideScrollerGameApp: App {
-    
-    var controllers = GameController()
-    
+        
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(controllers)
         }
     }
 }
