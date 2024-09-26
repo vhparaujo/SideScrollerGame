@@ -9,15 +9,18 @@ import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
-    
     let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
     
     private var playerNode: PlayerNode!
-    var platform: PlatformNode!
+    private var parallaxBackground: ParallaxBackground!
+    var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
+    private let box2 = BoxNode()
+    
+    var previousCameraXPosition: CGFloat = 0.0
+    var platform: PlatformNode!
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
-
 
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
@@ -25,11 +28,12 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        
-        
+        setupBackground()
         playerNode = PlayerNode(playerEra: .present)
         playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(playerNode)
+        
+        setupCamera()
         
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
@@ -66,6 +70,8 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
+        
+        self.cameraAndBackgroundUpdate()
         
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
@@ -109,7 +115,27 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+    }
+    
+    func cameraAndBackgroundUpdate() {
+        cameraNode.position.x = playerNode.position.x
+        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+        self.previousCameraXPosition = cameraNode.position.x
+    }
+    
+    func setupCamera() {
+        self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        self.addChild(self.cameraNode)
+        self.camera = cameraNode
+        self.previousCameraXPosition = cameraNode.position.x
+    }
 
+    func setupBackground() {
+        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.desertScene.textures(for: .present))
+        
+        self.addChild(parallaxBackground!)
     }
 
 }
