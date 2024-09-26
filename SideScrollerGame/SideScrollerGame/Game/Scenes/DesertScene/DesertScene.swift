@@ -104,8 +104,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func setupBackground() {
-        let images: [String] = ["close-trees", "mid-trees", "far-trees", "background"]
-        self.parallaxBackground = ParallaxBackground(screenSize: self.size, backgroundImages: images)
+        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.desertScene.textures(for: .present))
         
         self.addChild(parallaxBackground!)
     }
