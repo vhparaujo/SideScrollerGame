@@ -11,6 +11,10 @@ import SwiftUI
 
 @Observable
 class MultiplayerManager: NSObject {
+    var selfPlayerInfo: PlayerInfo = .init(position: .zero)
+    var otherPlayerInfo: PlayerInfo = .init(position: .zero)
+    
+    
     var friendList: [Friend] = []
     
     //game interface state
@@ -21,9 +25,6 @@ class MultiplayerManager: NSObject {
     
     //match information
     var opponent: GKPlayer? = nil
-    var messages: [Message] = []
-    var myScore = 0
-    var opponentScore = 0
     
     /// The name of the match.
     var matchName: String {
@@ -41,14 +42,17 @@ class MultiplayerManager: NSObject {
     }
     
     /// The root view controller of the window.
-//    var rootViewController: UIViewController? {
-//        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-//        return windowScene?.windows.first?.rootViewController
-//    }
+    override init(){
+        super.init()
+        authenticatePlayer()
+    }
+    
     var rootViewController: NSViewController? {
-            let window = NSApplication.shared.windows.first
-            return window?.contentViewController
+        guard let window = NSApplication.shared.windows.first else {
+            return nil
         }
+        return window.contentViewController
+    }
     
     /// Authenticates the local player, initiates a multiplayer game, and adds the access point.
     /// - Tag:authenticatePlayer
@@ -66,10 +70,6 @@ class MultiplayerManager: NSObject {
                 print("Error: \(error.localizedDescription).")
                 return
             }
-            
-            // A value of nil for viewController indicates successful authentication, and you can access
-            // local player properties.
-            
 
             // Register for real-time invitations from other players.
             GKLocalPlayer.local.register(self)
@@ -82,35 +82,6 @@ class MultiplayerManager: NSObject {
             // Enable the Start Game button.
             self.matchAvailable = true
         }
-    }
-    
-    /// Starts the matchmaking process where GameKit finds a player for the match.
-    /// - Tag:findPlayer
-    func findPlayer() async {
-        let request = GKMatchRequest()
-        request.minPlayers = 2
-        request.maxPlayers = 2
-        let match: GKMatch
-        
-        // If you use matchmaking rules, set the GKMatchRequest.queueName property here. If the rules use
-        // game-specific properties, set the local player's GKMatchRequest.properties too.
-        
-        // Start automatch.
-        do {
-            match = try await GKMatchmaker.shared().findMatch(for: request)
-        } catch {
-            print("Error: \(error.localizedDescription).")
-            return
-        }
-
-        // Start the game, although the automatch player hasn't connected yet.
-        if !playingGame {
-            startMyMatchWith(match: match)
-        }
-
-        // Stop automatch.
-        GKMatchmaker.shared().finishMatchmaking(for: match)
-        automatch = false
     }
     
     /// Presents the matchmaker interface where the local player selects and sends an invitation to another player.
@@ -136,29 +107,49 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     /// - Parameter match: The object that represents the real-time match.
     /// - Tag:startMyMatchWith
-    func startMyMatchWith(match: GKMatch) {
+    func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
         playingGame = true
         myMatch = match
         myMatch?.delegate = self
-            
-       
     }
+    
+    /// Stops the current match, cleans up resources, and returns to the main interface.
+    /// - Tag:stopGame
+    func endMatch() {
+        // If there's a match ongoing, end it
+        if let match = myMatch {
+            match.disconnect()
+            myMatch = nil
+        }
+        
+        // Reset game state
+        playingGame = false
+        matchAvailable = true
+        selfPlayerInfo = PlayerInfo(position: .zero)
+        otherPlayerInfo = PlayerInfo(position: .zero)
+        
+        // Clear opponent and scores
+        opponent = nil
+        
+        // Reactivate the access point so the player can start another game
+        GKAccessPoint.shared.isActive = true
+        
+        // Optionally, return to the main interface or reset views
+        // This depends on how you structure your views/UI
+        
+        print("Game has been stopped and reset.")
+    }
+
     
     /// Takes the player's turn.
     /// - Tag:takeAction
-    func takeAction(add: Bool) {
-        // Take your turn by incrementing the counter.
-        if add {
-            myScore += 1
-        }else{
-            myScore -= 1
-        }
-        
+    func takeAction() {
+        //remember to update the value of the self player before send to the other player
         
         // Otherwise, send the game data to the other player.
         do {
-            let data = encode(score: myScore)
+            let data = encode(content: selfPlayerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: GKMatch.SendDataMode.unreliable)
         } catch {
             print("Error: \(error.localizedDescription).")

@@ -16,20 +16,22 @@ extension MultiplayerManager {
     /// Creates a data representation of the local player's score for sending to other players.
     ///
     /// - Returns: A representation of game data that contains only the score.
-    func encode(score: Int) -> Data? {
-        let gameData = GameData(matchName: matchName, playerName: GKLocalPlayer.local.displayName, score: score, message: nil, outcome: nil)
-        return encode(gameData: gameData)
+    ///
+    
+    func encode(position: CGPoint) -> Data?{
+        let playerInfo = PlayerInfo(position: position)
+        return encode(content: playerInfo)
     }
     
     /// Creates a data representation of game data for sending to other players.
     ///
     /// - Returns: A representation of game data.
-    func encode(gameData: GameData) -> Data? {
+    func encode<T:Codable>(content: T) -> Data? {
         let encoder = PropertyListEncoder()
         encoder.outputFormat = .xml
         
         do {
-            let data = try encoder.encode(gameData)
+            let data = try encoder.encode(content)
             return data
         } catch {
             print("Error: \(error.localizedDescription).")
@@ -41,8 +43,8 @@ extension MultiplayerManager {
     ///
     /// - Parameter matchData: A data representation of the game data.
     /// - Returns: A game data object.
-    func decode(matchData: Data) -> GameData? {
+    func decode(matchData: Data) -> PlayerInfo? {
         // Convert the data object to a game data object.
-        return try? PropertyListDecoder().decode(GameData.self, from: matchData)
+        return try? PropertyListDecoder().decode(PlayerInfo.self, from: matchData)
     }
 }
