@@ -45,11 +45,6 @@ extension MultiplayerManager: GKMatchDelegate {
         // Decode the data representation of the game data.
         let otherPlayerInfoIncome = decode(matchData: data)
         
-
-//        if let data = otherPlayerInfoIncome{
-//            self.otherPlayerInfo = data
-//        }
-        
         //updating only the position of the other player
         if let position = otherPlayerInfoIncome?.position {
             self.otherPlayerInfo.position = position
