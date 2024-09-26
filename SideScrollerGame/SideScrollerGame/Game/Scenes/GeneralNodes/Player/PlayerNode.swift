@@ -7,6 +7,7 @@
 import SpriteKit
 import Combine
 
+
 class PlayerNode: SKSpriteNode {
     
     private var cancellables: [AnyCancellable] = []
@@ -18,6 +19,7 @@ class PlayerNode: SKSpriteNode {
     let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
     
     
+    
     private var isMovingLeft = false
     private var isMovingRight = false
     private var isGrounded = true
@@ -25,17 +27,13 @@ class PlayerNode: SKSpriteNode {
     
     private var facingRight = true // Tracks the orientation
     
+    private var currentPlatform: PlatformNode?
+    
     //Box movement
     var boxRef: BoxNode?
-    private var isGrabbed = false {
-        didSet {
-            if isGrabbed {
-                boxRef?.isHidden = true
-            } else {
-                boxRef?.isHidden = false
-            }
-        }
-    }
+    private var isGrabbed = false
+    private var boxOffset: CGFloat = 0.0
+    
     
     // Keep track of current action to avoid restarting the animation
     private var currentState: PlayerTextureState = .idle
@@ -43,7 +41,7 @@ class PlayerNode: SKSpriteNode {
     
     init(playerEra: PlayerEra) {
         self.playerEra = playerEra // Initialize with the player era
-
+        
         // Start with the idle texture for the given era
         let texture = SKTexture(imageNamed: "\(playerEra == .present ? "player-idle-present" : "player-idle-future")-1")
         super.init(texture: texture, color: .clear, size: texture.size())
@@ -73,7 +71,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
         self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box
-        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box
+        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform
         self.physicsBody?.friction = 1.0
         self.physicsBody?.restitution = 0.0
     }
@@ -94,49 +92,68 @@ class PlayerNode: SKSpriteNode {
     
     func handleKeyPress(action: GameActions) {
         switch action {
-        case .moveLeft:
-            isMovingLeft = true
-            facingRight = false
-            self.xScale = -abs(self.xScale)
-        case .moveRight:
-            isMovingRight = true
-            facingRight = true
-            self.xScale = abs(self.xScale)
-        case .jump:
-            if isGrounded { // Ensure player can only jump when grounded
-                self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-                isGrounded = false
-                changeState(to: .jumping)
-            }
-            case .grab:
-                if boxRef != nil {
-                    isGrabbed = true
+            case .moveLeft:
+                isMovingLeft = true
+                facingRight = false
+                if !isGrabbed {
+                    self.xScale = -abs(self.xScale)
                 }
-        default:
-            break
+            case .moveRight:
+                isMovingRight = true
+                facingRight = true
+                if !isGrabbed {
+                    self.xScale = abs(self.xScale)
+                }
+            case .jump:
+                if isGrounded, !isGrabbed {
+                    self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                    isGrounded = false
+                    changeState(to: .jumping)
+                }
+            case .grab:
+                if isGrounded {
+                    if let box = boxRef {
+                        isGrabbed = true
+                        box.isGrabbed = true
+                        box.enableMovement()
+                        // Capture the initial offset between the box and the player
+                        boxOffset = box.position.x - self.position.x
+                    }
+                }
+            default:
+                break
         }
     }
     
+    
+    
+    // Handle key releases
     func handleKeyRelease(action: GameActions) {
         switch action {
-        case .moveLeft:
-            isMovingLeft = false
-            if isMovingRight {
-                facingRight = true
-                self.xScale = abs(self.xScale)
-            }
-        case .moveRight:
-            isMovingRight = false
-            if isMovingLeft {
-                facingRight = false
-                self.xScale = -abs(self.xScale)
-            }
+            case .moveLeft:
+                isMovingLeft = false
+                if isMovingRight {
+                    facingRight = true
+                    if !isGrabbed {
+                        self.xScale = abs(self.xScale)
+                    }
+                }
+            case .moveRight:
+                isMovingRight = false
+                if isMovingLeft {
+                    facingRight = false
+                    if !isGrabbed {
+                        self.xScale = -abs(self.xScale)
+                    }
+                }
             case .grab:
                 if isGrabbed {
                     isGrabbed = false
+                    boxRef?.isGrabbed = false
+                    boxRef?.disableMovement()
                 }
-        default:
-            break
+            default:
+                break
         }
     }
     
@@ -152,14 +169,32 @@ class PlayerNode: SKSpriteNode {
             desiredVelocity = 0.0
         }
         
-        // Apply velocity
+        // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
-        // Ground detection using contact count
-        // isGrounded is updated in didBegin and didEnd methods
+        // Move the box with the player when grabbed
+        if isGrabbed, let box = boxRef {
+            // Maintain the initial offset captured during grabbing
+            box.position.x = self.position.x + boxOffset
+            box.physicsBody?.velocity.dx = desiredVelocity
+            
+            // Prevent the box from flipping
+            box.xScale = abs(box.xScale)
+        }
+        
+        // Adjust player's position by the platform's movement delta
+        if let platform = currentPlatform {
+            let delta = platform.movementDelta()
+            self.position.x += delta.x
+            self.position.y += delta.y
+        }
+
+        
         
         // Determine the appropriate state
-        if !isGrounded {
+        if isGrabbed {
+            changeState(to: .grabbing)
+        } else if !isGrounded {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
@@ -187,28 +222,34 @@ class PlayerNode: SKSpriteNode {
     }
     
     
-    // Handle landing after a jump
     func didBegin(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
-        
-        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box {
+
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
             isGrounded = true
+
+            if otherCategory == PhysicsCategories.platform {
+                currentPlatform = otherBody.node as? PlatformNode
+            }
         }
     }
-    
-    // Handle leaving the ground (e.g., jumping off a platform)
+
     func didEnd(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
-        
-        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box {
+
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
             if groundContactCount == 0 {
                 isGrounded = false
             }
+
+            if otherCategory == PhysicsCategories.platform {
+                currentPlatform = nil
+            }
         }
-        
     }
+
 }
