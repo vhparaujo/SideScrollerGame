@@ -109,6 +109,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+
     }
 
 }
