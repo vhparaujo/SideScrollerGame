@@ -18,7 +18,10 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     private let box2 = BoxNode()
     
     var previousCameraXPosition: CGFloat = 0.0
+    var platform: PlatformNode!
     
+    private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
+
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
         self.backgroundColor = .black
@@ -35,8 +38,15 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
         addChild(box)        // Add a box to the scene
-        box2.position = CGPoint(x: 300, y: 100) // Adjust as needed
-        addChild(box2)
+ 
+        
+        // Define the movement bounds for the platform
+        let minX = CGFloat(100)
+        let maxX = CGFloat(1000)
+        // Initialize and add the platform to the scene
+        platform = PlatformNode(minX: minX, maxX: maxX)
+        platform.position = CGPoint(x: minX, y: 200) // Set the starting position
+        addChild(platform)
         
         setupPhysics()
         
@@ -60,22 +70,36 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
-        playerNode.update(deltaTime: currentTime)
         
         self.cameraAndBackgroundUpdate()
+        
+        // Calculate deltaTime if needed
+        let deltaTime = currentTime - lastUpdateTime
+        lastUpdateTime = currentTime
+        
+        // Update the platform
+        platform.update(deltaTime: deltaTime)
+        
+        
+        // Update the player
+        playerNode.update(deltaTime: deltaTime)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-
         playerNode.didBegin(contact)
         
+        // Determine which body is the player and which is the box
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if  otherCategory == PhysicsCategories.box {
-            playerNode.boxRef = box
+        if otherCategory == PhysicsCategories.box {
+            // Cast the other node to BoxNode to get the specific box
+            if let boxNode = otherBody.node as? BoxNode {
+                playerNode.boxRef = boxNode
+            }
         }
     }
+
     
     func didEnd(_ contact: SKPhysicsContact) {
         playerNode.didEnd(contact)
@@ -83,8 +107,13 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if  otherCategory == PhysicsCategories.box {
-            playerNode.boxRef = nil
+        if otherCategory == PhysicsCategories.box {
+            if let boxNode = otherBody.node as? BoxNode {
+                // Only set boxRef to nil if it's the same box the player was interacting with
+                if playerNode.boxRef === boxNode {
+                    playerNode.boxRef = nil
+                }
+            }
         }
     }
     
@@ -108,4 +137,5 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(parallaxBackground!)
     }
+
 }
