@@ -3,13 +3,11 @@ import CoreGraphics
 import Combine
 
 class OtherPlayerNode: PlayerNode {
-    var playerId: String
     private var targetPosition: CGPoint?
     private var targetVelocity: CGVector?
     private var interpolationSpeed: CGFloat = 10.0 // Velocidade de interpolação
 
-    init(playerId: String, playerEra: PlayerEra, mpManager: MultiplayerManager) {
-        self.playerId = playerId
+    override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         
         super.init(playerEra: playerEra, mpManager: mpManager)
         
@@ -27,7 +25,7 @@ class OtherPlayerNode: PlayerNode {
     internal override func setupBindings() {
         mpManager.otherPlayerInfo
             .sink { [weak self] (playerInfo: PlayerInfo?) in
-                guard let self = self, let playerInfo = playerInfo, playerInfo.playerId == self.playerId else { return }
+                guard let self = self, let playerInfo = playerInfo else { return }
                 
                 // Atualizar o alvo de posição e velocidade recebida
                 self.targetPosition = playerInfo.position

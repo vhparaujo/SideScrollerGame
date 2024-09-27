@@ -1,10 +1,3 @@
-//
-//  DesertScene.swift
-//  SideScrollerGame
-//
-//  Created by Eduardo on 19/09/24.
-//
-
 import SpriteKit
 import SwiftUICore
 
@@ -13,11 +6,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
     
     private var playerNode: PlayerNode!
+    private var otherPlayer: OtherPlayerNode!
+    
     var platform: PlatformNode!
     private let box = BoxNode()
     
+   
+    
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
-
 
     override func didMove(to view: SKView) {
         self.name = "DesertScene"
@@ -25,17 +21,13 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        
-        
-        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
-        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(playerNode)
+        addPlayer()
+        addOtherPlayer()
         
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
         addChild(box)        // Add a box to the scene
  
-        
         // Define the movement bounds for the platform
         let minX = CGFloat(100)
         let maxX = CGFloat(1000)
@@ -45,10 +37,9 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         addChild(platform)
         
         setupPhysics()
-        
     }
     
-     init(size: CGSize, mpManager: MultiplayerManager) {
+    init(size: CGSize, mpManager: MultiplayerManager) {
         self.mpManager = mpManager
         super.init(size: size)
     }
@@ -65,9 +56,21 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         physicsBody?.collisionBitMask = PhysicsCategories.player
     }
     
+    func addPlayer() {
+        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
+        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(playerNode)
+    }
+    
+    // Método para adicionar o outro jogador
+    func addOtherPlayer() {
+        guard otherPlayer == nil else { return }
+        otherPlayer = OtherPlayerNode(playerEra: .future, mpManager: mpManager)
+        addChild(otherPlayer)
+    }
+    
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
-        
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
@@ -75,9 +78,11 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         // Update the platform
         platform.update(deltaTime: deltaTime)
         
-        
         // Update the player
         playerNode.update(deltaTime: deltaTime)
+        
+        // Update the other player if it exists
+        otherPlayer?.update(deltaTime: deltaTime)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -95,7 +100,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    
     func didEnd(_ contact: SKPhysicsContact) {
         playerNode.didEnd(contact)
         
@@ -110,7 +114,5 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-
     }
-
 }
