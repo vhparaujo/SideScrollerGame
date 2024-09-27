@@ -79,6 +79,10 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.restitution = 0.0
     }
     
+    func getPlayerInfo() -> PlayerInfo? {
+        return PlayerInfo(position: position, velocity: physicsBody!.velocity, state: currentState, facingRight: facingRight, isGrounded: isGrounded, isGrabbed: isGrabbed)
+      }
+    
     func setupBindings() {
         controller.keyPressPublisher
             .sink { action in

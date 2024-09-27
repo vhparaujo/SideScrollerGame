@@ -11,8 +11,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     var platform: PlatformNode!
     private let box = BoxNode()
     
-   
-    
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
 
     override func didMove(to view: SKView) {
@@ -26,7 +24,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
-        addChild(box)        // Add a box to the scene
+        addChild(box) // Add a box to the scene
  
         // Define the movement bounds for the platform
         let minX = CGFloat(100)
@@ -37,6 +35,8 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         addChild(platform)
         
         setupPhysics()
+        
+        // Setup binding for other player updates
     }
     
     init(size: CGSize, mpManager: MultiplayerManager) {
@@ -62,13 +62,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         addChild(playerNode)
     }
     
-    // Método para adicionar o outro jogador
     func addOtherPlayer() {
         guard otherPlayer == nil else { return }
-        otherPlayer = OtherPlayerNode(playerEra: .future, mpManager: mpManager)
+        otherPlayer = OtherPlayerNode(playerEra: .present, mpManager: mpManager)
+        otherPlayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(otherPlayer)
+        
     }
-    
+
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         // Calculate deltaTime if needed
@@ -83,6 +84,11 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer?.update(deltaTime: deltaTime)
+
+        // Enviar informações do jogador após atualizar
+        if let playerInfo = playerNode.getPlayerInfo() {
+            mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo)
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {

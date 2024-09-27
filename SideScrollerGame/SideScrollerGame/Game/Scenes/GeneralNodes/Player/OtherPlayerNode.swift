@@ -37,6 +37,8 @@ class OtherPlayerNode: PlayerNode {
     override func update(deltaTime: TimeInterval) {
         super.update(deltaTime: deltaTime)
         
+        print(position)
+        
         // Interpolar para a nova posição recebida se disponível
         if let targetPosition = targetPosition {
             let dx = targetPosition.x - position.x

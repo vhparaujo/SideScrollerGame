@@ -4,14 +4,7 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    var selfPlayerInfo: PlayerInfo? {
-        didSet {
-            // Envia as informações do jogador para os outros jogadores sempre que mudam
-            if let playerInfo = selfPlayerInfo {
-                sendInfoToOtherPlayers(playerInfo: playerInfo)
-            }
-        }
-    }
+    var selfPlayerInfo: PlayerInfo? 
     
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
