@@ -8,8 +8,13 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
     
-    var platform: PlatformNode!
+    private var parallaxBackground: ParallaxBackground!
+    var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
+    private let box2 = BoxNode()
+    
+    var previousCameraXPosition: CGFloat = 0.0
+    var platform: PlatformNode!
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
 
@@ -21,6 +26,9 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         addPlayer()
         addOtherPlayer()
+        setupBackground()
+     
+        setupCamera()
         
         // Add a box to the scene
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
@@ -72,6 +80,9 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
 
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
+        
+        self.cameraAndBackgroundUpdate()
+        
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
@@ -120,5 +131,26 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+    }
+    
+    func cameraAndBackgroundUpdate() {
+        cameraNode.position.x = playerNode.position.x
+        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+        self.previousCameraXPosition = cameraNode.position.x
+    }
+    
+    func setupCamera() {
+        self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        self.addChild(self.cameraNode)
+        self.camera = cameraNode
+        self.previousCameraXPosition = cameraNode.position.x
+    }
+
+    func setupBackground() {
+        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.desertScene.textures(for: .present))
+        
+        self.addChild(parallaxBackground!)
     }
 }
