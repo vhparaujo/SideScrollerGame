@@ -9,7 +9,7 @@ import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
-    
+    var mpManager: MultiplayerManager
     let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
     
     private var playerNode: PlayerNode!
@@ -27,7 +27,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         
         
-        playerNode = PlayerNode(playerEra: .present)
+        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
         playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(playerNode)
         
@@ -48,7 +48,8 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    override init(size: CGSize) {
+     init(size: CGSize, mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         super.init(size: size)
     }
     

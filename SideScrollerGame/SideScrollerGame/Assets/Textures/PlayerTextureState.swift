@@ -8,7 +8,7 @@ import SpriteKit
 
 
 
-enum PlayerTextureState {
+enum PlayerTextureState: Codable {
     case running
     case idle
     case jumping

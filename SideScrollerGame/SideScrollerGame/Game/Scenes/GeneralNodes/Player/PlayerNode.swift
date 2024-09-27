@@ -10,12 +10,12 @@ import Combine
 
 class PlayerNode: SKSpriteNode {
     
-    private var cancellables: [AnyCancellable] = []
-    private var controller: GameController = GameController()
-    private var playerEra: PlayerEra // Store the era for texture selection
+    internal var cancellables: [AnyCancellable] = []
+    internal var controller: GameController = GameController()
+    internal var playerEra: PlayerEra // Store the era for texture selection
     
     // Movement properties for the player
-    private var moveSpeed: CGFloat = 500.0
+    internal var moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
     
     
@@ -39,8 +39,11 @@ class PlayerNode: SKSpriteNode {
     private var currentState: PlayerTextureState = .idle
     private var currentActionKey = "PlayerAnimation"
     
-    init(playerEra: PlayerEra) {
+    var mpManager: MultiplayerManager
+
+    init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         self.playerEra = playerEra // Initialize with the player era
+        self.mpManager = mpManager
         
         // Start with the idle texture for the given era
         let texture = SKTexture(imageNamed: "\(playerEra == .present ? "player-idle-present" : "player-idle-future")-1")
@@ -159,6 +162,9 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
+        
+        sendPlayerInfoToOthers()
+
         var desiredVelocity: CGFloat = 0.0
         
         if isMovingLeft && !isMovingRight {
@@ -252,4 +258,38 @@ class PlayerNode: SKSpriteNode {
         }
     }
 
+    
+    func getCurrentState() -> PlayerTextureState {
+        return currentState
+    }
+    
+    func getFacingRight() -> Bool {
+        return facingRight
+    }
+    
+    func getIsGrounded() -> Bool {
+        return isGrounded
+    }
+    
+    func getIsGrabbed() -> Bool {
+        return isGrabbed
+    }
+    
+    // Função para gerar as informações atuais do jogador
+       private func generatePlayerInfo() -> PlayerInfo {
+           return PlayerInfo(
+               position: self.position,
+               velocity: self.physicsBody?.velocity ?? CGVector.zero,
+               state: currentState,
+               facingRight: facingRight,
+               isGrounded: isGrounded,
+               isGrabbed: isGrabbed
+           )
+       }
+       
+       // Função para enviar informações para outros jogadores
+       private func sendPlayerInfoToOthers() {
+           let playerInfo = generatePlayerInfo()
+           mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo) // Função do MultiplayerManager para enviar as informações
+       }
 }

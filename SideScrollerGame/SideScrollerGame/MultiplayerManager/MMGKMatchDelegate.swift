@@ -41,13 +41,14 @@ extension MultiplayerManager: GKMatchDelegate {
     
     /// Handles receiving a message from another player.
     /// - Tag:didReceiveData
+    /// Handles receiving a message from another player.
+    /// - Tag: didReceiveData
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
         // Decode the data representation of the game data.
         let otherPlayerInfoIncome = decode(matchData: data)
-        
-        //updating only the position of the other player
-        if let position = otherPlayerInfoIncome?.position {
-            self.otherPlayerInfo.position = position
-        }
+
+        // Atualize o CurrentValueSubject com o novo valor.
+        self.otherPlayerInfo.value = otherPlayerInfoIncome
     }
+
 }

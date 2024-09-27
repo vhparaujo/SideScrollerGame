@@ -8,27 +8,13 @@
 import Foundation
 import GameKit
 
-struct Friend: Identifiable {
-    var id = UUID()
-    var player: GKPlayer
-}
-
-/// A message that one player sends to another.
-struct Message: Identifiable {
-    var id = UUID()
-    var content: String
-    var playerName: String
-    var isLocalPlayer = false
-}
-
 // MARK: Game Data Objects
 struct PlayerInfo: Codable{
     var position: CGPoint
-    
-    var isMovingLeft = false
-    var isMovingRight = false
-    var isGrounded = true
-    var groundContactCount = 0 // Tracks number of ground contacts
-    
-    var facingRight = true // Tracks the orientation
+    var velocity: CGVector
+    var state: PlayerTextureState
+    var facingRight: Bool
+    var isGrounded: Bool
+    var isGrabbed: Bool
+    var playerId: String = UUID().uuidString
 }

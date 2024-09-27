@@ -12,6 +12,8 @@ struct GameView: View {
     @State private var currentSceneType: SceneType = .desert
     @State private var opacity: Double = 1.0
     
+    @Bindable var mpManager: MultiplayerManager
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -29,7 +31,7 @@ struct GameView: View {
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
         case .desert:
-            return DesertScene(size: size)
+            return DesertScene(size: size, mpManager: mpManager)
         }
     }
     
@@ -56,5 +58,5 @@ struct GameView: View {
 
 
 #Preview {
-    GameView()
+    GameView(mpManager: .init())
 }
