@@ -13,6 +13,9 @@ class OtherPlayerNode: PlayerNode {
         
         self.mpManager = mpManager
         
+        self.physicsBody?.categoryBitMask = PhysicsCategories.otherPlayer
+
+        
         // Assinar para atualizações de outros jogadores
         setupBindings()
     }
