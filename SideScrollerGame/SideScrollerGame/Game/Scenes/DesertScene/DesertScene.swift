@@ -48,6 +48,19 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         platform.position = CGPoint(x: minX, y: 200) // Set the starting position
         addChild(platform)
         
+        
+        let mapData: [[Int]] = [
+            [0, 1, 2, 3, 4],
+            [5, 6, 7, 8, 9],
+            [10, 11, 12, 13, 14]
+        ]
+
+        var tileMapNode = TileMapNode(tilesetImageName: "world_tileset", tileMapData: mapData)
+        tileMapNode.setScale(5)
+        tileMapNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(tileMapNode)
+
+        
         setupPhysics()
         
     }
