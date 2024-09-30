@@ -24,6 +24,7 @@ class PlayerNode: SKSpriteNode {
     internal var isMovingRight = false
     internal var isGrounded = true
     internal var groundContactCount = 0 // Tracks number of ground contacts
+    internal var isJumping = false
     
     internal var facingRight = true // Tracks the orientation
     
@@ -112,6 +113,7 @@ class PlayerNode: SKSpriteNode {
                     self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
                     isGrounded = false
                     changeState(to: .jumping)
+                    isJumping = true
                 }
             case .grab:
                 if isGrounded {
@@ -232,6 +234,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
             isGrounded = true
+            isJumping = false
 
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
@@ -280,7 +283,8 @@ class PlayerNode: SKSpriteNode {
             state: currentState,
             facingRight: facingRight,
             isGrabbed: isGrabbed,
-            isGrounded: isGrounded
+            isGrounded: isGrounded,
+            isJumping: isJumping
         )
 //           print(playerInfo)
            return playerInfo

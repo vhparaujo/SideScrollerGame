@@ -16,4 +16,5 @@ struct PlayerInfo: Codable{
     var facingRight: Bool
     var isGrabbed: Bool
     var isGrounded: Bool
+    var isJumping: Bool
 }

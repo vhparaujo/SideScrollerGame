@@ -7,7 +7,7 @@ class OtherPlayerNode: PlayerNode {
     private var targetVelocity: CGVector?
     private var interpolationSpeed: CGFloat = 10.0
     private var otherPlayerInfo: PlayerInfo?
-
+    
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         
         super.init(playerEra: playerEra, mpManager: mpManager)
@@ -31,13 +31,13 @@ class OtherPlayerNode: PlayerNode {
                 guard let self = self, let playerInfo = playerInfo else { return }
                 
                 self.otherPlayerInfo = playerInfo
-
                 self.isMovingLeft = playerInfo.isMovingLeft
                 self.isMovingRight = playerInfo.isMovingRight
                 self.facingRight = playerInfo.facingRight
                 self.isGrabbed = playerInfo.isGrabbed
                 self.currentState = playerInfo.state
                 self.isGrounded = playerInfo.isGrounded
+                self.isJumping = playerInfo.isJumping
             }
             .store(in: &cancellables)
     }
@@ -80,7 +80,6 @@ class OtherPlayerNode: PlayerNode {
             changeState(to: .grabbing)
         } else if !isGrounded {
             changeState(to: .jumping)
-          
         } else if desiredVelocity != 0 {
             changeState(to: .running)
         } else {
