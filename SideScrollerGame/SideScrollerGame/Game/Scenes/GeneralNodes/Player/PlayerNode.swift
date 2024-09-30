@@ -20,19 +20,19 @@ class PlayerNode: SKSpriteNode {
     
     
     
-    private var isMovingLeft = false
-    private var isMovingRight = false
-    private var isGrounded = true
-    private var groundContactCount = 0 // Tracks number of ground contacts
+    internal var isMovingLeft = false
+    internal var isMovingRight = false
+    internal var isGrounded = true
+    internal var groundContactCount = 0 // Tracks number of ground contacts
     
-    private var facingRight = true // Tracks the orientation
+    internal var facingRight = true // Tracks the orientation
     
-    private var currentPlatform: PlatformNode?
+    internal var currentPlatform: PlatformNode?
     
     //Box movement
     var boxRef: BoxNode?
-    private var isGrabbed = false
-    private var boxOffset: CGFloat = 0.0
+    internal var isGrabbed = false
+    internal var boxOffset: CGFloat = 0.0
     
     
     // Keep track of current action to avoid restarting the animation
@@ -79,9 +79,9 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.restitution = 0.0
     }
     
-    func getPlayerInfo() -> PlayerInfo? {
-        return PlayerInfo(position: position, velocity: physicsBody!.velocity, state: currentState, facingRight: facingRight)
-      }
+//    func getPlayerInfo() -> PlayerInfo? {
+//        return PlayerInfo(isMovingRight: isMovingRight, isMovingLeft: isMovingLeft, state: currentState, facingRight: facingRight, isGrabbed: isGrabbed)
+//    }
     
     func setupBindings() {
         controller.keyPressPublisher
@@ -212,7 +212,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     // Change the player's animation state
-    private func changeState(to newState: PlayerTextureState) {
+    internal func changeState(to newState: PlayerTextureState) {
         if currentState == newState { return } // Avoid changing to the same state
         currentState = newState
         
@@ -279,12 +279,15 @@ class PlayerNode: SKSpriteNode {
     
     // Função para gerar as informações atuais do jogador
        private func generatePlayerInfo() -> PlayerInfo {
-           return PlayerInfo(
-               position: self.position,
-               velocity: self.physicsBody?.velocity ?? CGVector.zero,
-               state: currentState,
-               facingRight: facingRight
-           )
+           let playerInfo = PlayerInfo(
+            isMovingRight: isMovingRight,
+            isMovingLeft: isMovingLeft,
+            state: currentState,
+            facingRight: facingRight,
+            isGrabbed: isGrabbed
+        )
+//           print(playerInfo)
+           return playerInfo
        }
        
        // Função para enviar informações para outros jogadores

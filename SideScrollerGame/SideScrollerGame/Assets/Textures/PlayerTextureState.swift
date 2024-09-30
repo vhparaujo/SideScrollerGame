@@ -21,7 +21,7 @@ enum PlayerTextureState: Codable {
                 return SKSpriteNode.loadTextures(prefix: "player-run-present", count: 6)
             case (.running, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-run-future", count: 6)
-                
+
             case (.idle, .present):
                 return SKSpriteNode.loadTextures(prefix: "player-idle-present", count: 4)
             case (.idle, .future):

@@ -10,8 +10,9 @@ import GameKit
 
 // MARK: Game Data Objects
 struct PlayerInfo: Codable{
-    var position: CGPoint
-    var velocity: CGVector
+    var isMovingRight: Bool
+    var isMovingLeft: Bool
     var state: PlayerTextureState
     var facingRight: Bool
+    var isGrabbed: Bool
 }

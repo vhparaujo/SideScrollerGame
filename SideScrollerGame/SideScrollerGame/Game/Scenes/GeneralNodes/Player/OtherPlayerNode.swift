@@ -37,22 +37,67 @@ class OtherPlayerNode: PlayerNode {
             .store(in: &cancellables)
     }
 
-    override func update(deltaTime: TimeInterval) {
-        super.update(deltaTime: deltaTime)
-        
-        
-        // Interpolar para a nova posição recebida se disponível
-        self.position = otherPlayerInfo?.position ?? position
-//        if let targetPosition = targetPosition {
-//            let dx = targetPosition.x - position.x
-//            let dy = targetPosition.y - position.y
-//            position.x += dx * interpolationSpeed * CGFloat(deltaTime)
-//            position.y += dy * interpolationSpeed * CGFloat(deltaTime)
-//        }
+//    override func update(deltaTime: TimeInterval) {
+//        super.update(deltaTime: deltaTime)
+//      
+//        
+//        
+//
+////        if let targetPosition = targetPosition {
+////            let dx = targetPosition.x - position.x
+////            let dy = targetPosition.y - position.y
+////            position.x += dx * interpolationSpeed * CGFloat(deltaTime)
+////            position.y += dy * interpolationSpeed * CGFloat(deltaTime)
+////        }
 //        
 //        // Aplicar a nova velocidade recebida, se disponível
 //        if let targetVelocity = targetVelocity {
 //            physicsBody?.velocity = targetVelocity
 //        }
+//    }
+    
+    override func update(deltaTime: TimeInterval) {
+        
+
+        var desiredVelocity: CGFloat = 0.0
+        
+        if isMovingLeft && !isMovingRight {
+            desiredVelocity = -moveSpeed
+        } else if isMovingRight && !isMovingLeft {
+            desiredVelocity = moveSpeed
+        } else {
+            desiredVelocity = 0.0
+        }
+        
+        // Apply velocity to the player
+        self.physicsBody?.velocity.dx = desiredVelocity
+        
+        // Move the box with the player when grabbed
+        if isGrabbed, let box = boxRef {
+            // Maintain the initial offset captured during grabbing
+            box.position.x = self.position.x + boxOffset
+            box.physicsBody?.velocity.dx = desiredVelocity
+            
+            // Prevent the box from flipping
+            box.xScale = abs(box.xScale)
+        }
+        
+        // Adjust player's position by the platform's movement delta
+        if let platform = currentPlatform {
+            let delta = platform.movementDelta()
+            self.position.x += delta.x
+            self.position.y += delta.y
+        }
+        
+        // Determine the appropriate state
+        if isGrabbed {
+            changeState(to: .grabbing)
+        } else if !isGrounded {
+            changeState(to: .jumping)
+        } else if desiredVelocity != 0 {
+            changeState(to: .running)
+        } else {
+            changeState(to: .idle)
+        }
     }
 }
