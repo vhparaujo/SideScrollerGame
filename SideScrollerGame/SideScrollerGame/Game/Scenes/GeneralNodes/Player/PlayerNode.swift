@@ -241,6 +241,7 @@ class PlayerNode: SKSpriteNode {
 
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
+            
             if groundContactCount == 0 {
                 isGrounded = false
             }
@@ -250,7 +251,6 @@ class PlayerNode: SKSpriteNode {
             }
         }
     }
-
     
     func getCurrentState() -> PlayerTextureState {
         return currentState
