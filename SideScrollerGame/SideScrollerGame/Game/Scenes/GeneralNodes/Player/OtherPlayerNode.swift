@@ -80,8 +80,7 @@ class OtherPlayerNode: PlayerNode {
             changeState(to: .grabbing)
         } else if !isGrounded {
             changeState(to: .jumping)
-            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-
+          
         } else if desiredVelocity != 0 {
             changeState(to: .running)
         } else {
