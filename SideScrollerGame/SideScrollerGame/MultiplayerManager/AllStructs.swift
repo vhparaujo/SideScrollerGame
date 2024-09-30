@@ -14,7 +14,4 @@ struct PlayerInfo: Codable{
     var velocity: CGVector
     var state: PlayerTextureState
     var facingRight: Bool
-    var isGrounded: Bool
-    var isGrabbed: Bool
-    var playerId: String = UUID().uuidString
 }

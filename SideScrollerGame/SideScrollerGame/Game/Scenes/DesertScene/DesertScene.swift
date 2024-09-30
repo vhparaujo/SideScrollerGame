@@ -27,7 +27,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         addPlayer()
         addOtherPlayer()
         setupBackground()
-     
         setupCamera()
         
         // Add a box to the scene
@@ -80,7 +79,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
 
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
-        
         self.cameraAndBackgroundUpdate()
         
         // Calculate deltaTime if needed
@@ -94,12 +92,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         playerNode.update(deltaTime: deltaTime)
         
         // Update the other player if it exists
-        otherPlayer?.update(deltaTime: deltaTime)
+        otherPlayer.update(deltaTime: deltaTime)
+        
+//        otherPlayer.position = mpManager.otherPlayerInfo.value?.position ?? position
 
-        // Enviar informações do jogador após atualizar
-        if let playerInfo = playerNode.getPlayerInfo() {
-            mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo)
-        }
+//        // Enviar informações do jogador após atualizar
+//        if let playerInfo = playerNode.getPlayerInfo() {
+//            mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo)
+//        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -110,6 +110,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.box {
+            
             // Cast the other node to BoxNode to get the specific box
             if let boxNode = otherBody.node as? BoxNode {
                 playerNode.boxRef = boxNode

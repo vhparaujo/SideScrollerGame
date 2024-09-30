@@ -80,7 +80,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func getPlayerInfo() -> PlayerInfo? {
-        return PlayerInfo(position: position, velocity: physicsBody!.velocity, state: currentState, facingRight: facingRight, isGrounded: isGrounded, isGrabbed: isGrabbed)
+        return PlayerInfo(position: position, velocity: physicsBody!.velocity, state: currentState, facingRight: facingRight)
       }
     
     func setupBindings() {
@@ -198,8 +198,6 @@ class PlayerNode: SKSpriteNode {
             self.position.x += delta.x
             self.position.y += delta.y
         }
-
-        
         
         // Determine the appropriate state
         if isGrabbed {
@@ -285,15 +283,13 @@ class PlayerNode: SKSpriteNode {
                position: self.position,
                velocity: self.physicsBody?.velocity ?? CGVector.zero,
                state: currentState,
-               facingRight: facingRight,
-               isGrounded: isGrounded,
-               isGrabbed: isGrabbed
+               facingRight: facingRight
            )
        }
        
        // Função para enviar informações para outros jogadores
        private func sendPlayerInfoToOthers() {
            let playerInfo = generatePlayerInfo()
-           mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo) // Função do MultiplayerManager para enviar as informações
+           mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo) 
        }
 }

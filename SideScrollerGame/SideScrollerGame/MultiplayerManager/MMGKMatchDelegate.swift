@@ -24,8 +24,11 @@ extension MultiplayerManager: GKMatchDelegate {
             }
         case .disconnected:
             print("\(player.displayName) Disconnected")
+            
+            self.endMatch()
         default:
             print("\(player.displayName) Connection Unknown")
+            self.endMatch()
         }
     }
     
@@ -44,11 +47,8 @@ extension MultiplayerManager: GKMatchDelegate {
     /// Handles receiving a message from another player.
     /// - Tag: didReceiveData
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        // Decode the data representation of the game data.
-        let otherPlayerInfoIncome = decode(matchData: data)
 
-        // Atualize o CurrentValueSubject com o novo valor.
-        self.otherPlayerInfo.value = otherPlayerInfoIncome
+        self.otherPlayerInfo.value = decode(matchData: data)
     }
 
 }

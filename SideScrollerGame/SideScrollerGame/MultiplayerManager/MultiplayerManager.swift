@@ -94,7 +94,7 @@ class MultiplayerManager: NSObject {
         playingGame = false
         matchAvailable = true
         selfPlayerInfo = nil
-        otherPlayerInfo.value = nil // Usar o Publisher para sinalizar a mudança
+        otherPlayerInfo.value = nil
         opponent = nil
         GKAccessPoint.shared.isActive = true
         
@@ -103,7 +103,7 @@ class MultiplayerManager: NSObject {
 
     /// Sends player info to other players.
     func sendInfoToOtherPlayers(playerInfo: PlayerInfo) {
-        selfPlayerInfo = playerInfo // Atualiza o selfPlayerInfo antes de enviar
+        selfPlayerInfo = playerInfo 
         do {
             let data = encode(content: playerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)

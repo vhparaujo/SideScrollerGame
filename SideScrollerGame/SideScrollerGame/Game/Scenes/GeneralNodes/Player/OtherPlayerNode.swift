@@ -5,7 +5,8 @@ import Combine
 class OtherPlayerNode: PlayerNode {
     private var targetPosition: CGPoint?
     private var targetVelocity: CGVector?
-    private var interpolationSpeed: CGFloat = 10.0 // Velocidade de interpolação
+    private var interpolationSpeed: CGFloat = 10.0
+    private var otherPlayerInfo: PlayerInfo?
 
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         
@@ -15,7 +16,6 @@ class OtherPlayerNode: PlayerNode {
         
         self.physicsBody?.categoryBitMask = PhysicsCategories.otherPlayer
 
-        
         // Assinar para atualizações de outros jogadores
         setupBindings()
     }
@@ -30,9 +30,9 @@ class OtherPlayerNode: PlayerNode {
             .sink { [weak self] (playerInfo: PlayerInfo?) in
                 guard let self = self, let playerInfo = playerInfo else { return }
                 
-                // Atualizar o alvo de posição e velocidade recebida
-                self.targetPosition = playerInfo.position
-                self.targetVelocity = playerInfo.velocity
+//                self.targetPosition = playerInfo.position
+//                self.targetVelocity = playerInfo.velocity
+                self.otherPlayerInfo = playerInfo
             }
             .store(in: &cancellables)
     }
@@ -40,19 +40,19 @@ class OtherPlayerNode: PlayerNode {
     override func update(deltaTime: TimeInterval) {
         super.update(deltaTime: deltaTime)
         
-        print(position)
         
         // Interpolar para a nova posição recebida se disponível
-        if let targetPosition = targetPosition {
-            let dx = targetPosition.x - position.x
-            let dy = targetPosition.y - position.y
-            position.x += dx * interpolationSpeed * CGFloat(deltaTime)
-            position.y += dy * interpolationSpeed * CGFloat(deltaTime)
-        }
-        
-        // Aplicar a nova velocidade recebida, se disponível
-        if let targetVelocity = targetVelocity {
-            physicsBody?.velocity = targetVelocity
-        }
+        self.position = otherPlayerInfo?.position ?? position
+//        if let targetPosition = targetPosition {
+//            let dx = targetPosition.x - position.x
+//            let dy = targetPosition.y - position.y
+//            position.x += dx * interpolationSpeed * CGFloat(deltaTime)
+//            position.y += dy * interpolationSpeed * CGFloat(deltaTime)
+//        }
+//        
+//        // Aplicar a nova velocidade recebida, se disponível
+//        if let targetVelocity = targetVelocity {
+//            physicsBody?.velocity = targetVelocity
+//        }
     }
 }

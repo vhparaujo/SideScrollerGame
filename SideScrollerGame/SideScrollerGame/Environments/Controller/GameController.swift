@@ -44,7 +44,7 @@ import Combine
             let keyMap = self.keymapModel.getKeyMap()
             if keyMap.keys.contains(event.keyCode) {
                 self.handleKeyEvent(event)
-                return nil  // Suppress default behavior
+                return event  // Suppress default behavior
             }
             return event  // Allow other events to be processed normally
         }
