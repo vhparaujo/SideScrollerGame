@@ -44,7 +44,6 @@ class OtherPlayerNode: PlayerNode {
     
     override func update(deltaTime: TimeInterval) {
         
-
         var desiredVelocity: CGFloat = 0.0
         
         if isMovingLeft && !isMovingRight {
@@ -57,6 +56,15 @@ class OtherPlayerNode: PlayerNode {
         
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
+        
+        if isJumping && isGrounded {
+            if isGrounded, !isGrabbed {
+                self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                isGrounded = false
+                changeState(to: .jumping)
+                isJumping = true
+            }
+        }
         
         // Move the box with the player when grabbed
         if isGrabbed, let box = boxRef {

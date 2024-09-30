@@ -18,23 +18,20 @@ class PlayerNode: SKSpriteNode {
     internal var moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
     
-    
+//    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, state: .idle, facingRight: false, isGrabbed: false, isGrounded: true, isJumping: false)
     
     internal var isMovingLeft = false
     internal var isMovingRight = false
     internal var isGrounded = true
     internal var groundContactCount = 0 // Tracks number of ground contacts
     internal var isJumping = false
-    
     internal var facingRight = true // Tracks the orientation
-    
     internal var currentPlatform: PlatformNode?
     
     //Box movement
     var boxRef: BoxNode?
     internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
-    
     
     // Keep track of current action to avoid restarting the animation
     internal var currentState: PlayerTextureState = .idle
@@ -75,10 +72,6 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.friction = 1.0
         self.physicsBody?.restitution = 0.0
     }
-    
-//    func getPlayerInfo() -> PlayerInfo? {
-//        return PlayerInfo(isMovingRight: isMovingRight, isMovingLeft: isMovingLeft, state: currentState, facingRight: facingRight, isGrabbed: isGrabbed)
-//    }
     
     func setupBindings() {
         controller.keyPressPublisher
@@ -286,7 +279,6 @@ class PlayerNode: SKSpriteNode {
             isGrounded: isGrounded,
             isJumping: isJumping
         )
-//           print(playerInfo)
            return playerInfo
        }
        

@@ -93,13 +93,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
-        
-//        otherPlayer.position = mpManager.otherPlayerInfo.value?.position ?? position
-
-//        // Enviar informações do jogador após atualizar
-//        if let playerInfo = playerNode.getPlayerInfo() {
-//            mpManager.sendInfoToOtherPlayers(playerInfo: playerInfo)
-//        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
