@@ -15,4 +15,5 @@ struct PlayerInfo: Codable{
     var state: PlayerTextureState
     var facingRight: Bool
     var isGrabbed: Bool
+    var isGrounded: Bool
 }

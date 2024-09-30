@@ -50,13 +50,10 @@ class PlayerNode: SKSpriteNode {
         super.init(texture: texture, color: .clear, size: texture.size())
         
         self.zPosition = 1
-        // Set the default visual scale of the sprite
-        self.setScale(5) // Adjust as needed
+        self.setScale(5)
         
         setupPhysicsBody()
         setupBindings()
-        
-        // Start with the idle animation
         changeState(to: .idle)
     }
     
@@ -65,8 +62,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func setupPhysicsBody() {
-        // Use the original size for the physics body
-        let bodySize = self.size // Original size before scaling
+        let bodySize = self.size
         
         self.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
         self.physicsBody?.isDynamic = true
@@ -123,7 +119,6 @@ class PlayerNode: SKSpriteNode {
                         isGrabbed = true
                         box.isGrabbed = true
                         box.enableMovement()
-                        // Capture the initial offset between the box and the player
                         boxOffset = box.position.x - self.position.x
                     }
                 }
@@ -284,7 +279,8 @@ class PlayerNode: SKSpriteNode {
             isMovingLeft: isMovingLeft,
             state: currentState,
             facingRight: facingRight,
-            isGrabbed: isGrabbed
+            isGrabbed: isGrabbed,
+            isGrounded: isGrounded
         )
 //           print(playerInfo)
            return playerInfo

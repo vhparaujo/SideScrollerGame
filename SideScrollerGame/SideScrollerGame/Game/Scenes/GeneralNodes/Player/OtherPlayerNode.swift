@@ -30,37 +30,17 @@ class OtherPlayerNode: PlayerNode {
             .sink { [weak self] (playerInfo: PlayerInfo?) in
                 guard let self = self, let playerInfo = playerInfo else { return }
                 
-//                self.targetPosition = playerInfo.position
-//                self.targetVelocity = playerInfo.velocity
                 self.otherPlayerInfo = playerInfo
-                
+
                 self.isMovingLeft = playerInfo.isMovingLeft
                 self.isMovingRight = playerInfo.isMovingRight
                 self.facingRight = playerInfo.facingRight
                 self.isGrabbed = playerInfo.isGrabbed
                 self.currentState = playerInfo.state
+                self.isGrounded = playerInfo.isGrounded
             }
             .store(in: &cancellables)
     }
-
-//    override func update(deltaTime: TimeInterval) {
-//        super.update(deltaTime: deltaTime)
-//      
-//        
-//        
-//
-////        if let targetPosition = targetPosition {
-////            let dx = targetPosition.x - position.x
-////            let dy = targetPosition.y - position.y
-////            position.x += dx * interpolationSpeed * CGFloat(deltaTime)
-////            position.y += dy * interpolationSpeed * CGFloat(deltaTime)
-////        }
-//        
-//        // Aplicar a nova velocidade recebida, se disponível
-//        if let targetVelocity = targetVelocity {
-//            physicsBody?.velocity = targetVelocity
-//        }
-//    }
     
     override func update(deltaTime: TimeInterval) {
         
@@ -100,6 +80,8 @@ class OtherPlayerNode: PlayerNode {
             changeState(to: .grabbing)
         } else if !isGrounded {
             changeState(to: .jumping)
+            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+
         } else if desiredVelocity != 0 {
             changeState(to: .running)
         } else {
