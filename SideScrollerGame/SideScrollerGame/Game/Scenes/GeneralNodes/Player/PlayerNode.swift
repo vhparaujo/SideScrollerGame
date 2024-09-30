@@ -36,7 +36,7 @@ class PlayerNode: SKSpriteNode {
     
     
     // Keep track of current action to avoid restarting the animation
-    private var currentState: PlayerTextureState = .idle
+    internal var currentState: PlayerTextureState = .idle
     private var currentActionKey = "PlayerAnimation"
     
     var mpManager: MultiplayerManager

@@ -33,6 +33,12 @@ class OtherPlayerNode: PlayerNode {
 //                self.targetPosition = playerInfo.position
 //                self.targetVelocity = playerInfo.velocity
                 self.otherPlayerInfo = playerInfo
+                
+                self.isMovingLeft = playerInfo.isMovingLeft
+                self.isMovingRight = playerInfo.isMovingRight
+                self.facingRight = playerInfo.facingRight
+                self.isGrabbed = playerInfo.isGrabbed
+                self.currentState = playerInfo.state
             }
             .store(in: &cancellables)
     }
