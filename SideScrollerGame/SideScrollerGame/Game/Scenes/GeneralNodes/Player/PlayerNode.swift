@@ -102,7 +102,7 @@ class PlayerNode: SKSpriteNode {
                     self.xScale = abs(self.xScale)
                 }
             case .jump:
-                if isGrounded, !isGrabbed {
+            if isGrounded, !isGrabbed{
                     self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
                     isGrounded = false
                     changeState(to: .jumping)

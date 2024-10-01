@@ -5,7 +5,6 @@ import Combine
 @Observable
 class MultiplayerManager: NSObject {
     var selfPlayerInfo: PlayerInfo? 
-    
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
     // Game interface state

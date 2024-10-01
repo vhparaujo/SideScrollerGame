@@ -58,7 +58,11 @@ class OtherPlayerNode: PlayerNode {
         self.physicsBody?.velocity.dx = desiredVelocity
         
         if (isJumping && isGrounded)  {
-            self.handleKeyPress(action: .jump)
+//            self.handleKeyPress(action: .jump)
+            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+            isGrounded = false
+            changeState(to: .jumping)
+            isJumping = true
         }
         
         // Move the box with the player when grabbed
