@@ -17,4 +17,5 @@ struct PlayerInfo: Codable{
     var isGrabbed: Bool
     var isGrounded: Bool
     var isJumping: Bool
+    var alreadyJumping: Bool
 }

@@ -38,6 +38,7 @@ class OtherPlayerNode: PlayerNode {
                 self.currentState = playerInfo.state
                 self.isGrounded = playerInfo.isGrounded
                 self.isJumping = playerInfo.isJumping
+                self.alreadyJumping = playerInfo.alreadyJumping
             }
             .store(in: &cancellables)
     }
@@ -57,12 +58,12 @@ class OtherPlayerNode: PlayerNode {
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
-        if (isJumping && isGrounded)  {
-//            self.handleKeyPress(action: .jump)
+        if (isJumping && !alreadyJumping)  {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             isGrounded = false
             changeState(to: .jumping)
             isJumping = true
+            alreadyJumping = true
         }
         
         // Move the box with the player when grabbed

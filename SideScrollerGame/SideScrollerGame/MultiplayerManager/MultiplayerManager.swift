@@ -102,7 +102,8 @@ class MultiplayerManager: NSObject {
 
     /// Sends player info to other players.
     func sendInfoToOtherPlayers(playerInfo: PlayerInfo) {
-        selfPlayerInfo = playerInfo 
+        selfPlayerInfo = playerInfo
+        print(selfPlayerInfo)
         do {
             let data = encode(content: playerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)

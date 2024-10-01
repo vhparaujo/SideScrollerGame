@@ -25,6 +25,7 @@ class PlayerNode: SKSpriteNode {
     internal var isGrounded = true
     internal var groundContactCount = 0 // Tracks number of ground contacts
     internal var isJumping = false
+    internal var alreadyJumping = false 
     internal var facingRight = true // Tracks the orientation
     internal var currentPlatform: PlatformNode?
     
@@ -228,6 +229,7 @@ class PlayerNode: SKSpriteNode {
             groundContactCount += 1
             isGrounded = true
             isJumping = false
+            alreadyJumping = false
 
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
@@ -244,6 +246,7 @@ class PlayerNode: SKSpriteNode {
             
             if groundContactCount == 0 {
                 isGrounded = false
+                
             }
 
             if otherCategory == PhysicsCategories.platform {
@@ -277,7 +280,8 @@ class PlayerNode: SKSpriteNode {
             facingRight: facingRight,
             isGrabbed: isGrabbed,
             isGrounded: isGrounded,
-            isJumping: isJumping
+            isJumping: isJumping,
+            alreadyJumping: alreadyJumping
         )
            return playerInfo
        }
