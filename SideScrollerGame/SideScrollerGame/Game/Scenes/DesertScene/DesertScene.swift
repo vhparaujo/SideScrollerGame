@@ -40,13 +40,16 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         box.position = CGPoint(x: 300, y: 100) // Adjust as needed
         addChild(box)        // Add a box to the scene
         
-        fatalBox.position = CGPoint(x: 1200, y: 100)
-        fatalBox.physicsBody = SKPhysicsBody(texture: SKTexture(imageNamed: "fatalBox"), size: CGSize(width: 50, height: 50))
-        fatalBox.physicsBody?.isDynamic = false
-        fatalBox.physicsBody?.categoryBitMask = PhysicsCategories.fatal
-        fatalBox.physicsBody?.contactTestBitMask = PhysicsCategories.player
-        fatalBox.physicsBody?.collisionBitMask = PhysicsCategories.player
-        addChild(fatalBox)
+//        fatalBox.position = CGPoint(x: 1200, y: 100)
+//        fatalBox.physicsBody = SKPhysicsBody(texture: SKTexture(imageNamed: "fatalBox"), size: CGSize(width: 50, height: 50))
+//        fatalBox.physicsBody?.isDynamic = false
+//        fatalBox.physicsBody?.categoryBitMask = PhysicsCategories.fatal
+//        fatalBox.physicsBody?.contactTestBitMask = PhysicsCategories.player
+//        fatalBox.physicsBody?.collisionBitMask = PhysicsCategories.player
+//        addChild(fatalBox)
+        let elevator = ElevatorNode(mode: .automatic)
+        elevator.position = CGPoint(x: 1200, y: 0)
+        addChild(elevator)
  
         
         // Define the movement bounds for the platform
