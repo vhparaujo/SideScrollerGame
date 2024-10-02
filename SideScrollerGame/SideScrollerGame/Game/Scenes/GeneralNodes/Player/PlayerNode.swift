@@ -18,7 +18,7 @@ class PlayerNode: SKSpriteNode {
     internal var moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
     
-    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false)
+    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false, isDying: false)
     
 //    internal var isMovingLeft = false
 //    internal var isMovingRight = false
@@ -49,7 +49,8 @@ class PlayerNode: SKSpriteNode {
         super.init(texture: texture, color: .clear, size: texture.size())
         
         self.zPosition = 1
-        self.setScale(5)
+        // Set the default visual scale of the sprite
+        self.setScale(4) // Adjust as needed
         
         setupPhysicsBody()
         setupBindings()
@@ -162,7 +163,43 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
-  
+    func triggerDeath() {
+        // Alterar estado para "morte" para evitar outras ações
+        playerInfo.isDying = true
+
+        // Remover todas as ações anteriores
+            self.removeAllActions()
+            
+            // Desativar a física do jogador para evitar movimentação durante a animação
+            self.physicsBody?.isDynamic = false
+            
+            // **Parte 1: Salto para cima**
+            let jumpUp = SKAction.moveBy(x: 0, y: 300, duration: 0.3) // O personagem pula para fora da tela
+        let scaleDown = SKAction.scale(to: 7, duration: 0.3)    // O personagem encolhe enquanto sobe
+            
+            // **Parte 2: Queda rápida**
+        let fallDown = SKAction.moveBy(x: 0, y: -1000, duration: 0.8) // O personagem cai rapidamente
+        let scaleUp = SKAction.scale(to: 5, duration: 0.8)          // O personagem desaparece gradualmente durante a queda
+
+            // **Animação de texturas durante o salto e queda**
+            let deathTextures = PlayerTextureState.hurt.textures(for: playerEra)
+            let deathAnimation = SKAction.animate(with: deathTextures, timePerFrame: 0.1)
+            
+            // **Repetir a animação até o final da sequência de morte**
+            let repeatDeathAnimation = SKAction.repeatForever(deathAnimation)
+            
+            // **Combinar a animação com o movimento de salto e queda**
+        let jumpAndAnimate = SKAction.group([SKAction.sequence([jumpUp, scaleDown, fallDown, scaleUp]), repeatDeathAnimation, SKAction.run { [weak self] in
+            playerInfo.isDying = false
+            
+        }])
+            
+            // Executar a sequência de animação e movimento
+            let deathSequence = SKAction.sequence([jumpAndAnimate, SKAction.removeFromParent()])
+            
+            // Rodar a sequência de morte
+            self.run(deathSequence)
+    }
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
@@ -207,6 +244,8 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
+        } else if playerInfo.isDying {
+            changeState(to: .hurt)
         } else {
             changeState(to: .idle)
         }
@@ -249,6 +288,10 @@ class PlayerNode: SKSpriteNode {
     func didBegin(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
+        
+        if otherCategory == PhysicsCategories.fatal {
+            triggerDeath()
+        }
 
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1

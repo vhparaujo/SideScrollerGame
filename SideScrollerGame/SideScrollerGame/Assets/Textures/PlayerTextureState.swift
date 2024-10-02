@@ -14,6 +14,7 @@ enum PlayerTextureState: Codable {
     case jumping
     case climbing
     case grabbing
+    case hurt
     
     func textures(for era: PlayerEra) -> [SKTexture] {
         switch (self, era) {
@@ -41,6 +42,11 @@ enum PlayerTextureState: Codable {
                 return SKSpriteNode.loadTextures(prefix: "player-grab-present", count: 2)
             case (.grabbing, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-grab-future", count: 2)
+            
+            case (.hurt, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-hurt-present", count: 2)
+            case (.hurt, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-hurt-future", count: 2)
         }
     }
     
@@ -56,6 +62,8 @@ enum PlayerTextureState: Codable {
                 return 0.2
             case .grabbing:
                 return 0.1
+            case .hurt:
+            return 0.1
         }
     }
 }
