@@ -58,13 +58,13 @@ class OtherPlayerNode: PlayerNode {
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
-        if (isJumping && !alreadyJumping)  {
-            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-            isGrounded = false
-            changeState(to: .jumping)
-            isJumping = true
-            alreadyJumping = true
-        }
+//        if (isJumping && !alreadyJumping)  {
+//            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+//            isGrounded = false
+//            changeState(to: .jumping)
+//            isJumping = true
+//            alreadyJumping = true
+//        }
         
         // Move the box with the player when grabbed
         if isGrabbed, let box = boxRef {

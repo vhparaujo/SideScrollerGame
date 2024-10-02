@@ -103,12 +103,15 @@ class PlayerNode: SKSpriteNode {
                     self.xScale = abs(self.xScale)
                 }
             case .jump:
-            if isGrounded, !isGrabbed{
-                    self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-                    isGrounded = false
-                    changeState(to: .jumping)
-                    isJumping = true
-                }
+                isJumping = true
+            
+//            case .jump:
+//            if isGrounded, !isGrabbed{
+//                    self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+//                    isGrounded = false
+//                    changeState(to: .jumping)
+//                    isJumping = true
+//                }
             case .grab:
                 if isGrounded {
                     if let box = boxRef {
@@ -155,6 +158,8 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+  
+    
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
         
@@ -200,7 +205,25 @@ class PlayerNode: SKSpriteNode {
         } else {
             changeState(to: .idle)
         }
+        
+        callJump()
     }
+    
+    func callJump() {
+        // Lógica do salto movida para dentro do update
+            if isJumping && !alreadyJumping && isGrounded && !isGrabbed {
+                self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                isGrounded = false
+                changeState(to: .jumping)
+                isJumping = true
+                alreadyJumping = true
+            }
+
+            // Caso o jogador tenha voltado ao chão, resetar o estado de salto
+            if isGrounded {
+                isJumping = false
+                alreadyJumping = false
+            }    }
     
     // Change the player's animation state
     internal func changeState(to newState: PlayerTextureState) {

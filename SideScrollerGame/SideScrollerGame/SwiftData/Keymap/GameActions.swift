@@ -13,6 +13,6 @@ enum GameActions: String, Codable {
     case grab
     
     var allCases: [GameActions] {
-        [.moveLeft, .moveRight, .jump, .climb, .grab]
+        [.moveLeft, .moveRight/*, .jump*/, .climb, .grab]
     }
 }
