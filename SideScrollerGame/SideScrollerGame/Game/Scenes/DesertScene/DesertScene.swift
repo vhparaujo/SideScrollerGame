@@ -30,13 +30,13 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         playerNode = PlayerNode(playerEra: .present)
-        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        playerNode.position = CGPoint(x: size.width, y: size.height / 2)
         addChild(playerNode)
         
         setupCamera()
         
         // Add a box to the scene
-        box.position = CGPoint(x: 300, y: 100) // Adjust as needed
+        box.position = CGPoint(x: size.width + 100, y: size.height / 2) // Adjust as needed
         addChild(box)        // Add a box to the scene
  
         
@@ -48,9 +48,62 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         platform.position = CGPoint(x: minX, y: 200) // Set the starting position
         addChild(platform)
 
-        
-        setupPhysics()
-        
+                
+        // Embed the first scene into the current DesertScene
+        if let platformScene = SKScene(fileNamed: "FirstScene") {
+            if let tileNode = platformScene.childNode(withName: "FirstSceneTile") as? SKTileMapNode {
+                
+                tileNode.setScale(5)
+
+                let tileMapWidth = tileNode.mapSize.width * tileNode.xScale
+
+                // Position the tile map at the center of the screen
+                tileNode.position = CGPoint(x: tileMapWidth / 2, y: self.size.height / 2)
+                tileNode.zPosition = 1
+
+                
+                // Remove any existing physics body on the tile map
+                tileNode.physicsBody = nil
+
+                // Create a physics layer to hold all the physics bodies
+                let physicsLayer = SKNode()
+                physicsLayer.position = CGPoint.zero
+                addChild(physicsLayer)
+
+                // Iterate over each tile to create individual physics bodies
+                for col in 0..<tileNode.numberOfColumns {
+                    for row in 0..<tileNode.numberOfRows {
+                        // Get the tile definition at this column and row
+                        if tileNode.tileDefinition(atColumn: col, row: row) != nil {
+                            // Get the tile's position in tileNode's coordinate system
+                            let tilePosition = tileNode.centerOfTile(atColumn: col, row: row)
+                            // Convert tile position to the scene's coordinate system
+                            let tilePositionInScene = tileNode.convert(tilePosition, to: self)
+                            // Create a node for the tile's physics body
+                            let tilePhysicsNode = SKNode()
+                            tilePhysicsNode.position = tilePositionInScene
+                            tilePhysicsNode.zPosition = tileNode.zPosition
+                            // Adjust the physics body size for the tile's scaling
+                            let tileSize = CGSize(width: tileNode.tileSize.width * tileNode.xScale,
+                                                  height: tileNode.tileSize.height * tileNode.yScale)
+                            // Create the physics body
+                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            // Define physics categories
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            // Add the physics node to the physics layer
+                            physicsLayer.addChild(tilePhysicsNode)
+                        }
+                    }
+                }
+
+                tileNode.removeFromParent()
+                // Add the tile node to the scene
+                addChild(tileNode)
+            }
+        }
     }
     
     override init(size: CGSize) {
@@ -58,7 +111,17 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+    }
+    
+    func sceneToNode(scene: SKScene) -> SKSpriteNode {
+        // Capture the scene as a texture
+        let texture = view?.texture(from: scene)
+        
+        // Create an SKSpriteNode from the texture
+        let spriteNode = SKSpriteNode(texture: texture)
+        spriteNode.size = scene.size
+        return spriteNode
     }
     
     func setupPhysics() {
