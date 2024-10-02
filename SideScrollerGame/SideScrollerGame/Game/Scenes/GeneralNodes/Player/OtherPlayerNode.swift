@@ -30,15 +30,8 @@ class OtherPlayerNode: PlayerNode {
             .sink { [weak self] (playerInfo: PlayerInfo?) in
                 guard let self = self, let playerInfo = playerInfo else { return }
                 
-                self.otherPlayerInfo = playerInfo
-                self.isMovingLeft = playerInfo.isMovingLeft
-                self.isMovingRight = playerInfo.isMovingRight
-                self.facingRight = playerInfo.facingRight
-                self.isGrabbed = playerInfo.isGrabbed
-                self.textureState = playerInfo.textureState
-                self.isGrounded = playerInfo.isGrounded
-                self.isJumping = playerInfo.isJumping
-                self.alreadyJumping = playerInfo.alreadyJumping
+                self.playerInfo = playerInfo
+               
             }
             .store(in: &cancellables)
     }
@@ -48,9 +41,9 @@ class OtherPlayerNode: PlayerNode {
 
         var desiredVelocity: CGFloat = 0.0
         
-        if isMovingLeft && !isMovingRight {
+        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
             desiredVelocity = -moveSpeed
-        } else if isMovingRight && !isMovingLeft {
+        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
             desiredVelocity = moveSpeed
         } else {
             desiredVelocity = 0.0
@@ -60,7 +53,7 @@ class OtherPlayerNode: PlayerNode {
         self.physicsBody?.velocity.dx = desiredVelocity
         
         // Move the box with the player when grabbed
-        if isGrabbed, let box = boxRef {
+        if playerInfo.isGrabbed, let box = boxRef {
             // Maintain the initial offset captured during grabbing
             box.position.x = self.position.x + boxOffset
             box.physicsBody?.velocity.dx = desiredVelocity
@@ -77,9 +70,9 @@ class OtherPlayerNode: PlayerNode {
         }
         
         // Determine the appropriate state
-        if isGrabbed {
+        if playerInfo.isGrabbed {
             changeState(to: .grabbing)
-        } else if !isGrounded {
+        } else if !playerInfo.isGrounded {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
