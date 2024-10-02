@@ -44,7 +44,7 @@ class OtherPlayerNode: PlayerNode {
     }
     
     override func update(deltaTime: TimeInterval) {
-        
+        callJump()
         var desiredVelocity: CGFloat = 0.0
         
         if isMovingLeft && !isMovingRight {

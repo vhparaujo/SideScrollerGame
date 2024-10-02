@@ -211,19 +211,20 @@ class PlayerNode: SKSpriteNode {
     
     func callJump() {
         // Lógica do salto movida para dentro do update
-            if isJumping && !alreadyJumping && isGrounded && !isGrabbed {
-                self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-                isGrounded = false
-                changeState(to: .jumping)
-                isJumping = true
-                alreadyJumping = true
-            }
-
-            // Caso o jogador tenha voltado ao chão, resetar o estado de salto
-            if isGrounded {
-                isJumping = false
-                alreadyJumping = false
-            }    }
+        if isJumping && !alreadyJumping && isGrounded && !isGrabbed {
+            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+            isGrounded = false
+            changeState(to: .jumping)
+            isJumping = true
+            alreadyJumping = true
+        }
+        
+        // Caso o jogador tenha voltado ao chão, resetar o estado de salto
+        if isGrounded {
+            isJumping = false
+            alreadyJumping = false
+        }
+    }
     
     // Change the player's animation state
     internal func changeState(to newState: PlayerTextureState) {
