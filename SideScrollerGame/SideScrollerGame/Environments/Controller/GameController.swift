@@ -28,7 +28,7 @@ import Combine
                 0:  .moveLeft,  // A key
                 2:  .moveRight, // D key
                 49: .jump,      // Space key
-                14: .grab       // E key
+                14: .action       // E key
             ]
         }()
         
@@ -92,7 +92,7 @@ import Combine
                 0:  .moveLeft,  // A key
                 2:  .moveRight, // D key
                 49: .jump,      // Space key
-                14: .grab       // E key
+                14: .action       // E key
             ]
         }()
         

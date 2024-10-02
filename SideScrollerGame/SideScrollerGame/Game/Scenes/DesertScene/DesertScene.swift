@@ -1,17 +1,13 @@
-//
-//  DesertScene.swift
-//  SideScrollerGame
-//
-//  Created by Eduardo on 19/09/24.
-//
-
 import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
+    var mpManager: MultiplayerManager
     let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
     
     private var playerNode: PlayerNode!
+    private var otherPlayer: OtherPlayerNode!
+    
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
@@ -29,8 +25,10 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
+        addPlayer()
+        addOtherPlayer()
         setupBackground()
-        playerNode = PlayerNode(playerEra: .present)
+        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
         playerNode.position = CGPoint(x: size.width, y: size.height / 2)
         addChild(playerNode)
         
@@ -48,7 +46,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         fatalBox.physicsBody?.collisionBitMask = PhysicsCategories.player
         addChild(fatalBox)
  
-        
         // Define the movement bounds for the platform
         let minX = CGFloat(100)
         let maxX = CGFloat(1000)
@@ -115,13 +112,15 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    override init(size: CGSize) {
+    init(size: CGSize, mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         super.init(size: size)
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+            fatalError("init(coder:) has not been implemented")
+            super.init(coder: aDecoder)
+        }
     
     func sceneToNode(scene: SKScene) -> SKSpriteNode {
         // Capture the scene as a texture
@@ -141,9 +140,22 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         physicsBody?.collisionBitMask = PhysicsCategories.player
     }
     
+    func addPlayer() {
+        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
+        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(playerNode)
+    }
+    
+    func addOtherPlayer() {
+        guard otherPlayer == nil else { return }
+        otherPlayer = OtherPlayerNode(playerEra: .present, mpManager: mpManager)
+        otherPlayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(otherPlayer)
+        
+    }
+
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
-        
         self.cameraAndBackgroundUpdate()
         
         // Calculate deltaTime if needed
@@ -153,9 +165,11 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         // Update the platform
         platform.update(deltaTime: deltaTime)
         
-        
         // Update the player
         playerNode.update(deltaTime: deltaTime)
+        
+        // Update the other player if it exists
+        otherPlayer.update(deltaTime: deltaTime)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -166,6 +180,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.box {
+            
             // Cast the other node to BoxNode to get the specific box
             if let boxNode = otherBody.node as? BoxNode {
                 playerNode.boxRef = boxNode
@@ -173,7 +188,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    
     func didEnd(_ contact: SKPhysicsContact) {
         playerNode.didEnd(contact)
         
@@ -210,5 +224,4 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(parallaxBackground!)
     }
-
 }

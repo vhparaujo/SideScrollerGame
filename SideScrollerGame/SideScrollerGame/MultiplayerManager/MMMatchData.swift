@@ -18,10 +18,10 @@ extension MultiplayerManager {
     /// - Returns: A representation of game data that contains only the score.
     ///
     
-    func encode(position: CGPoint) -> Data?{
-        let playerInfo = PlayerInfo(position: position)
-        return encode(content: playerInfo)
-    }
+//    func encode(position: CGPoint) -> Data?{
+//        let playerInfo = PlayerInfo(position: position)
+//        return encode(content: playerInfo)
+//    }
     
     /// Creates a data representation of game data for sending to other players.
     ///
