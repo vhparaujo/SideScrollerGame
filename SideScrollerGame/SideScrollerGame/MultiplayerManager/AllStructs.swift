@@ -12,7 +12,7 @@ import GameKit
 struct PlayerInfo: Codable{
     var isMovingRight: Bool
     var isMovingLeft: Bool
-    var state: PlayerTextureState
+    var textureState: PlayerTextureState
     var facingRight: Bool
     var isGrabbed: Bool
     var isGrounded: Bool
