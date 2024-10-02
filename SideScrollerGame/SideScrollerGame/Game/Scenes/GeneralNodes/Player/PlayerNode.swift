@@ -22,6 +22,7 @@ class PlayerNode: SKSpriteNode {
     private var isMovingLeft = false
     private var isMovingRight = false
     private var isGrounded = true
+    private var isDying = false
     private var groundContactCount = 0 // Tracks number of ground contacts
     
     private var facingRight = true // Tracks the orientation
@@ -156,6 +157,44 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    func triggerDeath() {
+        // Alterar estado para "morte" para evitar outras ações
+        self.isDying = true
+
+        // Remover todas as ações anteriores
+            self.removeAllActions()
+            
+            // Desativar a física do jogador para evitar movimentação durante a animação
+            self.physicsBody?.isDynamic = false
+            
+            // **Parte 1: Salto para cima**
+            let jumpUp = SKAction.moveBy(x: 0, y: 300, duration: 0.3) // O personagem pula para fora da tela
+        let scaleDown = SKAction.scale(to: 7, duration: 0.3)    // O personagem encolhe enquanto sobe
+            
+            // **Parte 2: Queda rápida**
+        let fallDown = SKAction.moveBy(x: 0, y: -1000, duration: 0.8) // O personagem cai rapidamente
+        let scaleUp = SKAction.scale(to: 5, duration: 0.8)          // O personagem desaparece gradualmente durante a queda
+
+            // **Animação de texturas durante o salto e queda**
+            let deathTextures = PlayerTextureState.hurt.textures(for: playerEra)
+            let deathAnimation = SKAction.animate(with: deathTextures, timePerFrame: 0.1)
+            
+            // **Repetir a animação até o final da sequência de morte**
+            let repeatDeathAnimation = SKAction.repeatForever(deathAnimation)
+            
+            // **Combinar a animação com o movimento de salto e queda**
+        let jumpAndAnimate = SKAction.group([SKAction.sequence([jumpUp, scaleDown, fallDown, scaleUp]), repeatDeathAnimation, SKAction.run { [weak self] in
+            self?.isDying = false
+            
+        }])
+            
+            // Executar a sequência de animação e movimento
+            let deathSequence = SKAction.sequence([jumpAndAnimate, SKAction.removeFromParent()])
+            
+            // Rodar a sequência de morte
+            self.run(deathSequence)
+    }
+    
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
         var desiredVelocity: CGFloat = 0.0
@@ -197,6 +236,8 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
+        } else if isDying {
+            changeState(to: .hurt)
         } else {
             changeState(to: .idle)
         }
@@ -224,6 +265,10 @@ class PlayerNode: SKSpriteNode {
     func didBegin(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
+        
+        if otherCategory == PhysicsCategories.fatal {
+            triggerDeath()
+        }
 
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1

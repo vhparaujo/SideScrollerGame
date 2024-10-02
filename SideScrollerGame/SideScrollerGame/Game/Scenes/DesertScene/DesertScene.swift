@@ -16,6 +16,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
     private let box2 = BoxNode()
+    private let fatalBox = SKSpriteNode(color: .clear, size: CGSize(width: 50, height: 50))
     
     var previousCameraXPosition: CGFloat = 0.0
     var platform: PlatformNode!
@@ -38,6 +39,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         // Add a box to the scene
         box.position = CGPoint(x: size.width + 100, y: size.height / 2) // Adjust as needed
         addChild(box)        // Add a box to the scene
+        
+        fatalBox.position = CGPoint(x: 1200, y: 100)
+        fatalBox.physicsBody = SKPhysicsBody(texture: SKTexture(imageNamed: "fatalBox"), size: CGSize(width: 50, height: 50))
+        fatalBox.physicsBody?.isDynamic = false
+        fatalBox.physicsBody?.categoryBitMask = PhysicsCategories.fatal
+        fatalBox.physicsBody?.contactTestBitMask = PhysicsCategories.player
+        fatalBox.physicsBody?.collisionBitMask = PhysicsCategories.player
+        addChild(fatalBox)
  
         
         // Define the movement bounds for the platform
