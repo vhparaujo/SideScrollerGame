@@ -18,7 +18,7 @@ class PlayerNode: SKSpriteNode {
     internal var moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
     
-    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, isGrabbed: false, isGrounded: true, isJumping: false, alreadyJumping: false)
+    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false)
     
 //    internal var isMovingLeft = false
 //    internal var isMovingRight = false
@@ -93,22 +93,19 @@ class PlayerNode: SKSpriteNode {
             case .moveLeft:
                 playerInfo.isMovingLeft = true
                 playerInfo.facingRight = false
-                if !playerInfo.isGrabbed {
-                    self.xScale = -abs(self.xScale)
-                }
+               
             case .moveRight:
                 playerInfo.isMovingRight = true
                 playerInfo.facingRight = true
-                if !playerInfo.isGrabbed {
-                    self.xScale = abs(self.xScale)
-                }
+               
             case .jump:
                 playerInfo.isJumping = true
 
             case .action:
+                
                 if playerInfo.isGrounded {
                     if let box = boxRef {
-                        playerInfo.isGrabbed = true
+                        playerInfo.action = true
                         box.isGrabbed = true
                         box.enableMovement()
                         boxOffset = box.position.x - self.position.x
@@ -119,6 +116,25 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    func callMovements() {
+        if playerInfo.isMovingRight {
+                playerInfo.facingRight = true
+            if !playerInfo.action {
+                self.xScale = abs(self.xScale)
+            }
+        }
+        
+        if playerInfo.isMovingLeft && !playerInfo.action{
+           self.xScale = -abs(self.xScale)
+        }
+       
+        if playerInfo.isMovingRight && !playerInfo.action {
+            self.xScale = abs(self.xScale)
+        }
+        
+        
+    }
+    
     
     
     // Handle key releases
@@ -126,23 +142,18 @@ class PlayerNode: SKSpriteNode {
         switch action {
             case .moveLeft:
                 playerInfo.isMovingLeft = false
-                if playerInfo.isMovingRight {
-                        playerInfo.facingRight = true
-                    if !playerInfo.isGrabbed {
-                        self.xScale = abs(self.xScale)
-                    }
-                }
+               
             case .moveRight:
                 playerInfo.isMovingRight = false
                 if playerInfo.isMovingLeft {
                     playerInfo.facingRight = false
-                    if !playerInfo.isGrabbed {
+                    if !playerInfo.action {
                         self.xScale = -abs(self.xScale)
                     }
                 }
             case .action:
-                if playerInfo.isGrabbed {
-                    playerInfo.isGrabbed = false
+                if playerInfo.action {
+                    playerInfo.action = false
                     boxRef?.isGrabbed = false
                     boxRef?.disableMovement()
                 }
@@ -155,9 +166,9 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
-        
         sendPlayerInfoToOthers()
         callJump()
+        callMovements()
 
         var desiredVelocity: CGFloat = 0.0
         
@@ -173,7 +184,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.velocity.dx = desiredVelocity
         
         // Move the box with the player when grabbed
-        if playerInfo.isGrabbed, let box = boxRef {
+        if playerInfo.action, let box = boxRef {
             // Maintain the initial offset captured during grabbing
             box.position.x = self.position.x + boxOffset
             box.physicsBody?.velocity.dx = desiredVelocity
@@ -190,7 +201,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         // Determine the appropriate state
-        if playerInfo.isGrabbed {
+        if playerInfo.action {
             changeState(to: .grabbing)
         } else if !playerInfo.isGrounded {
             changeState(to: .jumping)
@@ -202,7 +213,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func callJump() {
-        if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.isGrabbed {
+        if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             playerInfo.isGrounded = false
             changeState(to: .jumping)

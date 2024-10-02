@@ -38,6 +38,7 @@ class OtherPlayerNode: PlayerNode {
     
     override func update(deltaTime: TimeInterval) {
         callJump()
+        
 
         var desiredVelocity: CGFloat = 0.0
         
@@ -53,7 +54,7 @@ class OtherPlayerNode: PlayerNode {
         self.physicsBody?.velocity.dx = desiredVelocity
         
         // Move the box with the player when grabbed
-        if playerInfo.isGrabbed, let box = boxRef {
+        if playerInfo.action, let box = boxRef {
             // Maintain the initial offset captured during grabbing
             box.position.x = self.position.x + boxOffset
             box.physicsBody?.velocity.dx = desiredVelocity
@@ -70,7 +71,7 @@ class OtherPlayerNode: PlayerNode {
         }
         
         // Determine the appropriate state
-        if playerInfo.isGrabbed {
+        if playerInfo.action {
             changeState(to: .grabbing)
         } else if !playerInfo.isGrounded {
             changeState(to: .jumping)

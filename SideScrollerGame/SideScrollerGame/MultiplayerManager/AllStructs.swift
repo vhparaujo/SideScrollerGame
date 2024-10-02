@@ -14,7 +14,7 @@ struct PlayerInfo: Codable{
     var isMovingLeft: Bool
     var textureState: PlayerTextureState
     var facingRight: Bool
-    var isGrabbed: Bool
+    var action: Bool
     var isGrounded: Bool
     var isJumping: Bool
     var alreadyJumping: Bool
