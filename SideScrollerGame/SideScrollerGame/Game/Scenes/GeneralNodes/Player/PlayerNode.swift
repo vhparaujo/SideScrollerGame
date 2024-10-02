@@ -190,7 +190,7 @@ class PlayerNode: SKSpriteNode {
             
             // **Combinar a animação com o movimento de salto e queda**
         let jumpAndAnimate = SKAction.group([SKAction.sequence([jumpUp, scaleDown, fallDown, scaleUp]), repeatDeathAnimation, SKAction.run { [weak self] in
-            playerInfo.isDying = false
+            self?.playerInfo.isDying = false
             
         }])
             

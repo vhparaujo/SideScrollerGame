@@ -118,8 +118,9 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+            fatalError("init(coder:) has not been implemented")
+            super.init(coder: aDecoder)
+        }
     
     func sceneToNode(scene: SKScene) -> SKSpriteNode {
         // Capture the scene as a texture
