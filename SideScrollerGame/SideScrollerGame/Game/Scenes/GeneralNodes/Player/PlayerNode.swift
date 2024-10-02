@@ -15,9 +15,8 @@ class PlayerNode: SKSpriteNode {
     private var playerEra: PlayerEra // Store the era for texture selection
     
     // Movement properties for the player
-    private var moveSpeed: CGFloat = 500.0
-    let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
-    
+    private var moveSpeed: CGFloat = 250.0
+    let jumpImpulse: CGFloat = 500.0 // Impulse applied to the player when jumping
     
     
     private var isMovingLeft = false
@@ -49,7 +48,7 @@ class PlayerNode: SKSpriteNode {
         
         self.zPosition = 1
         // Set the default visual scale of the sprite
-        self.setScale(5) // Adjust as needed
+        self.setScale(4) // Adjust as needed
         
         setupPhysicsBody()
         setupBindings()
