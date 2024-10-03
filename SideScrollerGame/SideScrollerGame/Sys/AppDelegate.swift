@@ -20,7 +20,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             window.toggleFullScreen(nil)
         }
 
-        disableKeyboardShortcuts()
         setPresentationOptions()
     }
 
@@ -30,16 +29,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             DispatchQueue.main.async {
                 window.toggleFullScreen(nil)
             }
-        }
-    }
-
-    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        return .terminateCancel // Prevent the app from quitting
-    }
-
-    func applicationWillTerminate(_ notification: Notification) {
-        if let eventMonitor = eventMonitor {
-            NSEvent.removeMonitor(eventMonitor)
         }
     }
 
@@ -54,35 +43,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.styleMask.remove(.resizable)
     }
 
-    private func disableKeyboardShortcuts() {
-        // Disable Command + Q and other shortcuts
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            if event.modifierFlags.contains(.command) {
-                switch event.keyCode {
-                case 12, // 'Q' key
-                     46, // 'M' key
-                     53: // Escape key
-                    return nil
-                default:
-                    break
-                }
-            }
-
-            if event.keyCode == 53 { // Escape key
-                return nil
-            }
-
-            return event
-        }
-    }
-
     private func setPresentationOptions() {
         let options: NSApplication.PresentationOptions = [
             .hideDock,
             .hideMenuBar,
-            .disableForceQuit,        // Disable Command + Option + Escape
-            .disableProcessSwitching, // Disable Command + Tab
-            .disableSessionTermination,
             .disableHideApplication
         ]
         NSApp.presentationOptions = options
