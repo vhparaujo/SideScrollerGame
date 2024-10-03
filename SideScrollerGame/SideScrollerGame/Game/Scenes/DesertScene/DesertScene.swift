@@ -28,10 +28,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         addPlayer()
         addOtherPlayer()
         setupBackground()
-        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
-        playerNode.position = CGPoint(x: size.width, y: size.height / 2)
-        addChild(playerNode)
-        
         setupCamera()
         
         // Add a box to the scene
@@ -67,7 +63,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
                 tileNode.position = CGPoint(x: tileMapWidth / 2, y: self.size.height / 2)
                 tileNode.zPosition = 1
 
-                
                 // Remove any existing physics body on the tile map
                 tileNode.physicsBody = nil
 
@@ -118,7 +113,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
     
     required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
+        self.mpManager = MultiplayerManager()
             super.init(coder: aDecoder)
         }
     
@@ -204,13 +199,36 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+//    func cameraAndBackgroundUpdate() {
+//        cameraNode.position.x = playerNode.position.x
+//        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+//        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+//        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+//        self.previousCameraXPosition = cameraNode.position.x
+//                
+//    }
+    
+    
     func cameraAndBackgroundUpdate() {
         cameraNode.position.x = playerNode.position.x
         let cameraMovementX = cameraNode.position.x - previousCameraXPosition
         self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
         self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
         self.previousCameraXPosition = cameraNode.position.x
+        
+        let targetY = playerNode.position.y
+        let currentY = cameraNode.position.y
+        
+        let delayDuration: TimeInterval = 0.5
+        let interpolationSpeed: CGFloat = 0.1
+
+        DispatchQueue.main.async {
+            let deltaY = targetY - currentY
+            let newY = currentY + deltaY * interpolationSpeed
+            self.cameraNode.position.y = newY
+        }
     }
+
     
     func setupCamera() {
         self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
