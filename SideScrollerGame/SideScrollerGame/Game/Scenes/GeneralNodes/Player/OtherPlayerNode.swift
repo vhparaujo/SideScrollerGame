@@ -6,7 +6,6 @@ class OtherPlayerNode: PlayerNode {
     private var targetPosition: CGPoint?
     private var targetVelocity: CGVector?
     private var interpolationSpeed: CGFloat = 10.0
-    private var otherPlayerInfo: PlayerInfo?
     private var updateTimer: Timer = .init()
     
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
@@ -33,9 +32,8 @@ class OtherPlayerNode: PlayerNode {
         mpManager.otherPlayerInfo
             .sink { [weak self] (playerInfo: PlayerInfo?) in
                 guard let self = self, let playerInfo = playerInfo else { return }
-                
                 self.playerInfo = playerInfo
-               
+                
             }
             .store(in: &cancellables)
     }
@@ -44,7 +42,12 @@ class OtherPlayerNode: PlayerNode {
         private func startPositionUpdateTimer() {
             updateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
 //                self.position = playerInfo.position
-                self?.position = self?.playerInfo.position ?? .init()
+                
+                if let self = self {
+                    self.position = self.playerInfo.position
+                    print(self.position)
+                    print("player info:\(self.playerInfo)")
+                }
             }
         }
     

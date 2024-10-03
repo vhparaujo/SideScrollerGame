@@ -7,14 +7,15 @@
 import SpriteKit
 
 enum BackgroundTexture {
-    case desertScene
+    case firstScene
+    
     
     func textures(for era: PlayerEra) -> [String] {
         switch (self, era) {
-        case (.desertScene, .present):
-            return ["background-scene1-present-1", "background-scene1-present-2", "background-scene1-present-3", "background-scene1-present-4"]
-        case (.desertScene, .future):
-            return ["background-scene1-future-1", "background-scene1-future-2", "background-scene1-future-3", "background-scene1-future-4"]
+            case (.firstScene, .present):
+                return ["background-scene1-present-1", "background-scene1-present-2", "background-scene1-present-3", "background-scene1-present-4"]
+            case (.firstScene, .future):
+                return ["background-scene1-future-1", "background-scene1-future-2", "background-scene1-future-3", "background-scene1-future-4"]
         }
     }
 }
