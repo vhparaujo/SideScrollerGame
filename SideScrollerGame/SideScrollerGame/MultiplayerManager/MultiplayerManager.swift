@@ -134,8 +134,8 @@ class MultiplayerManager: NSObject {
         
         do {
             let data = encode(content: content)
-            try myMatch?.sendData(toAllPlayers: data!,  with: .unreliable)
-        }catch{
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        } catch {
             print("Error: \(error.localizedDescription).")
         }
     }

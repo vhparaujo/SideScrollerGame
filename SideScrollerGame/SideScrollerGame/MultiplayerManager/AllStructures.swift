@@ -29,7 +29,7 @@ struct GameStartInfo: Codable{
     var isStartPressedByOtherPlayer: IsPressed
 }
 
-enum IsPressed: UInt16, Codable{
-    case yes = 1
-    case no = 0
+enum IsPressed: Codable{
+    case yes
+    case no
 }
