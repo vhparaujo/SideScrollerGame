@@ -2,14 +2,19 @@ import Foundation
 import GameKit
 import Combine
 
+
+
 @Observable
 class MultiplayerManager: NSObject {
     var selfPlayerInfo: PlayerInfo? 
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
+    var gameStartInfo: GameStartInfo = .init(isStartPressedByPlayer: false, isStartPressedByOtherPlayer: false)
+    
     // Game interface state
     var matchAvailable = false
     var playingGame = false
+    var choosingEra = false
     var myMatch: GKMatch? = nil
     var automatch = false
     
@@ -78,7 +83,8 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
-        playingGame = true
+//        playingGame = true
+        choosingEra = true
         myMatch = match
         myMatch?.delegate = self
     }
@@ -91,6 +97,7 @@ class MultiplayerManager: NSObject {
         }
         
         playingGame = false
+        choosingEra = false
         matchAvailable = true
         selfPlayerInfo = nil
         otherPlayerInfo.value = nil
@@ -107,6 +114,28 @@ class MultiplayerManager: NSObject {
             let data = encode(content: playerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
         } catch {
+            print("Error: \(error.localizedDescription).")
+        }
+    }
+    
+    func sendInfoToOtherPlayers(eraUpdate: PlayerEra){
+        gameStartInfo.playerEraSelection = eraUpdate
+        
+        do {
+            let data = encode(content: eraUpdate)
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        } catch {
+            print("Error: \(error.localizedDescription).")
+        }
+    }
+    
+    func sendInfoToOtherPlayers(startPressed: Bool){
+        gameStartInfo.isStartPressedByPlayer = startPressed
+        
+        do {
+            let data = encode(content: gameStartInfo)
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        }catch{
             print("Error: \(error.localizedDescription).")
         }
     }
