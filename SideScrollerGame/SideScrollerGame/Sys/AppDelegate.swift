@@ -4,6 +4,7 @@
 //
 //  Created by Eduardo on 03/10/24.
 //
+
 import Cocoa
 import SwiftUI
 
@@ -47,6 +48,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let options: NSApplication.PresentationOptions = [
             .hideDock,
             .hideMenuBar,
+            .disableProcessSwitching, // Disable Command + Tab
+//            .disableSessionTermination,
             .disableHideApplication
         ]
         NSApp.presentationOptions = options
