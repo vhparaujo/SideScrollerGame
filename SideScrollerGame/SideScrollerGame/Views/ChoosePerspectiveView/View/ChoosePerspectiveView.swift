@@ -18,7 +18,7 @@ struct ChoosePerspectiveView: View {
             ForEach(PlayerEra.allCases, id: \.self) { perspective in
                 Button("\(perspective)") {
                     self.perspective = perspective
-                    mpManager.sendInfoToOtherPlayers(eraUpdate: perspective)
+                    mpManager.sendInfoToOtherPlayers(content: perspective)
                 }
                 .padding()
                 .background(self.perspective == perspective ? Color.blue : Color.gray)

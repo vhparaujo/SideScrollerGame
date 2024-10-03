@@ -118,11 +118,11 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(eraUpdate: PlayerEra){
-        gameStartInfo.playerEraSelection = eraUpdate
+    func sendInfoToOtherPlayers(content: PlayerEra){
+        gameStartInfo.playerEraSelection = content
         
         do {
-            let data = encode(content: eraUpdate)
+            let data = encode(content: content)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
         } catch {
             print("Error: \(error.localizedDescription).")
