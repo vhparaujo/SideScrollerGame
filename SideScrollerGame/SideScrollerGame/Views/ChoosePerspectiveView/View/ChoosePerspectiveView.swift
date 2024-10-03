@@ -26,10 +26,9 @@ struct ChoosePerspectiveView: View {
                 .cornerRadius(8)
             }
             
-            if mpManager.gameStartInfo.playerEraSelection != mpManager.gameStartInfo.otherPlayerEraSelection {
+            if (mpManager.gameStartInfo.playerEraSelection != mpManager.gameStartInfo.otherPlayerEraSelection) && (mpManager.gameStartInfo.playerEraSelection != nil && mpManager.gameStartInfo.otherPlayerEraSelection != nil) {
                 
                 Button("Start Game") {
-                    
                     mpManager.sendInfoToOtherPlayers(content: .yes)
                 }
             }
