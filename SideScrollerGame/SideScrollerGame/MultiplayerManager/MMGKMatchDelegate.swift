@@ -50,13 +50,12 @@ extension MultiplayerManager: GKMatchDelegate {
         // Tenta decodificar como PlayerInfo
         if let dataReceived: PlayerInfo = decode(matchData: data) {
             self.otherPlayerInfo.value = dataReceived
-        }
-        else if let dataReceived: PlayerEra = decode(matchData: data) {
+            
+        }else if let dataReceived: PlayerEra = decode(matchData: data) {
             self.gameStartInfo.otherPlayerEraSelection = dataReceived
             
-        }else if let dataReceived: Bool = decode(matchData: data) {
+        }else if let dataReceived: IsPressed = decode(matchData: data) {
             self.gameStartInfo.isStartPressedByOtherPlayer = dataReceived
         }
     }
-
 }

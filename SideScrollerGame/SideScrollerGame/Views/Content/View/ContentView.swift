@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Bindable var managerMP = MultiplayerManager()
     var body: some View {
-        if managerMP.playingGame {
+        if managerMP.gameStartInfo.isStartPressedByPlayer == .yes && managerMP.gameStartInfo.isStartPressedByOtherPlayer == .yes {
+            
             if let era = managerMP.gameStartInfo.playerEraSelection {
                 GameView(currentSceneType: .first(era), mpManager: managerMP)
             }
