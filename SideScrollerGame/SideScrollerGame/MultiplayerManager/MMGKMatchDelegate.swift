@@ -47,8 +47,16 @@ extension MultiplayerManager: GKMatchDelegate {
     /// Handles receiving a message from another player.
     /// - Tag: didReceiveData
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-
-        self.otherPlayerInfo.value = decode(matchData: data)
+        // Tenta decodificar como PlayerInfo
+        if let dataReceived: PlayerInfo = decode(matchData: data) {
+            self.otherPlayerInfo.value = dataReceived
+        }
+        else if let dataReceived: PlayerEra = decode(matchData: data) {
+            self.gameStartInfo.otherPlayerEraSelection = dataReceived
+            
+        }else if let dataReceived: Bool = decode(matchData: data) {
+            self.gameStartInfo.isStartPressedByOtherPlayer = dataReceived
+        }
     }
 
 }

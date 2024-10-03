@@ -43,8 +43,7 @@ extension MultiplayerManager {
     ///
     /// - Parameter matchData: A data representation of the game data.
     /// - Returns: A game data object.
-    func decode(matchData: Data) -> PlayerInfo? {
-        // Convert the data object to a game data object.
-        return try? PropertyListDecoder().decode(PlayerInfo.self, from: matchData)
+    func decode<T: Decodable>(matchData: Data) -> T? {
+        return try? PropertyListDecoder().decode(T.self, from: matchData)
     }
 }

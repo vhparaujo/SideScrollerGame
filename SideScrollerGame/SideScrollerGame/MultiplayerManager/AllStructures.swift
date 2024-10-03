@@ -9,7 +9,7 @@ import Foundation
 import GameKit
 
 // MARK: Game Data Objects
-struct PlayerInfo: Codable{
+struct PlayerInfo: Codable {
     var isMovingRight: Bool
     var isMovingLeft: Bool
     var textureState: PlayerTextureState
@@ -20,4 +20,11 @@ struct PlayerInfo: Codable{
     var alreadyJumping: Bool
     var isDying: Bool
     var position: CGPoint
+}
+
+struct GameStartInfo: Codable{
+    var playerEraSelection: PlayerEra?
+    var otherPlayerEraSelection: PlayerEra?
+    var isStartPressedByPlayer: Bool
+    var isStartPressedByOtherPlayer: Bool
 }
