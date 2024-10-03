@@ -196,6 +196,7 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
+        
         sendPlayerInfoToOthers()
         callJump()
         callMovements()
@@ -314,11 +315,11 @@ class PlayerNode: SKSpriteNode {
             }
         }
     }
- 
-    
-       
+
        // Função para enviar informações para outros jogadores
        private func sendPlayerInfoToOthers() {
+           playerInfo.position = self.position
+           
            mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
        }
 }
