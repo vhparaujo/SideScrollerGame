@@ -24,15 +24,13 @@ struct ChoosePerspectiveView: View {
                 .background(self.perspective == perspective ? Color.blue : Color.gray)
                 .foregroundColor(.white)
                 .cornerRadius(8)
-                
             }
             
             if mpManager.gameStartInfo.playerEraSelection != mpManager.gameStartInfo.otherPlayerEraSelection {
+                
                 Button("Start Game") {
-                    mpManager.gameStartInfo.isStartPressedByOtherPlayer = true
-                    if mpManager.gameStartInfo.isStartPressedByPlayer && mpManager.gameStartInfo.isStartPressedByOtherPlayer {
-                        mpManager.playingGame = true
-                    }
+                    
+                    mpManager.sendInfoToOtherPlayers(content: .yes)
                 }
             }
         }

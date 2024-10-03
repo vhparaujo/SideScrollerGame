@@ -9,7 +9,7 @@ class MultiplayerManager: NSObject {
     var selfPlayerInfo: PlayerInfo? 
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(isStartPressedByPlayer: false, isStartPressedByOtherPlayer: false)
+    var gameStartInfo: GameStartInfo = .init(isStartPressedByPlayer: .no, isStartPressedByOtherPlayer: .no)
     
     // Game interface state
     var matchAvailable = false
@@ -129,12 +129,12 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(startPressed: Bool){
-        gameStartInfo.isStartPressedByPlayer = startPressed
+    func sendInfoToOtherPlayers(content: IsPressed){
+        gameStartInfo.isStartPressedByPlayer = content
         
         do {
-            let data = encode(content: gameStartInfo)
-            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+            let data = encode(content: content)
+            try myMatch?.sendData(toAllPlayers: data!,  with: .unreliable)
         }catch{
             print("Error: \(error.localizedDescription).")
         }

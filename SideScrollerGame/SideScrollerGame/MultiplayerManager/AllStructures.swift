@@ -25,6 +25,11 @@ struct PlayerInfo: Codable {
 struct GameStartInfo: Codable{
     var playerEraSelection: PlayerEra?
     var otherPlayerEraSelection: PlayerEra?
-    var isStartPressedByPlayer: Bool
-    var isStartPressedByOtherPlayer: Bool
+    var isStartPressedByPlayer: IsPressed
+    var isStartPressedByOtherPlayer: IsPressed
+}
+
+enum IsPressed: UInt16, Codable{
+    case yes = 1
+    case no = 0
 }
