@@ -11,13 +11,15 @@ struct ContentView: View {
     @Bindable var managerMP = MultiplayerManager()
     var body: some View {
         if managerMP.playingGame {
-            GameView(currentSceneType: .first(.present), mpManager: managerMP)
+            if let era = managerMP.gameStartInfo.playerEraSelection {
+                GameView(currentSceneType: .first(era), mpManager: managerMP)
+            }
         }else if managerMP.choosingEra {
             ChoosePerspectiveView(mpManager: managerMP)
         }else{
             JoinGameView(managerMP: managerMP)
         }
-
+        
     }
 }
 
