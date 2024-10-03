@@ -18,7 +18,7 @@ struct GameView: View {
         GeometryReader { geometry in
             VStack {
                 
-                SpriteView(scene: createScene(size: geometry.size), debugOptions: [.showsFPS, .showsNodeCount, .showsPhysics])
+                SpriteView(scene: createScene(size: CGSize(width: 1920, height: 1080)), debugOptions: [.showsFPS, .showsNodeCount, .showsPhysics])
                     .ignoresSafeArea()
                     .id(currentSceneType) // Force refresh when the scene type changes
                     .opacity(opacity)      // Use opacity to control fade in/out
