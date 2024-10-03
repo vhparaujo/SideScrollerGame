@@ -282,10 +282,6 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-//        if otherCategory == PhysicsCategories.fatal {
-//            triggerDeath()
-//        }
-
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
             playerInfo.isGrounded = true
@@ -295,6 +291,9 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
+            
+        } else if otherCategory == PhysicsCategories.fatal {
+            triggerDeath()
         }
     }
 

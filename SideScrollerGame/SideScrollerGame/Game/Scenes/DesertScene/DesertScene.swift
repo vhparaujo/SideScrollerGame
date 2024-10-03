@@ -219,7 +219,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         let targetY = playerNode.position.y
         let currentY = cameraNode.position.y
         
-        let delayDuration: TimeInterval = 0.5
         let interpolationSpeed: CGFloat = 0.1
 
         DispatchQueue.main.async {
