@@ -9,7 +9,7 @@ import SwiftUI
 import SpriteKit
 
 struct GameView: View {
-    @State private var currentSceneType: SceneType = .desert
+    @State var currentSceneType: SceneType
     @State private var opacity: Double = 1.0
     
     @Bindable var mpManager: MultiplayerManager
@@ -17,7 +17,6 @@ struct GameView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                
                 SpriteView(scene: createScene(size: CGSize(width: 1920, height: 1080)), debugOptions: [.showsFPS, .showsNodeCount, .showsPhysics])
                     .ignoresSafeArea()
                     .id(currentSceneType) // Force refresh when the scene type changes
@@ -30,8 +29,8 @@ struct GameView: View {
     
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
-        case .desert:
-            return DesertScene(size: size, mpManager: mpManager)
+            case .first(let playerEra):
+                return FirstScene(size: size, mpManager: mpManager, playerEra: playerEra)
         }
     }
     
@@ -50,13 +49,9 @@ struct GameView: View {
         }
     }
     
-    enum SceneType: Hashable {
-        case desert
-    }
+
 }
 
-
-
-#Preview {
-    GameView(mpManager: .init())
+enum SceneType: Hashable {
+    case first(PlayerEra)
 }
