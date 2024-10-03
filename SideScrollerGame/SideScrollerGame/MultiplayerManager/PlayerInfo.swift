@@ -19,4 +19,5 @@ struct PlayerInfo: Codable{
     var isJumping: Bool
     var alreadyJumping: Bool
     var isDying: Bool
+    var position: CGPoint
 }

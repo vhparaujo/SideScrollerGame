@@ -16,17 +16,12 @@ class PlayerNode: SKSpriteNode {
     
     // Movement properties for the player
     internal var moveSpeed: CGFloat = 500.0
-    let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
+    let jumpImpulse: CGFloat = 480.0 // Impulse applied to the player when jumping
     
-    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false, isDying: false)
-    
-//    internal var isMovingLeft = false
-//    internal var isMovingRight = false
-//    internal var isGrounded = true
+    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false, isDying: false, position: .zero)
+
     internal var groundContactCount = 0 // Tracks number of ground contacts
-//    internal var isJumping = false
-//    internal var alreadyJumping = false 
-//    internal var facingRight = true // Tracks the orientation
+
     internal var currentPlatform: PlatformNode?
     
     //Box movement
@@ -34,8 +29,6 @@ class PlayerNode: SKSpriteNode {
 //    internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
     
-    // Keep track of current action to avoid restarting the animation
-//    internal var textureState: PlayerTextureState = .idle
     private var currentActionKey = "PlayerAnimation"
     
     var mpManager: MultiplayerManager
@@ -289,10 +282,6 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory == PhysicsCategories.fatal {
-            triggerDeath()
-        }
-
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
             playerInfo.isGrounded = true
@@ -302,6 +291,9 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
+            
+        } else if otherCategory == PhysicsCategories.fatal {
+            triggerDeath()
         }
     }
 

@@ -7,6 +7,7 @@ class OtherPlayerNode: PlayerNode {
     private var targetVelocity: CGVector?
     private var interpolationSpeed: CGFloat = 10.0
     private var otherPlayerInfo: PlayerInfo?
+    private var updateTimer: Timer = .init()
     
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         
@@ -18,6 +19,9 @@ class OtherPlayerNode: PlayerNode {
 
         // Assinar para atualizações de outros jogadores
         setupBindings()
+        
+        startPositionUpdateTimer()
+
     }
     
     @MainActor required init?(coder aDecoder: NSCoder) {
@@ -35,6 +39,17 @@ class OtherPlayerNode: PlayerNode {
             }
             .store(in: &cancellables)
     }
+    
+    // Função para iniciar o timer de atualização
+        private func startPositionUpdateTimer() {
+            updateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+//                self.position = playerInfo.position
+                self?.position = self?.playerInfo.position ?? .init()
+            }
+        }
+    
+    
+    
     
     override func update(deltaTime: TimeInterval) {
         callJump()
