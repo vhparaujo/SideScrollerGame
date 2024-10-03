@@ -10,11 +10,11 @@ import SwiftUI
 struct ContentView: View {
     @Bindable var managerMP = MultiplayerManager()
     var body: some View {
-        if managerMP.playingGame {
-            GameView(mpManager: managerMP)
-        }else{
-            JoinGameView(managerMP: managerMP)
-        }
+//        if managerMP.playingGame {
+        GameView(currentSceneType: .first(.present), mpManager: managerMP)
+//        }else{
+//            JoinGameView(managerMP: managerMP)
+//        }
     }
 }
 
