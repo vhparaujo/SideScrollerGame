@@ -30,10 +30,26 @@ class ElevatorNode: SKNode {
         elevatorBody.addChild(elevatorPlatform)
         
         self.elevatorPlatform.position = CGPoint(x: 0, y: 400)
+        
+        setup()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setup() {
+        setPhysicsBody()
+    }
+    
+    private func setPhysicsBody() {
+        elevatorPlatform.physicsBody = SKPhysicsBody(rectangleOf: elevatorPlatform.size)
+        elevatorPlatform.anchorPoint = CGPoint(x: 0.5, y: 1.0)
+        elevatorPlatform.physicsBody?.affectedByGravity = false
+        elevatorPlatform.physicsBody?.isDynamic = false
+        elevatorPlatform.physicsBody?.categoryBitMask = PhysicsCategories.ground
+        elevatorPlatform.physicsBody?.collisionBitMask = PhysicsCategories.player
+        elevatorPlatform.physicsBody?.contactTestBitMask = PhysicsCategories.player
     }
 }
 
