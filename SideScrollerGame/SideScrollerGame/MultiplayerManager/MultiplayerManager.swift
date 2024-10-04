@@ -2,8 +2,6 @@ import Foundation
 import GameKit
 import Combine
 
-
-
 @Observable
 class MultiplayerManager: NSObject {
     var selfPlayerInfo: PlayerInfo? 
@@ -40,6 +38,7 @@ class MultiplayerManager: NSObject {
     override init() {
         super.init()
         authenticatePlayer()
+        
     }
     
     var rootViewController: NSViewController? {

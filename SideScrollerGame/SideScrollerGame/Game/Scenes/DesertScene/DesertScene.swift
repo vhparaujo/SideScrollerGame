@@ -2,7 +2,7 @@ import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
-    var mpManager: MultiplayerManager
+    var mpManager: MultiplayerManager = .init()
     
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
@@ -56,9 +56,8 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.mpManager = MultiplayerManager()
-            super.init(coder: aDecoder)
-        }
+        super.init(coder: aDecoder)
+    }
     
     
     func addPlayer() {
