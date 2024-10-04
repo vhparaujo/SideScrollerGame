@@ -10,38 +10,32 @@ import Combine
 
 class PlayerNode: SKSpriteNode {
     
-    private var cancellables: [AnyCancellable] = []
-    private var controller: GameController = GameController()
-    private var playerEra: PlayerEra // Store the era for texture selection
+    internal var cancellables: [AnyCancellable] = []
+    internal var controller: GameController = GameController()
+    internal var playerEra: PlayerEra // Store the era for texture selection
     
     // Movement properties for the player
-    private var moveSpeed: CGFloat = 500.0
-    let jumpImpulse: CGFloat = 1000.0 // Impulse applied to the player when jumping
+    internal var moveSpeed: CGFloat = 500.0
+    let jumpImpulse: CGFloat = 480.0 // Impulse applied to the player when jumping
     
-    
-    
-    private var isMovingLeft = false
-    private var isMovingRight = false
-    private var isGrounded = true
-    private var isDying = false
-    private var groundContactCount = 0 // Tracks number of ground contacts
-    
-    private var facingRight = true // Tracks the orientation
-    
-    private var currentPlatform: PlatformNode?
+    internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false, isDying: false, position: .zero)
+
+    internal var groundContactCount = 0 // Tracks number of ground contacts
+
+    internal var currentPlatform: PlatformNode?
     
     //Box movement
     var boxRef: BoxNode?
-    private var isGrabbed = false
-    private var boxOffset: CGFloat = 0.0
+//    internal var isGrabbed = false
+    internal var boxOffset: CGFloat = 0.0
     
-    
-    // Keep track of current action to avoid restarting the animation
-    private var currentState: PlayerTextureState = .idle
     private var currentActionKey = "PlayerAnimation"
     
-    init(playerEra: PlayerEra) {
+    var mpManager: MultiplayerManager
+
+    init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         self.playerEra = playerEra // Initialize with the player era
+        self.mpManager = mpManager
         
         // Start with the idle texture for the given era
         let texture = SKTexture(imageNamed: "\(playerEra == .present ? "player-idle-present" : "player-idle-future")-1")
@@ -49,12 +43,10 @@ class PlayerNode: SKSpriteNode {
         
         self.zPosition = 1
         // Set the default visual scale of the sprite
-        self.setScale(5) // Adjust as needed
+        self.setScale(4) // Adjust as needed
         
         setupPhysicsBody()
         setupBindings()
-        
-        // Start with the idle animation
         changeState(to: .idle)
     }
     
@@ -63,8 +55,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func setupPhysicsBody() {
-        // Use the original size for the physics body
-        let bodySize = self.size // Original size before scaling
+        let bodySize = self.size
         
         self.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
         self.physicsBody?.isDynamic = true
@@ -94,30 +85,23 @@ class PlayerNode: SKSpriteNode {
     func handleKeyPress(action: GameActions) {
         switch action {
             case .moveLeft:
-                isMovingLeft = true
-                facingRight = false
-                if !isGrabbed {
-                    self.xScale = -abs(self.xScale)
-                }
+                playerInfo.isMovingLeft = true
+                playerInfo.facingRight = false
+               
             case .moveRight:
-                isMovingRight = true
-                facingRight = true
-                if !isGrabbed {
-                    self.xScale = abs(self.xScale)
-                }
+                playerInfo.isMovingRight = true
+                playerInfo.facingRight = true
+               
             case .jump:
-                if isGrounded, !isGrabbed {
-                    self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-                    isGrounded = false
-                    changeState(to: .jumping)
-                }
-            case .grab:
-                if isGrounded {
+                playerInfo.isJumping = true
+
+            case .action:
+                
+                if playerInfo.isGrounded {
                     if let box = boxRef {
-                        isGrabbed = true
+                        playerInfo.action = true
                         box.isGrabbed = true
                         box.enableMovement()
-                        // Capture the initial offset between the box and the player
                         boxOffset = box.position.x - self.position.x
                     }
                 }
@@ -126,30 +110,44 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    func callMovements() {
+        if playerInfo.isMovingRight {
+                playerInfo.facingRight = true
+            if !playerInfo.action {
+                self.xScale = abs(self.xScale)
+            }
+        }
+        
+        if playerInfo.isMovingLeft && !playerInfo.action{
+           self.xScale = -abs(self.xScale)
+        }
+       
+        if playerInfo.isMovingRight && !playerInfo.action {
+            self.xScale = abs(self.xScale)
+        }
+        
+        
+    }
+    
     
     
     // Handle key releases
     func handleKeyRelease(action: GameActions) {
         switch action {
             case .moveLeft:
-                isMovingLeft = false
-                if isMovingRight {
-                    facingRight = true
-                    if !isGrabbed {
-                        self.xScale = abs(self.xScale)
-                    }
-                }
+                playerInfo.isMovingLeft = false
+               
             case .moveRight:
-                isMovingRight = false
-                if isMovingLeft {
-                    facingRight = false
-                    if !isGrabbed {
+                playerInfo.isMovingRight = false
+                if playerInfo.isMovingLeft {
+                    playerInfo.facingRight = false
+                    if !playerInfo.action {
                         self.xScale = -abs(self.xScale)
                     }
                 }
-            case .grab:
-                if isGrabbed {
-                    isGrabbed = false
+            case .action:
+                if playerInfo.action {
+                    playerInfo.action = false
                     boxRef?.isGrabbed = false
                     boxRef?.disableMovement()
                 }
@@ -160,7 +158,7 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         // Alterar estado para "morte" para evitar outras ações
-        self.isDying = true
+        playerInfo.isDying = true
 
         // Remover todas as ações anteriores
             self.removeAllActions()
@@ -185,7 +183,7 @@ class PlayerNode: SKSpriteNode {
             
             // **Combinar a animação com o movimento de salto e queda**
         let jumpAndAnimate = SKAction.group([SKAction.sequence([jumpUp, scaleDown, fallDown, scaleUp]), repeatDeathAnimation, SKAction.run { [weak self] in
-            self?.isDying = false
+            self?.playerInfo.isDying = false
             
         }])
             
@@ -198,11 +196,16 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
+        
+        sendPlayerInfoToOthers()
+        callJump()
+        callMovements()
+
         var desiredVelocity: CGFloat = 0.0
         
-        if isMovingLeft && !isMovingRight {
+        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
             desiredVelocity = -moveSpeed
-        } else if isMovingRight && !isMovingLeft {
+        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
             desiredVelocity = moveSpeed
         } else {
             desiredVelocity = 0.0
@@ -212,7 +215,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.velocity.dx = desiredVelocity
         
         // Move the box with the player when grabbed
-        if isGrabbed, let box = boxRef {
+        if playerInfo.action, let box = boxRef {
             // Maintain the initial offset captured during grabbing
             box.position.x = self.position.x + boxOffset
             box.physicsBody?.velocity.dx = desiredVelocity
@@ -227,36 +230,49 @@ class PlayerNode: SKSpriteNode {
             self.position.x += delta.x
             self.position.y += delta.y
         }
-
-        
         
         // Determine the appropriate state
-        if isGrabbed {
+        if playerInfo.action {
             changeState(to: .grabbing)
-        } else if !isGrounded {
+        } else if !playerInfo.isGrounded {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
-        } else if isDying {
+        } else if playerInfo.isDying {
             changeState(to: .hurt)
         } else {
             changeState(to: .idle)
         }
     }
     
+    func callJump() {
+        if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
+            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+            playerInfo.isGrounded = false
+            changeState(to: .jumping)
+            playerInfo.isJumping = true
+            playerInfo.alreadyJumping = true
+        }
+        
+        if playerInfo.isGrounded {
+            playerInfo.isJumping = false
+            playerInfo.alreadyJumping = false
+        }
+    }
+    
     // Change the player's animation state
-    private func changeState(to newState: PlayerTextureState) {
-        if currentState == newState { return } // Avoid changing to the same state
-        currentState = newState
+    internal func changeState(to newState: PlayerTextureState) {
+        if playerInfo.textureState == newState { return } // Avoid changing to the same state
+        playerInfo.textureState = newState
         
         // Remove any existing animation
         self.removeAction(forKey: currentActionKey)
         
         // Get the appropriate textures based on the player era
-        let textures = currentState.textures(for: playerEra)
+        let textures = playerInfo.textureState.textures(for: playerEra)
         
         // Get the animation action
-        let animationAction = SKAction.repeatForever(SKAction.animate(with: textures, timePerFrame: currentState.timePerFrame))
+        let animationAction = SKAction.repeatForever(SKAction.animate(with: textures, timePerFrame: playerInfo.textureState.timePerFrame))
         
         // Run the new animation
         self.run(animationAction, withKey: currentActionKey)
@@ -267,17 +283,18 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory == PhysicsCategories.fatal {
-            triggerDeath()
-        }
-
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
-            isGrounded = true
+            playerInfo.isGrounded = true
+            playerInfo.isJumping = false
+            playerInfo.alreadyJumping = false
 
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
+            
+        } else if otherCategory == PhysicsCategories.fatal {
+            triggerDeath()
         }
     }
 
@@ -287,8 +304,10 @@ class PlayerNode: SKSpriteNode {
 
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
+            
             if groundContactCount == 0 {
-                isGrounded = false
+                playerInfo.isGrounded = false
+                
             }
 
             if otherCategory == PhysicsCategories.platform {
@@ -297,4 +316,10 @@ class PlayerNode: SKSpriteNode {
         }
     }
 
+       // Função para enviar informações para outros jogadores
+       private func sendPlayerInfoToOthers() {
+           playerInfo.position = self.position
+           
+           mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
+       }
 }
