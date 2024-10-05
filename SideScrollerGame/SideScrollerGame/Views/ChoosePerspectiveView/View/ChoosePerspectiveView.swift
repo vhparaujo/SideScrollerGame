@@ -11,25 +11,40 @@ import SwiftUI
 
 struct ChoosePerspectiveView: View {
     @Bindable var mpManager: MultiplayerManager
-    @State var perspective: PlayerEra?
+    @State var playerStartInfo: playerStartInfo?
+    
     
     var body: some View {
-        HStack {
-            ForEach(PlayerEra.allCases, id: \.self) { perspective in
-                Button("\(perspective)") {
-                    self.perspective = perspective
-                    mpManager.sendInfoToOtherPlayers(content: perspective)
+        VStack{
+            HStack {
+                ForEach(PlayerEra.allCases, id: \.self) { perspective in
+                    Button("\(perspective)") {
+                        self.playerStartInfo?.eraSelection = perspective
+                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo ?? .init(eraSelection: .none, isStartPressed: .no))
+                    }
+                    .padding()
+                    .background(self.playerStartInfo?.eraSelection == perspective ? Color.blue : Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
                 }
-                .padding()
-                .background(self.perspective == perspective ? Color.blue : Color.gray)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
-            
-            if (mpManager.gameStartInfo.playerEraSelection != mpManager.gameStartInfo.otherPlayerEraSelection) && (mpManager.gameStartInfo.playerEraSelection != nil && mpManager.gameStartInfo.otherPlayerEraSelection != nil) {
+            if (mpManager.gameStartInfo?.localPlayerStartInfo.eraSelection != mpManager.gameStartInfo?.otherPlayerStartInfo.eraSelection) && (mpManager.gameStartInfo?.localPlayerStartInfo.eraSelection != nil && mpManager.gameStartInfo?.otherPlayerStartInfo.eraSelection != nil) {
                 
-                Button("Start Game") {
-                    mpManager.sendInfoToOtherPlayers(content: .yes)
+                Button {
+                    if (mpManager.gameStartInfo?.localPlayerStartInfo.isStartPressed == .yes){
+                        
+                        playerStartInfo?.isStartPressed = .yes
+                    } else{
+                        playerStartInfo?.isStartPressed = .no
+                    }
+                    mpManager.sendInfoToOtherPlayers(content: playerStartInfo ?? .init(eraSelection: .none, isStartPressed: .no))
+                    
+                } label: {
+                    if (mpManager.gameStartInfo?.localPlayerStartInfo.isStartPressed == .yes) {
+                        Text("Ready")
+                    } else {
+                        Text("Cancel")
+                    }
                 }
             }
         }
@@ -37,6 +52,7 @@ struct ChoosePerspectiveView: View {
     }
 }
 
+
 #Preview {
-    ChoosePerspectiveView(mpManager: .init())
+    ChoosePerspectiveView(mpManager: .init(), playerStartInfo: .init(isStartPressed: .no))
 }
