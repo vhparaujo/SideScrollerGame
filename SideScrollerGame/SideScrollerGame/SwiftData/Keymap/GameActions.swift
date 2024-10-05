@@ -5,6 +5,8 @@
 //  Created by Eduardo on 19/09/24.
 //
 
+import GameController
+
 enum GameActions: String, Codable {
     case moveLeft
     case moveRight
@@ -15,4 +17,8 @@ enum GameActions: String, Codable {
     var allCases: [GameActions] {
         [.moveLeft, .moveRight/*, .jump*/, .climb, .action]
     }
+}
+
+extension GCKeyCode: Codable {
+    
 }

@@ -11,7 +11,9 @@ import Combine
 class PlayerNode: SKSpriteNode {
     
     internal var cancellables: [AnyCancellable] = []
-    internal var controller: GameController = GameController()
+    internal var controller: GameController {
+        return GameController.shared
+    }
     internal var playerEra: PlayerEra // Store the era for texture selection
     
     // Movement properties for the player
