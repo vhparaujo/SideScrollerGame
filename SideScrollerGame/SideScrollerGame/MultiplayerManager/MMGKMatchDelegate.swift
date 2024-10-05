@@ -15,7 +15,6 @@ extension MultiplayerManager: GKMatchDelegate {
     func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         switch state {
         case .connected:
-            print("\(player.displayName) Connected")
             
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
@@ -23,18 +22,15 @@ extension MultiplayerManager: GKMatchDelegate {
                 
             }
         case .disconnected:
-            print("\(player.displayName) Disconnected")
             
             self.endMatch()
         default:
-            print("\(player.displayName) Connection Unknown")
             self.endMatch()
         }
     }
     
     /// Handles an error during the matchmaking process.
     func match(_ match: GKMatch, didFailWithError error: Error?) {
-        print("\n\nMatch object fails with error: \(error!.localizedDescription)")
     }
 
     /// Reinvites a player when they disconnect from the match.

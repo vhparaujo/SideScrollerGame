@@ -45,8 +45,6 @@ class OtherPlayerNode: PlayerNode {
                 
                 if let self = self {
                     self.position = self.playerInfo.position
-                    print(self.position)
-                    print("player info:\(self.playerInfo)")
                 }
             }
         }

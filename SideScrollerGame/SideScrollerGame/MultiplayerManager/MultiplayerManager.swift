@@ -56,7 +56,7 @@ class MultiplayerManager: NSObject {
                 return
             }
             if let error = error {
-                print("Error: \(error.localizedDescription).")
+                print("Error authenticating player: \(error)")
                 return
             }
             GKLocalPlayer.local.register(self)
@@ -103,7 +103,6 @@ class MultiplayerManager: NSObject {
         opponent = nil
         GKAccessPoint.shared.isActive = true
         
-        print("Game has been stopped and reset.")
     }
 
     /// Sends player info to other players.

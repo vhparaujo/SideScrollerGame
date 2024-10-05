@@ -34,7 +34,6 @@ extension MultiplayerManager {
             let data = try encoder.encode(content)
             return data
         } catch {
-            print("Error: \(error.localizedDescription).")
             return nil
         }
     }
