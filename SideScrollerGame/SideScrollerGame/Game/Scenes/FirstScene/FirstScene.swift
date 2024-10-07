@@ -52,6 +52,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
+        
+        let elevator = ElevatorNode(playerEra: .present, mode: .automatic)
+        elevator.position = CGPoint(x: 1200, y: -60)
+        addChild(elevator)
     }
     
     func addPlayer() {

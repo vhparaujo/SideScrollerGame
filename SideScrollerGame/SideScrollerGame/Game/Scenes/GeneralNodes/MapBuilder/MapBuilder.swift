@@ -59,6 +59,8 @@ class MapBuilder {
                             // Create the physics body
                             tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
                             tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.friction = 0
+                            
                             // Define physics categories
                             tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
                             tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box

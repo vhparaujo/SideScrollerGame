@@ -42,9 +42,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
 //        fatalBox.physicsBody?.contactTestBitMask = PhysicsCategories.player
 //        fatalBox.physicsBody?.collisionBitMask = PhysicsCategories.player
 //        addChild(fatalBox)
-        let elevator = ElevatorNode(mode: .automatic)
-        elevator.position = CGPoint(x: 1200, y: 0)
-        addChild(elevator)
+        
  
         
         // Define the movement bounds for the platform
