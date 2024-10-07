@@ -100,7 +100,7 @@ class MultiplayerManager: NSObject {
         matchAvailable = true
         localPlayer = nil
         otherPlayerInfo.value = nil
-        gameStartInfo = nil
+      
         opponent = nil
         GKAccessPoint.shared.isActive = true
         
@@ -118,8 +118,8 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: playerStartInfo){
-        gameStartInfo?.localPlayerStartInfo = content
-        print(gameStartInfo?.localPlayerStartInfo)
+        gameStartInfo.localPlayerStartInfo = content
+        print(gameStartInfo.localPlayerStartInfo)
         print(content, "content")
         do {
             let data = encode(content: content)

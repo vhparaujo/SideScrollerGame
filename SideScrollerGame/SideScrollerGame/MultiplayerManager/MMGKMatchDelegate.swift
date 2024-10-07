@@ -48,7 +48,7 @@ extension MultiplayerManager: GKMatchDelegate {
             self.otherPlayerInfo.value = dataReceived
             
         }else if let dataReceived: playerStartInfo = decode(matchData: data) {
-            self.gameStartInfo?.otherPlayerStartInfo = dataReceived
+            self.gameStartInfo.otherPlayerStartInfo = dataReceived
             
         }
     }
