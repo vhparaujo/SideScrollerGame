@@ -21,6 +21,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var box4 = BoxNode()
     private var box5 = BoxNode()
     private var spawnPoint: SpawnPointNode!
+    private var spawnPoint2: SpawnPointNode!
     
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
@@ -54,12 +55,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addOtherPlayer()
         setupBackground()
         setupCamera()
+        addBoxes()
+        addSpawnPoint()
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
-        
-        addBoxes()
         
     }
     
@@ -84,8 +85,11 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func addSpawnPoint() {
-        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint())
+        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
         addChild(spawnPoint)
+        
+        spawnPoint2 = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width * 3, y: size.height / 2 + 200))
+        addChild(spawnPoint2)
     }
     
     func addPlayer() {

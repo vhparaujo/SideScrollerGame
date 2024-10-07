@@ -10,11 +10,10 @@ import SpriteKit
 class SpawnPointNode: SKSpriteNode {
     
     init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .red, size: size)
+        super.init(texture: nil, color: .blue, size: size)
         
         self.position = position
-        
-        self.isHidden = true
+        self.isHidden = false
     }
     
     required init?(coder aDecoder: NSCoder) {
