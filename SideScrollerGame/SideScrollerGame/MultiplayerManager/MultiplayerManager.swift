@@ -4,10 +4,10 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    var selfPlayerInfo: PlayerInfo? 
+    var localPlayer: PlayerInfo? 
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(isStartPressedByPlayer: .no, isStartPressedByOtherPlayer: .no)
+    var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
@@ -37,7 +37,7 @@ class MultiplayerManager: NSObject {
     /// The root view controller of the window.
     override init() {
         super.init()
-        authenticatePlayer()
+        authenticateLocalPlayer()
         
     }
     
@@ -49,7 +49,7 @@ class MultiplayerManager: NSObject {
     }
     
     /// Authenticates the local player, initiates a multiplayer game, and adds the access point.
-    func authenticatePlayer() {
+    func authenticateLocalPlayer() {
         GKLocalPlayer.local.authenticateHandler = { viewController, error in
             if let viewController = viewController {
                 self.rootViewController?.presentAsModalWindow(viewController)
@@ -98,8 +98,9 @@ class MultiplayerManager: NSObject {
         playingGame = false
         choosingEra = false
         matchAvailable = true
-        selfPlayerInfo = nil
+        localPlayer = nil
         otherPlayerInfo.value = nil
+      
         opponent = nil
         GKAccessPoint.shared.isActive = true
         
@@ -107,7 +108,7 @@ class MultiplayerManager: NSObject {
 
     /// Sends player info to other players.
     func sendInfoToOtherPlayers(playerInfo: PlayerInfo) {
-        selfPlayerInfo = playerInfo
+        localPlayer = playerInfo
         do {
             let data = encode(content: playerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
@@ -116,9 +117,10 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(content: PlayerEra){
-        gameStartInfo.playerEraSelection = content
-        
+    func sendInfoToOtherPlayers(content: playerStartInfo){
+        gameStartInfo.localPlayerStartInfo = content
+        print(gameStartInfo.localPlayerStartInfo)
+        print(content, "content")
         do {
             let data = encode(content: content)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
@@ -127,14 +129,4 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(content: IsPressed){
-        gameStartInfo.isStartPressedByPlayer = content
-        
-        do {
-            let data = encode(content: content)
-            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
-        } catch {
-            print("Error: \(error.localizedDescription).")
-        }
-    }
 }
