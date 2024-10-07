@@ -29,7 +29,8 @@ import GameController
             .keyA: .moveLeft,  // A key
             .keyD: .moveRight, // D key
             .spacebar: .jump,  // Space key
-            .keyE: .action     // E key
+            .keyE: .action,     // E key
+                
         ]
 
         if let keymap = SwiftDataManager.shared.fetchFirstKeymap() {

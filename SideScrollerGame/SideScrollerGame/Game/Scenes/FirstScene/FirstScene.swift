@@ -20,6 +20,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var box3 = BoxNode()
     private var box4 = BoxNode()
     private var box5 = BoxNode()
+    private var spawnPoint: SpawnPointNode!
     
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
@@ -80,6 +81,11 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         box5.position = CGPoint(x: size.width * 5 + 700, y: size.height / 2)
         addChild(box5)
         
+    }
+    
+    func addSpawnPoint() {
+        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint())
+        addChild(spawnPoint)
     }
     
     func addPlayer() {
