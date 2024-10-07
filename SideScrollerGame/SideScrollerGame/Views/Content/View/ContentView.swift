@@ -16,7 +16,7 @@ struct ContentView: View {
         GameView(currentSceneType: .first(era), mpManager: managerMP)
             }
         }else if managerMP.choosingEra {
-            ChoosePerspectiveView(mpManager: managerMP)
+            ChoosePerspectiveView(mpManager: managerMP, playerStartInfo: .init( isStartPressed: .no))
         }else{
             JoinGameView(managerMP: managerMP)
         }

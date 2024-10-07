@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ChoosePerspectiveView: View {
     @Bindable var mpManager: MultiplayerManager
-    @State var playerStartInfo: playerStartInfo?
+    @State var playerStartInfo: playerStartInfo
     
     
     var body: some View {
@@ -19,25 +19,26 @@ struct ChoosePerspectiveView: View {
             HStack {
                 ForEach(PlayerEra.allCases, id: \.self) { perspective in
                     Button("\(perspective)") {
-                        self.playerStartInfo?.eraSelection = perspective
-                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo ?? .init(eraSelection: .none, isStartPressed: .no))
+                        self.playerStartInfo.eraSelection = perspective
+                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     }
                     .padding()
-                    .background(self.playerStartInfo?.eraSelection == perspective ? Color.blue : Color.gray)
+                    .background(self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
             }
+        
             if (mpManager.gameStartInfo?.localPlayerStartInfo.eraSelection != mpManager.gameStartInfo?.otherPlayerStartInfo.eraSelection) && (mpManager.gameStartInfo?.localPlayerStartInfo.eraSelection != nil && mpManager.gameStartInfo?.otherPlayerStartInfo.eraSelection != nil) {
                 
                 Button {
                     if (mpManager.gameStartInfo?.localPlayerStartInfo.isStartPressed == .yes){
                         
-                        playerStartInfo?.isStartPressed = .yes
+                        playerStartInfo.isStartPressed = .yes
                     } else{
-                        playerStartInfo?.isStartPressed = .no
+                        playerStartInfo.isStartPressed = .no
                     }
-                    mpManager.sendInfoToOtherPlayers(content: playerStartInfo ?? .init(eraSelection: .none, isStartPressed: .no))
+                    mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     
                 } label: {
                     if (mpManager.gameStartInfo?.localPlayerStartInfo.isStartPressed == .yes) {
