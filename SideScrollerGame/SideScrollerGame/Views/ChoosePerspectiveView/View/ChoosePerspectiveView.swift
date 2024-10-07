@@ -32,20 +32,13 @@ struct ChoosePerspectiveView: View {
             if (mpManager.gameStartInfo.localPlayerStartInfo.eraSelection != mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection) && (mpManager.gameStartInfo.localPlayerStartInfo.eraSelection != nil && mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection != nil) {
                 
                 Button {
-                    if (mpManager.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes){
-                        
                         playerStartInfo.isStartPressed = .yes
-                    } else{
-                        playerStartInfo.isStartPressed = .no
-                    }
+                    
                     mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     
                 } label: {
-                    if (mpManager.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes) {
-                        Text("Ready")
-                    } else {
-                        Text("Cancel")
-                    }
+                    Text("Ready")
+                  
                 }
             }
         }
