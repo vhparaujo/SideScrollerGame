@@ -7,7 +7,7 @@ class MultiplayerManager: NSObject {
     var localPlayer: PlayerInfo? 
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo?
+    var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
@@ -119,6 +119,8 @@ class MultiplayerManager: NSObject {
     
     func sendInfoToOtherPlayers(content: playerStartInfo){
         gameStartInfo?.localPlayerStartInfo = content
+        print(gameStartInfo?.localPlayerStartInfo)
+        print(content, "content")
         do {
             let data = encode(content: content)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
