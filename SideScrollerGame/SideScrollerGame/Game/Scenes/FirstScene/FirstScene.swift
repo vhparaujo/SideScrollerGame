@@ -15,6 +15,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
     
+    private var box = BoxNode()
+    private var box2 = BoxNode()
+    private var box3 = BoxNode()
+    private var box4 = BoxNode()
+    private var box5 = BoxNode()
+    
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
     
@@ -24,7 +30,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var tileMapWidth: CGFloat = 0.0
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
-
+    
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -34,7 +40,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         self.mpManager = MultiplayerManager()
-            super.init(coder: aDecoder)
+        super.init(coder: aDecoder)
     }
     
     override func didMove(to view: SKView) {
@@ -47,11 +53,33 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addOtherPlayer()
         setupBackground()
         setupCamera()
-                
+        
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
-
+        
+        addBoxes()
+        
+    }
+    
+    func addBoxes() {
+        box.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(box)
+        
+        box2.position = CGPoint(x: size.width + 550, y: size.height / 2)
+        addChild(box2)
+        
+        box3.position = CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250)
+        box3.physicsBody?.isDynamic = false
+        addChild(box3)
+        
+        box4.position = CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250)
+        box4.physicsBody?.isDynamic = false
+        addChild(box4)
+        
+        box5.position = CGPoint(x: size.width * 5 + 700, y: size.height / 2)
+        addChild(box5)
+        
     }
     
     func addPlayer() {
@@ -76,7 +104,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addChild(otherPlayer)
         
     }
-
+    
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
@@ -107,7 +135,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
+    
     func didEnd(_ contact: SKPhysicsContact) {
         playerNode.didEnd(contact)
         
@@ -124,14 +152,14 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-//    func cameraAndBackgroundUpdate() {
-//        cameraNode.position.x = playerNode.position.x
-//        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
-//        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
-//        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
-//        self.previousCameraXPosition = cameraNode.position.x
-//
-//    }
+    //    func cameraAndBackgroundUpdate() {
+    //        cameraNode.position.x = playerNode.position.x
+    //        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+    //        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+    //        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+    //        self.previousCameraXPosition = cameraNode.position.x
+    //
+    //    }
     
     
     func cameraAndBackgroundUpdate() {
@@ -162,8 +190,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let newY = currentY + deltaY * interpolationSpeed
         cameraNode.position.y = newY
     }
-
-
+    
+    
     
     func setupCamera() {
         self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
@@ -171,7 +199,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         self.camera = cameraNode
         self.previousCameraXPosition = cameraNode.position.x
     }
-
+    
     func setupBackground() {
         self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
         
