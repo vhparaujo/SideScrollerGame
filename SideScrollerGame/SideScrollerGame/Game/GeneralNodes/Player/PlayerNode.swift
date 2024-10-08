@@ -276,6 +276,13 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    // Função para enviar informações para outros jogadores
+    private func sendPlayerInfoToOthers() {
+        playerInfo.position = self.position
+        
+        mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
+    }
+    
     // Change the player's animation state
     internal func changeState(to newState: PlayerTextureState) {
         if playerInfo.textureState == newState { return } // Avoid changing to the same state
@@ -330,12 +337,5 @@ class PlayerNode: SKSpriteNode {
                 currentPlatform = nil
             }
         }
-    }
-    
-    // Função para enviar informações para outros jogadores
-    private func sendPlayerInfoToOthers() {
-        playerInfo.position = self.position
-        
-        mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
     }
 }

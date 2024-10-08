@@ -69,7 +69,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         if !alreadyHadBox{
             mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
         }
-        
     }
     
     func addPlayer() {
