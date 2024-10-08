@@ -52,10 +52,10 @@ extension MultiplayerManager: GKMatchDelegate {
 
         }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
             
-            if let index = self.boxes.firstIndex(where: { $0.id == dataReceived.id }) {
-                self.boxes[index].position = dataReceived.position
+            if let index = self.firstSceneBoxes.firstIndex(where: { $0.id == dataReceived.id }) {
+                self.firstSceneBoxes[index].position = dataReceived.position
             }else{
-                self.boxes.append(dataReceived)
+                self.firstSceneBoxes.append(dataReceived)
             }
         }
         
