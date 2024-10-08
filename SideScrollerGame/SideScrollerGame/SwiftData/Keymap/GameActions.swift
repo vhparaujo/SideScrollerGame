@@ -7,16 +7,15 @@
 
 import GameController
 
-enum GameActions: String, Codable {
+enum GameActions: String, Codable, CaseIterable {
     case moveLeft
     case moveRight
     case jump
     case climb
     case action
+    case brintToPresent
     
-    var allCases: [GameActions] {
-        [.moveLeft, .moveRight/*, .jump*/, .climb, .action]
-    }
+   
 }
 
 extension GCKeyCode: Codable {

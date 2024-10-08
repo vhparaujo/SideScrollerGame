@@ -15,6 +15,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
     
+    
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
     
@@ -47,11 +48,22 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addOtherPlayer()
         setupBackground()
         setupCamera()
+        addBox(position: .init(x: 1418, y: 10))
                 
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
+    }
+    
+    func addBox(position: CGPoint){
+        if playerEra == .future {
+            let newBox = BoxNode()
+            newBox.position = position
+            newBox.name = "\(newBox.id)"
+            addChild(newBox)
+            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
+        }
     }
     
     func addPlayer() {
@@ -81,12 +93,24 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
         
+        if playerEra == .present {
+            for n in mpManager.boxes {
+                if let childNode = self.children.first(where: { $0.name == "\(n.id)" }) {
+                    childNode.position = n.position
+                }else {
+                    addBox(position: n.position)
+                }
+            }
+        }
+
+        
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         
         // Update the player
         playerNode.update(deltaTime: deltaTime)
+        print(playerNode.position)
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)

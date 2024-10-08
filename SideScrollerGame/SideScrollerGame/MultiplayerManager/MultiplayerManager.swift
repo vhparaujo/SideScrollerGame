@@ -19,6 +19,9 @@ class MultiplayerManager: NSObject {
     // Match information
     var opponent: GKPlayer? = nil
     
+    //boxes
+    var boxes: [BoxTeletransport] = []
+    
     /// The name of the match.
     var matchName: String {
         "\(opponentName) Match"
@@ -117,10 +120,9 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(content: playerStartInfo){
+    func sendInfoToOtherPlayers(content: PlayerStartInfo){
         gameStartInfo.localPlayerStartInfo = content
-        print(gameStartInfo.localPlayerStartInfo)
-        print(content, "content")
+        
         do {
             let data = encode(content: content)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
@@ -129,4 +131,17 @@ class MultiplayerManager: NSObject {
         }
     }
     
+    func sendInfoToOtherPlayers(box: BoxTeletransport) {
+        if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
+            self.boxes[index].position = box.position
+        }
+        
+        do {
+            let data = encode(content: box)
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        } catch {
+            print("Error: \(error.localizedDescription).")
+        }
+    }
+
 }
