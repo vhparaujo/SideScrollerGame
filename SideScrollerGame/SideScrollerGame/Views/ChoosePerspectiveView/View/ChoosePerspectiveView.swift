@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ChoosePerspectiveView: View {
     @Bindable var mpManager: MultiplayerManager
-    @State var playerStartInfo: playerStartInfo
+    @State var playerStartInfo: PlayerStartInfo
     
     
     var body: some View {
@@ -24,6 +24,7 @@ struct ChoosePerspectiveView: View {
                     }
                     .padding()
                     .background(self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
+                    .background(self.mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection == perspective ? Color.red : Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }

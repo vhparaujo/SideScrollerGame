@@ -8,6 +8,7 @@ import SpriteKit
 
 class BoxNode: SKSpriteNode {
     var isGrabbed: Bool = false
+    var id = UUID()
 
     init() {
         let texture = SKTexture(imageNamed: "box") // Replace with your box texture

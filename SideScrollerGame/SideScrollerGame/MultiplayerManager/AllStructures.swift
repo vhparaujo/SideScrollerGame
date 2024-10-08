@@ -23,11 +23,11 @@ struct PlayerInfo: Codable {
 }
 
 struct GameStartInfo: Codable{
-    var localPlayerStartInfo: playerStartInfo
-    var otherPlayerStartInfo: playerStartInfo
+    var localPlayerStartInfo: PlayerStartInfo
+    var otherPlayerStartInfo: PlayerStartInfo
 }
 
-struct playerStartInfo: Codable{
+struct PlayerStartInfo: Codable{
     var eraSelection: PlayerEra?
     var isStartPressed: IsPressed
 }
@@ -35,4 +35,9 @@ struct playerStartInfo: Codable{
 enum IsPressed: Codable{
     case yes
     case no
+}
+
+struct BoxTeletransport: Codable{
+    var position: CGPoint
+    var id: UUID
 }

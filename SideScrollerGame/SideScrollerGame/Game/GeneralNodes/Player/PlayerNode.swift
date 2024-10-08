@@ -20,13 +20,15 @@ class PlayerNode: SKSpriteNode {
     
     // Movement properties for the player
     internal var moveSpeed: CGFloat = 500.0
-    let jumpImpulse: CGFloat = 480.0 // Impulse applied to the player when jumping
+    let jumpImpulse: CGFloat = 7700 // Impulse applied to the player when jumping
     
     internal var playerInfo: PlayerInfo = .init(isMovingRight: false, isMovingLeft: false, textureState: .idle, facingRight: true, action: false, isGrounded: true, isJumping: false, alreadyJumping: false, isDying: false, position: .zero)
     
     internal var groundContactCount = 0 // Tracks number of ground contacts
     
     internal var currentPlatform: PlatformNode?
+    
+    var isPassedToPast = false
     
     //Box movement
     var boxRef: BoxNode?
@@ -70,6 +72,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform
         self.physicsBody?.friction = 1.0
         self.physicsBody?.restitution = 0.0
+        self.physicsBody?.mass = 10.0
     }
     
     func setupBindings() {
@@ -88,29 +91,35 @@ class PlayerNode: SKSpriteNode {
     
     func handleKeyPress(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = true
-                playerInfo.facingRight = false
-                
-            case .moveRight:
-                playerInfo.isMovingRight = true
-                playerInfo.facingRight = true
-                
-            case .jump:
-                playerInfo.isJumping = true
-                
-            case .action:
-                
-                if playerInfo.isGrounded {
-                    if let box = boxRef {
-                        playerInfo.action = true
-                        box.isGrabbed = true
-                        box.enableMovement()
-                        boxOffset = box.position.x - self.position.x
-                    }
+        case .moveLeft:
+            playerInfo.isMovingLeft = true
+            playerInfo.facingRight = false
+            
+        case .moveRight:
+            playerInfo.isMovingRight = true
+            playerInfo.facingRight = true
+            
+        case .jump:
+            playerInfo.isJumping = true
+            
+        case .action:
+            if playerInfo.isGrounded {
+                if let box = boxRef {
+                    playerInfo.action = true
+                    box.isGrabbed = true
+                    box.enableMovement()
+                    boxOffset = box.position.x - self.position.x
                 }
-            default:
-                break
+            }
+        case .brintToPresent:
+            if let box = boxRef {
+                if !isPassedToPast {
+                    mpManager.sendInfoToOtherPlayers(box: .init(position: box.position, id: box.id))
+                }
+            }
+            
+        default:
+            break
         }
     }
     
@@ -138,25 +147,25 @@ class PlayerNode: SKSpriteNode {
     // Handle key releases
     func handleKeyRelease(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = false
-                
-            case .moveRight:
-                playerInfo.isMovingRight = false
-                if playerInfo.isMovingLeft {
-                    playerInfo.facingRight = false
-                    if !playerInfo.action {
-                        self.xScale = -abs(self.xScale)
-                    }
+        case .moveLeft:
+            playerInfo.isMovingLeft = false
+            
+        case .moveRight:
+            playerInfo.isMovingRight = false
+            if playerInfo.isMovingLeft {
+                playerInfo.facingRight = false
+                if !playerInfo.action {
+                    self.xScale = -abs(self.xScale)
                 }
-            case .action:
-                if playerInfo.action {
-                    playerInfo.action = false
-                    boxRef?.isGrabbed = false
-                    boxRef?.disableMovement()
-                }
-            default:
-                break
+            }
+        case .action:
+            if playerInfo.action {
+                playerInfo.action = false
+                boxRef?.isGrabbed = false
+                boxRef?.disableMovement()
+            }
+        default:
+            break
         }
     }
     
@@ -268,6 +277,13 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    // Função para enviar informações para outros jogadores
+    private func sendPlayerInfoToOthers() {
+        playerInfo.position = self.position
+        
+        mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
+    }
+    
     // Change the player's animation state
     internal func changeState(to newState: PlayerTextureState) {
         if playerInfo.textureState == newState { return } // Avoid changing to the same state
@@ -322,12 +338,5 @@ class PlayerNode: SKSpriteNode {
                 currentPlatform = nil
             }
         }
-    }
-    
-    // Função para enviar informações para outros jogadores
-    private func sendPlayerInfoToOthers() {
-        playerInfo.position = self.position
-        
-        mpManager.sendInfoToOtherPlayers(playerInfo: self.playerInfo)
     }
 }

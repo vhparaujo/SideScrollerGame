@@ -47,9 +47,19 @@ extension MultiplayerManager: GKMatchDelegate {
         if let dataReceived: PlayerInfo = decode(matchData: data) {
             self.otherPlayerInfo.value = dataReceived
             
-        }else if let dataReceived: playerStartInfo = decode(matchData: data) {
+        }else if let dataReceived: PlayerStartInfo = decode(matchData: data) {
             self.gameStartInfo.otherPlayerStartInfo = dataReceived
+
+        }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
             
+            if let index = self.firstSceneBoxes.firstIndex(where: { $0.id == dataReceived.id }) {
+                self.firstSceneBoxes[index].position = dataReceived.position
+            }else{
+                self.firstSceneBoxes.append(dataReceived)
+            }
         }
+        
     }
 }
+
+
