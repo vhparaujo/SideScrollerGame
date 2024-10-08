@@ -15,7 +15,6 @@ extension MultiplayerManager: GKMatchDelegate {
     func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         switch state {
         case .connected:
-            print("\(player.displayName) Connected")
             
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
@@ -23,15 +22,15 @@ extension MultiplayerManager: GKMatchDelegate {
                 
             }
         case .disconnected:
-            print("\(player.displayName) Disconnected")
+            
+            self.endMatch()
         default:
-            print("\(player.displayName) Connection Unknown")
+            self.endMatch()
         }
     }
     
     /// Handles an error during the matchmaking process.
     func match(_ match: GKMatch, didFailWithError error: Error?) {
-        print("\n\nMatch object fails with error: \(error!.localizedDescription)")
     }
 
     /// Reinvites a player when they disconnect from the match.
@@ -41,13 +40,26 @@ extension MultiplayerManager: GKMatchDelegate {
     
     /// Handles receiving a message from another player.
     /// - Tag:didReceiveData
+    /// Handles receiving a message from another player.
+    /// - Tag: didReceiveData
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        // Decode the data representation of the game data.
-        let otherPlayerInfoIncome = decode(matchData: data)
-        
-        //updating only the position of the other player
-        if let position = otherPlayerInfoIncome?.position {
-            self.otherPlayerInfo.position = position
+        // Tenta decodificar como PlayerInfo
+        if let dataReceived: PlayerInfo = decode(matchData: data) {
+            self.otherPlayerInfo.value = dataReceived
+            
+        }else if let dataReceived: PlayerStartInfo = decode(matchData: data) {
+            self.gameStartInfo.otherPlayerStartInfo = dataReceived
+
+        }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
+            
+            if let index = self.firstSceneBoxes.firstIndex(where: { $0.id == dataReceived.id }) {
+                self.firstSceneBoxes[index].position = dataReceived.position
+            }else{
+                self.firstSceneBoxes.append(dataReceived)
+            }
         }
+        
     }
 }
+
+

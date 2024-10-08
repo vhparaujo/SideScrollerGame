@@ -8,12 +8,13 @@ import SpriteKit
 
 
 
-enum PlayerTextureState {
+enum PlayerTextureState: Codable {
     case running
     case idle
     case jumping
     case climbing
     case grabbing
+    case hurt
     
     func textures(for era: PlayerEra) -> [SKTexture] {
         switch (self, era) {
@@ -21,7 +22,7 @@ enum PlayerTextureState {
                 return SKSpriteNode.loadTextures(prefix: "player-run-present", count: 6)
             case (.running, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-run-future", count: 6)
-                
+
             case (.idle, .present):
                 return SKSpriteNode.loadTextures(prefix: "player-idle-present", count: 4)
             case (.idle, .future):
@@ -41,6 +42,11 @@ enum PlayerTextureState {
                 return SKSpriteNode.loadTextures(prefix: "player-grab-present", count: 2)
             case (.grabbing, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-grab-future", count: 2)
+            
+            case (.hurt, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-hurt-present", count: 2)
+            case (.hurt, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-hurt-future", count: 2)
         }
     }
     
@@ -56,6 +62,8 @@ enum PlayerTextureState {
                 return 0.2
             case .grabbing:
                 return 0.1
+            case .hurt:
+            return 0.1
         }
     }
 }

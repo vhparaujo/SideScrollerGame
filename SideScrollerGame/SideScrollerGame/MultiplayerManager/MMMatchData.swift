@@ -18,10 +18,10 @@ extension MultiplayerManager {
     /// - Returns: A representation of game data that contains only the score.
     ///
     
-    func encode(position: CGPoint) -> Data?{
-        let playerInfo = PlayerInfo(position: position)
-        return encode(content: playerInfo)
-    }
+//    func encode(position: CGPoint) -> Data?{
+//        let playerInfo = PlayerInfo(position: position)
+//        return encode(content: playerInfo)
+//    }
     
     /// Creates a data representation of game data for sending to other players.
     ///
@@ -34,7 +34,6 @@ extension MultiplayerManager {
             let data = try encoder.encode(content)
             return data
         } catch {
-            print("Error: \(error.localizedDescription).")
             return nil
         }
     }
@@ -43,8 +42,7 @@ extension MultiplayerManager {
     ///
     /// - Parameter matchData: A data representation of the game data.
     /// - Returns: A game data object.
-    func decode(matchData: Data) -> PlayerInfo? {
-        // Convert the data object to a game data object.
-        return try? PropertyListDecoder().decode(PlayerInfo.self, from: matchData)
+    func decode<T: Decodable>(matchData: Data) -> T? {
+        return try? PropertyListDecoder().decode(T.self, from: matchData)
     }
 }

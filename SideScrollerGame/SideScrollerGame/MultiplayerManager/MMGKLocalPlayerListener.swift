@@ -12,7 +12,6 @@ import SwiftUI
 extension MultiplayerManager: GKLocalPlayerListener {
     /// Handles when the local player sends requests to start a match with other players.
     func player(_ player: GKPlayer, didRequestMatchWithRecipients recipientPlayers: [GKPlayer]) {
-        print("\n\nSending invites to other players.")
     }
     
     /// Presents the matchmaker interface when the local player accepts an invitation from another player.

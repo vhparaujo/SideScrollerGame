@@ -1,24 +1,22 @@
-//
-//  DesertScene.swift
-//  SideScrollerGame
-//
-//  Created by Eduardo on 19/09/24.
-//
-
 import SpriteKit
 import SwiftUICore
 
 class DesertScene: SKScene, SKPhysicsContactDelegate {
-    let ground = SKSpriteNode(color: .clear, size: CGSize(width: 10000, height: 50))
+    var mpManager: MultiplayerManager = .init()
     
     private var playerNode: PlayerNode!
+    private var otherPlayer: OtherPlayerNode!
+    
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
     private let box = BoxNode()
     private let box2 = BoxNode()
+    private let fatalBox = SKSpriteNode(color: .clear, size: CGSize(width: 50, height: 50))
     
     var previousCameraXPosition: CGFloat = 0.0
     var platform: PlatformNode!
+    
+    var tileMapWidth: CGFloat = 0.0
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
 
@@ -28,17 +26,14 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
+        addPlayer()
+        addOtherPlayer()
         setupBackground()
-        playerNode = PlayerNode(playerEra: .present)
-        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(playerNode)
-        
         setupCamera()
         
         // Add a box to the scene
-        box.position = CGPoint(x: 300, y: 100) // Adjust as needed
+        box.position = CGPoint(x: size.width + 100, y: size.height / 2) // Adjust as needed
         addChild(box)        // Add a box to the scene
- 
         
         // Define the movement bounds for the platform
         let minX = CGFloat(100)
@@ -47,30 +42,40 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         platform = PlatformNode(minX: minX, maxX: maxX)
         platform.position = CGPoint(x: minX, y: 200) // Set the starting position
         addChild(platform)
-        
-        setupPhysics()
-        
+
+                
+        let mapBuilder = MapBuilder(scene: self)
+        mapBuilder.embedScene(fromFileNamed: "FirstFutureScene")
+        tileMapWidth = mapBuilder.tileMapWidth
+
     }
     
-    override init(size: CGSize) {
+    init(size: CGSize, mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         super.init(size: size)
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
-    func setupPhysics() {
-        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        physicsBody?.isDynamic = false
-        physicsBody?.categoryBitMask = PhysicsCategories.ground
-        physicsBody?.contactTestBitMask = PhysicsCategories.player
-        physicsBody?.collisionBitMask = PhysicsCategories.player
+    
+    func addPlayer() {
+        playerNode = PlayerNode(playerEra: .present, mpManager: mpManager)
+        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(playerNode)
     }
     
+    func addOtherPlayer() {
+        guard otherPlayer == nil else { return }
+        otherPlayer = OtherPlayerNode(playerEra: .present, mpManager: mpManager)
+        otherPlayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(otherPlayer)
+        
+    }
+
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
-        
         self.cameraAndBackgroundUpdate()
         
         // Calculate deltaTime if needed
@@ -80,9 +85,11 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         // Update the platform
         platform.update(deltaTime: deltaTime)
         
-        
         // Update the player
         playerNode.update(deltaTime: deltaTime)
+        
+        // Update the other player if it exists
+        otherPlayer.update(deltaTime: deltaTime)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -93,6 +100,7 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.box {
+            
             // Cast the other node to BoxNode to get the specific box
             if let boxNode = otherBody.node as? BoxNode {
                 playerNode.boxRef = boxNode
@@ -100,7 +108,6 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    
     func didEnd(_ contact: SKPhysicsContact) {
         playerNode.didEnd(contact)
         
@@ -117,13 +124,46 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+//    func cameraAndBackgroundUpdate() {
+//        cameraNode.position.x = playerNode.position.x
+//        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
+//        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
+//        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
+//        self.previousCameraXPosition = cameraNode.position.x
+//                
+//    }
+    
+    
     func cameraAndBackgroundUpdate() {
-        cameraNode.position.x = playerNode.position.x
+        // Calculate the visible size based on the camera's scale
+        let visibleSize = CGSize(width: self.size.width / cameraNode.xScale, height: self.size.height / cameraNode.yScale)
+        
+        // Set the camera's X position to follow the player
+        var newCameraX = playerNode.position.x
+        
+        // Calculate the map boundaries
+        let leftBoundary = visibleSize.width / 2
+        let rightBoundary = max(0, tileMapWidth - visibleSize.width / 2)
+        
+        // Clamp the camera's X position between the boundaries
+        newCameraX = max(leftBoundary, min(newCameraX, rightBoundary))
+        
+        cameraNode.position.x = newCameraX
         let cameraMovementX = cameraNode.position.x - previousCameraXPosition
         self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
         self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
         self.previousCameraXPosition = cameraNode.position.x
+        
+        // Follow the player in Y direction (optional if you want vertical camera movement)
+        let targetY = playerNode.position.y
+        let currentY = cameraNode.position.y
+        let interpolationSpeed: CGFloat = 0.1
+        let deltaY = targetY - currentY
+        let newY = currentY + deltaY * interpolationSpeed
+        cameraNode.position.y = newY
     }
+
+
     
     func setupCamera() {
         self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
@@ -133,9 +173,8 @@ class DesertScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func setupBackground() {
-        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.desertScene.textures(for: .present))
+        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: .present))
         
         self.addChild(parallaxBackground!)
     }
-
 }

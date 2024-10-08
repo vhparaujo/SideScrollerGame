@@ -5,14 +5,19 @@
 //  Created by Eduardo on 19/09/24.
 //
 
-enum GameActions: String, Codable {
+import GameController
+
+enum GameActions: String, Codable, CaseIterable {
     case moveLeft
     case moveRight
     case jump
     case climb
-    case grab
+    case action
+    case brintToPresent
     
-    var allCases: [GameActions] {
-        [.moveLeft, .moveRight, .jump, .climb, .grab]
-    }
+   
+}
+
+extension GCKeyCode: Codable {
+    
 }
