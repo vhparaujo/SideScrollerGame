@@ -15,6 +15,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
     
+    private var spawnPoint: SpawnPointNode!
+    private var spawnPoint2: SpawnPointNode!
     
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
@@ -52,6 +54,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         if playerEra == .future {
             addBox(position: .init(x: 1418, y: 10))
         }
+        addBoxes()
+        addSpawnPoint()
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
@@ -59,16 +63,36 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
+    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false, isDynamic: Bool = true){
         let newBox = BoxNode()
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
+        newBox.physicsBody?.isDynamic = isDynamic
         addChild(newBox)
         
         if !alreadyHadBox{
-            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
+            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
         }
+    }
+    func addBoxes() {
+        addBox(position: CGPoint(x: size.width / 2, y: size.height / 2))
+
+        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
+
+        addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250), isDynamic: false)
+   
+        addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250), isDynamic: false)
+
+        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
+    }
+    
+    func addSpawnPoint() {
+        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
+        addChild(spawnPoint)
+        
+        spawnPoint2 = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width * 3, y: size.height / 2 + 200))
+        addChild(spawnPoint2)
     }
     
     func addPlayer() {
@@ -99,7 +123,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         self.cameraAndBackgroundUpdate()
         
         if playerEra == .present {
-            for n in mpManager.boxes {
+            for n in mpManager.firstSceneBoxes {
                 if let childNode = self.children.first(where: { $0.name == "\(n.id)" }) {
                     childNode.position = n.position
                 }else {

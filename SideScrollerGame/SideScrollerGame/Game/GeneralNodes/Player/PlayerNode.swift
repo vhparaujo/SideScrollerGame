@@ -10,6 +10,8 @@ import Combine
 
 class PlayerNode: SKSpriteNode {
     
+    internal var spawnPoint: CGPoint?
+    
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameController {
         return GameController.shared
@@ -113,13 +115,8 @@ class PlayerNode: SKSpriteNode {
             if let box = boxRef {
                 if !isPassedToPast {
                     mpManager.sendInfoToOtherPlayers(box: .init(position: box.position, id: box.id))
-                    
                 }
             }
-//        case .brintToPresent:
-//            mpManager.sendInfoToOtherPlayers(boxNewPosition: boxRef?.position ?? .zero)
-//            boxRef?.removeFromParent()
-//            break
             
         default:
             break
@@ -208,6 +205,10 @@ class PlayerNode: SKSpriteNode {
         
         // Rodar a sequência de morte
         self.run(deathSequence)
+        
+        if let spawnPoint = spawnPoint {
+            self.position = spawnPoint
+        }
     }
     
     // Update player position and animation based on movement direction
