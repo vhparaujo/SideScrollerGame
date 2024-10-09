@@ -62,6 +62,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         tileMapWidth = mapBuilder.tileMapWidth
         
     }
+    override func keyUp(with event: NSEvent) {
+        
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        
+    }
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false, isDynamic: Bool = true){
         let newBox = BoxNode()

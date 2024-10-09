@@ -12,9 +12,9 @@ import Combine
 import GameController
 
 @MainActor
-@Observable class GameController {
+class GameControllerManager {
     
-    public static var shared = GameController()
+    public static var shared = GameControllerManager()
     
     var keyPressPublisher = PassthroughSubject<GameActions, Never>()
     var keyReleasePublisher = PassthroughSubject<GameActions, Never>()
