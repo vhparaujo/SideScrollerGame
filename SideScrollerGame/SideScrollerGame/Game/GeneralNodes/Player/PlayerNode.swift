@@ -68,9 +68,9 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box
-        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform
-        self.physicsBody?.friction = 1.0
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall
+        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
+        self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
         self.physicsBody?.mass = 10.0
     }
@@ -317,7 +317,7 @@ class PlayerNode: SKSpriteNode {
                 currentPlatform = otherBody.node as? PlatformNode
             }
             
-        } else if otherCategory == PhysicsCategories.fatal {
+        } else if otherCategory == PhysicsCategories.Death {
             triggerDeath()
         }
     }
