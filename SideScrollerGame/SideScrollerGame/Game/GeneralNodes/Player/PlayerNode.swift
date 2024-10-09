@@ -13,8 +13,8 @@ class PlayerNode: SKSpriteNode {
     internal var spawnPoint: CGPoint?
     
     internal var cancellables: [AnyCancellable] = []
-    internal var controller: GameController {
-        return GameController.shared
+    internal var controller: GameControllerManager {
+        return GameControllerManager.shared
     }
     internal var playerEra: PlayerEra // Store the era for texture selection
     
