@@ -28,8 +28,8 @@ class BoxNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true // Gravity enabled
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.box
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground
-        self.physicsBody?.collisionBitMask = PhysicsCategories.ground // Only collide with ground
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall
+        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.wall
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
         self.physicsBody?.pinned = false // Start unpinned

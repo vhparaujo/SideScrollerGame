@@ -8,7 +8,7 @@
 import SpriteKit
 
 class MapBuilder {
-
+    
     var scene: SKScene
     
     var tileMapWidth: CGFloat = 0
@@ -44,7 +44,7 @@ class MapBuilder {
                 for col in 0..<tileNode.numberOfColumns {
                     for row in 0..<tileNode.numberOfRows {
                         // Get the tile definition at this column and row
-                        if tileNode.tileDefinition(atColumn: col, row: row) != nil {
+                        if let tileDefinition = tileNode.tileDefinition(atColumn: col, row: row) {
                             // Get the tile's position in tileNode's coordinate system
                             let tilePosition = tileNode.centerOfTile(atColumn: col, row: row)
                             // Convert tile position to the scene's coordinate system
@@ -56,15 +56,47 @@ class MapBuilder {
                             // Adjust the physics body size for the tile's scaling
                             let tileSize = CGSize(width: tileNode.tileSize.width * tileNode.xScale,
                                                   height: tileNode.tileSize.height * tileNode.yScale)
-                            // Create the physics body
-                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                            tilePhysicsNode.physicsBody?.isDynamic = false
-                            // Define physics categories
-                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
-                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            // Add the physics node to the physics layer
-                            physicsLayer.addChild(tilePhysicsNode)
+                            
+                            // Identify the tile type
+                            if let tileName = tileDefinition.name {
+                                switch tileName {
+                                    case "Ground":
+                                        // Create the physics body for ground tiles
+                                        tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                                        tilePhysicsNode.physicsBody?.isDynamic = false
+                                        tilePhysicsNode.physicsBody?.friction = 0
+                                        tilePhysicsNode.physicsBody?.restitution = 0.0
+
+                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
+                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                    case "Wall":
+                                        // Create the physics body for ground tiles
+                                        tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                                        tilePhysicsNode.physicsBody?.isDynamic = false
+                                        tilePhysicsNode.physicsBody?.friction = 0
+                                        tilePhysicsNode.physicsBody?.restitution = 0.0
+
+                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
+                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                    case "Death":
+                                        // Create the physics body for death tiles
+                                        tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                                        tilePhysicsNode.physicsBody?.isDynamic = false
+                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
+                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
+                                    default:
+                                        // Default physics body for other tiles
+                                        break
+                                }
+                            }
+                            
+                            // Add the physics node to the physics layer if it has a physics body
+                            if tilePhysicsNode.physicsBody != nil {
+                                physicsLayer.addChild(tilePhysicsNode)
+                            }
                         }
                     }
                 }
@@ -74,5 +106,19 @@ class MapBuilder {
                 scene.addChild(tileNode)
             }
         }
+    }
+    
+    func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
+        // Define the rectangle centered at (0,0) since the node's position is set accordingly
+        let rect = CGRect(x: -tileSize.width / 2, y: -tileSize.height / 2, width: tileSize.width, height: tileSize.height)
+        // Define the corner radius (adjust as needed)
+        let cornerRadius = min(tileSize.width, tileSize.height) * 0.2 // 20% of the smallest dimension
+        // Create the rounded rectangle path
+        let path = CGPath(roundedRect: rect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        // Create the physics body from the path
+        let physicsBody = SKPhysicsBody(polygonFrom: path)
+        // Enable precise collision detection if necessary
+        physicsBody.usesPreciseCollisionDetection = true
+        return physicsBody
     }
 }

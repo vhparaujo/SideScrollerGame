@@ -14,5 +14,6 @@ struct PhysicsCategories {
     static let ground: UInt32 = 0x1 << 1
     static let box: UInt32   = 0x1 << 2
     static let platform: UInt32 = 0x1 << 3
-    static let fatal: UInt32  = 0x1 << 5
+    static let Death: UInt32  = 0x1 << 5
+    static let wall: UInt32    = 0x1 << 6
 }
