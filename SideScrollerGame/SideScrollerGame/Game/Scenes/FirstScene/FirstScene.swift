@@ -28,7 +28,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
     
-    
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -51,9 +50,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        if playerEra == .future {
-            addBox(position: .init(x: 1418, y: 10))
-        }
         addBoxes()
         addSpawnPoint()
         
@@ -63,26 +59,26 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false, isDynamic: Bool = true){
+    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
         let newBox = BoxNode()
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
-        newBox.physicsBody?.isDynamic = isDynamic
         addChild(newBox)
         
         if !alreadyHadBox{
             mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
         }
     }
+    
     func addBoxes() {
-        addBox(position: CGPoint(x: size.width / 2, y: size.height / 2))
+        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
 
         addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
 
-        addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250), isDynamic: false)
+        addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
    
-        addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250), isDynamic: false)
+        addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
 
         addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
     }
@@ -121,17 +117,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
-        
-        if playerEra == .present {
-            for n in mpManager.firstSceneBoxes {
-                if let childNode = self.children.first(where: { $0.name == "\(n.id)" }) {
-                    childNode.position = n.position
-                }else {
-                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
-                }
-            }
-        }
-        
         
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
