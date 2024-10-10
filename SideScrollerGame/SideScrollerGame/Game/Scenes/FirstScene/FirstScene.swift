@@ -26,6 +26,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var tileMapWidth: CGFloat = 0.0
     
+    var fadeNode: SKSpriteNode!
+    
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
@@ -53,6 +55,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addGeneralBoxes()
         addFutureBoxes()
         addSpawnPoint()
+        addFadeOverlay()
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
@@ -167,14 +170,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    //    func cameraAndBackgroundUpdate() {
-    //        cameraNode.position.x = playerNode.position.x
-    //        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
-    //        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
-    //        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
-    //        self.previousCameraXPosition = cameraNode.position.x
-    //
-    //    }
+    func addFadeOverlay() {
+        // Create a full-screen black node with zero alpha (fully transparent)
+        fadeNode = SKSpriteNode(color: .black, size: self.size)
+        fadeNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        fadeNode.alpha = 0
+        fadeNode.zPosition = 1000 // Ensure it's above all other nodes
+        fadeNode.name = "fadeNode"
+        self.addChild(fadeNode)
+    }
     
     
     func cameraAndBackgroundUpdate() {

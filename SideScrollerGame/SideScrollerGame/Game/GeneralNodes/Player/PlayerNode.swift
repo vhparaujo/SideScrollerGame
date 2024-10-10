@@ -167,13 +167,13 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
-        
-        if playerInfo.isDying {
-            if let position = spawnPoint {
-                self.position = position
-                playerInfo.isDying = false
-            }
-        }
+//        
+//        if playerInfo.isDying {
+//            if let position = spawnPoint {
+//                self.position = position
+//                playerInfo.isDying = false
+//            }
+//        }
         
         sendPlayerInfoToOthers()
         callJump()
@@ -312,15 +312,20 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
-        
-        
-        // Fade out action
-        let fadeOutAction = SKAction.fadeOut(withDuration: 1.0)
-        // Fade in action
-        let fadeInAction = SKAction.fadeIn(withDuration: 1.0)
-        
-        // Run the fade out, reset, fade in sequence on the scene
-        let sequence = SKAction.sequence([fadeOutAction, fadeInAction])
-        scene?.run(sequence)
+
+        if let scene = self.scene as? FirstScene {
+            // Create fade-in and fade-out actions
+            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
+            let resetPlayer = SKAction.run { [weak self] in
+                if let spawnPoint = self?.spawnPoint {
+                    self?.position = spawnPoint
+                }
+            }
+            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
+
+            // Run the sequence on the fade node
+            scene.fadeNode.run(sequence)
+        }
     }
 }
