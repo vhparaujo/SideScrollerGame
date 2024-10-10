@@ -11,7 +11,7 @@ import Combine
 class PlayerNode: SKSpriteNode {
     
     internal var spawnPoint: CGPoint?
-    
+        
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameControllerManager {
         return GameControllerManager.shared
@@ -34,6 +34,8 @@ class PlayerNode: SKSpriteNode {
     var boxRef: BoxNode?
     //    internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
+    
+    weak var elevatorRef: ElevatorNode?
     
     private var currentActionKey = "PlayerAnimation"
     
@@ -104,13 +106,20 @@ class PlayerNode: SKSpriteNode {
                 
             case .action:
                 if playerInfo.isGrounded {
-                    if let box = boxRef {
-                        playerInfo.action = true
-                        box.isGrabbed = true
-                        box.enableMovement()
-                        boxOffset = box.position.x - self.position.x
-                    }
-                }
+                               if let box = boxRef {
+                                   playerInfo.action = true
+                                   box.isGrabbed = true
+                                   box.enableMovement()
+                                   boxOffset = box.position.x - self.position.x
+                               }
+                           }
+
+                           if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
+                               if let elevator = elevatorRef {
+                                   playerInfo.action = true
+                                   elevator.moveManual()
+                               }
+                           }
             case .brintToPresent:
                 break
                 
@@ -159,6 +168,7 @@ class PlayerNode: SKSpriteNode {
                     playerInfo.action = false
                     boxRef?.isGrabbed = false
                     boxRef?.disableMovement()
+                    elevatorRef?.stopManualMove()
                 }
             default:
                 break
@@ -166,15 +176,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     // Update player position and animation based on movement direction
-    func update(deltaTime: TimeInterval) {
-//        
-//        if playerInfo.isDying {
-//            if let position = spawnPoint {
-//                self.position = position
-//                playerInfo.isDying = false
-//            }
-//        }
-        
+    func update(deltaTime: TimeInterval) {        
         sendPlayerInfoToOthers()
         callJump()
         callMovements()
