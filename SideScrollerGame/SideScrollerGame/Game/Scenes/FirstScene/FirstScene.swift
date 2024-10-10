@@ -54,6 +54,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addFutureBoxes()
         addSpawnPoint()
         
+        if playerEra == .future {
+            addBox(position: .init(x: 1418, y: 10))
+        }
+        
         
         
         let mapBuilder = MapBuilder(scene: self)

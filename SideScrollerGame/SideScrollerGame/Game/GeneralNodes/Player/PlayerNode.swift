@@ -112,6 +112,12 @@ class PlayerNode: SKSpriteNode {
                 }
             }
         case .brintToPresent:
+            if let box = boxRef {
+                if !isPassedToPast {
+                    mpManager.sendInfoToOtherPlayers(box: .init(position: box.position, id: box.id))
+                    
+                }
+            }
 //            if let box = boxRef {
 //                 if !isPassedToPast {
 //                     mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id))
