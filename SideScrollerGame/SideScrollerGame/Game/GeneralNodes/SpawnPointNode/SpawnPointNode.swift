@@ -8,15 +8,22 @@
 import SpriteKit
 
 class SpawnPointNode: SKSpriteNode {
-    
     init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .blue, size: size)
-        
+        super.init(texture: nil, color: .green, size: size)
         self.position = position
-        self.isHidden = false
+        self.setupPhysicsBody()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+        self.setupPhysicsBody()
+    }
+
+    func setupPhysicsBody() {
+        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
+        self.physicsBody?.isDynamic = false
+        self.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player
+        self.physicsBody?.collisionBitMask = 0
     }
 }

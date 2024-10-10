@@ -16,4 +16,6 @@ struct PhysicsCategories {
     static let platform: UInt32 = 0x1 << 3
     static let Death: UInt32  = 0x1 << 5
     static let wall: UInt32    = 0x1 << 6
+    static let spawnPoint: UInt32 = 0x1 << 7  // Add this line
+
 }

@@ -60,13 +60,9 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    override func keyUp(with event: NSEvent) {
-        
-    }
+    override func keyUp(with event: NSEvent) {}
     
-    override func keyDown(with event: NSEvent) {
-        
-    }
+    override func keyDown(with event: NSEvent) {}
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
         let newBox = BoxNode()
