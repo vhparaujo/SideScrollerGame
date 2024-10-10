@@ -148,7 +148,6 @@ class MultiplayerManager: NSObject {
         if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
             self.boxes[index].position = box.position
         }
-//        firstSceneBoxes[box.id] = box
         
         do {
             let data = encode(content: box)
