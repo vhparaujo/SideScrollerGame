@@ -25,9 +25,12 @@ class PlayerNode: SKSpriteNode {
     internal var currentPlatform: PlatformNode?
     
     //Box movement
-    var boxRef: BoxNode?
+    weak var boxRef: BoxNode?
 //    internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
+    
+    // Elevator Movement
+    weak var elevatorRef: ElevatorNode?
     
     private var currentActionKey = "PlayerAnimation"
     
@@ -62,7 +65,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.moveButton
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform
         self.physicsBody?.friction = 1.0
         self.physicsBody?.restitution = 0.0
@@ -105,6 +108,13 @@ class PlayerNode: SKSpriteNode {
                         boxOffset = box.position.x - self.position.x
                     }
                 }
+                
+            if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
+                if let elevator = elevatorRef {
+                    playerInfo.action = true
+                    elevator.moveManual()
+                }
+            }
             default:
                 break
         }
@@ -150,7 +160,9 @@ class PlayerNode: SKSpriteNode {
                     playerInfo.action = false
                     boxRef?.isGrabbed = false
                     boxRef?.disableMovement()
+                    elevatorRef?.stopManualMove()
                 }
+                
             default:
                 break
         }
