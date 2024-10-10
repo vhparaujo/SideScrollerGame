@@ -59,6 +59,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         tileMapWidth = mapBuilder.tileMapWidth
         
     }
+    
     override func keyUp(with event: NSEvent) {
         
     }
@@ -75,7 +76,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addChild(newBox)
         
         if !alreadyHadBox{
-            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
+//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
         }
     }
     
