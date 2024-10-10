@@ -4,7 +4,6 @@
 //
 //  Created by Eduardo on 03/10/24.
 //
-
 import SpriteKit
 
 class MapBuilder {
@@ -22,90 +21,103 @@ class MapBuilder {
     func embedScene(fromFileNamed fileName: String) {
         // Embed the specified scene into the current scene
         if let platformScene = SKScene(fileNamed: fileName) {
+            // Process the visible tile map node
             if let tileNode = platformScene.childNode(withName: "Tile Map Node") as? SKTileMapNode {
+                processTileMapNode(tileNode)
+            }
+            // Process the invisible tile map node
+            if let invisibleTileNode = platformScene.childNode(withName: "Invisible Tile Map Node") as? SKTileMapNode {
                 
-                tileNode.setScale(5)
-                
-                self.tileMapWidth = tileNode.mapSize.width * tileNode.xScale
-                
-                // Position the tile map at the center of the screen
-                tileNode.position = CGPoint(x: tileMapWidth / 2, y: scene.size.height / 2)
-                tileNode.zPosition = 1
-                
-                // Remove any existing physics body on the tile map
-                tileNode.physicsBody = nil
-                
-                // Create a physics layer to hold all the physics bodies
-                let physicsLayer = SKNode()
-                physicsLayer.position = CGPoint.zero
-                scene.addChild(physicsLayer)
-                
-                // Iterate over each tile to create individual physics bodies
-                for col in 0..<tileNode.numberOfColumns {
-                    for row in 0..<tileNode.numberOfRows {
-                        // Get the tile definition at this column and row
-                        if let tileDefinition = tileNode.tileDefinition(atColumn: col, row: row) {
-                            // Get the tile's position in tileNode's coordinate system
-                            let tilePosition = tileNode.centerOfTile(atColumn: col, row: row)
-                            // Convert tile position to the scene's coordinate system
-                            let tilePositionInScene = tileNode.convert(tilePosition, to: scene)
-                            // Create a node for the tile's physics body
-                            let tilePhysicsNode = SKNode()
-                            tilePhysicsNode.position = tilePositionInScene
-                            tilePhysicsNode.zPosition = tileNode.zPosition
-                            // Adjust the physics body size for the tile's scaling
-                            let tileSize = CGSize(width: tileNode.tileSize.width * tileNode.xScale,
-                                                  height: tileNode.tileSize.height * tileNode.yScale)
-                            
-                            // Identify the tile type
-                            if let tileName = tileDefinition.name {
-                                switch tileName {
-                                    case "Ground":
-                                        // Create the physics body for ground tiles
-                                        tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                                        tilePhysicsNode.physicsBody?.isDynamic = false
-                                        tilePhysicsNode.physicsBody?.friction = 0
-                                        tilePhysicsNode.physicsBody?.restitution = 0.0
-
-                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
-                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                    case "Wall":
-                                        // Create the physics body for ground tiles
-                                        tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                                        tilePhysicsNode.physicsBody?.isDynamic = false
-                                        tilePhysicsNode.physicsBody?.friction = 0
-                                        tilePhysicsNode.physicsBody?.restitution = 0.0
-
-                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
-                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                    case "Death":
-                                        // Create the physics body for death tiles
-                                        tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                        tilePhysicsNode.physicsBody?.isDynamic = false
-                                        tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
-                                        tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                                        tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
-                                    default:
-                                        // Default physics body for other tiles
-                                        break
-                                }
-                            }
-                            
-                            // Add the physics node to the physics layer if it has a physics body
-                            if tilePhysicsNode.physicsBody != nil {
-                                physicsLayer.addChild(tilePhysicsNode)
-                            }
-                        }
-                    }
-                }
-                
-                tileNode.removeFromParent()
-                // Add the tile node to the scene
-                scene.addChild(tileNode)
+                print("created invisible tile mapd")
+                // Set the alpha to 0 to make it invisible
+                invisibleTileNode.alpha = 0.0
+                processTileMapNode(invisibleTileNode)
             }
         }
+    }
+    
+    // Function to process a tile map node
+    func processTileMapNode(_ tileNode: SKTileMapNode) {
+        tileNode.setScale(5)
+        
+        self.tileMapWidth = tileNode.mapSize.width * tileNode.xScale
+        
+        // Position the tile map at the center of the screen
+        tileNode.position = CGPoint(x: tileMapWidth / 2, y: scene.size.height / 2)
+        tileNode.zPosition = 1
+        
+        // Remove any existing physics body on the tile map
+        tileNode.physicsBody = nil
+        
+        // Create a physics layer to hold all the physics bodies
+        let physicsLayer = SKNode()
+        physicsLayer.position = CGPoint.zero
+        scene.addChild(physicsLayer)
+        
+        // Iterate over each tile to create individual physics bodies
+        for col in 0..<tileNode.numberOfColumns {
+            for row in 0..<tileNode.numberOfRows {
+                // Get the tile definition at this column and row
+                if let tileDefinition = tileNode.tileDefinition(atColumn: col, row: row) {
+                    // Get the tile's position in tileNode's coordinate system
+                    let tilePosition = tileNode.centerOfTile(atColumn: col, row: row)
+                    // Convert tile position to the scene's coordinate system
+                    let tilePositionInScene = tileNode.convert(tilePosition, to: scene)
+                    // Create a node for the tile's physics body
+                    let tilePhysicsNode = SKNode()
+                    tilePhysicsNode.position = tilePositionInScene
+                    tilePhysicsNode.zPosition = tileNode.zPosition
+                    // Adjust the physics body size for the tile's scaling
+                    let tileSize = CGSize(width: tileNode.tileSize.width * tileNode.xScale,
+                                          height: tileNode.tileSize.height * tileNode.yScale)
+                    
+                    // Identify the tile type
+                    if let tileName = tileDefinition.name {
+                        switch tileName {
+                            case "Ground":
+                                // Create the physics body for ground tiles
+                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                                tilePhysicsNode.physicsBody?.isDynamic = false
+                                tilePhysicsNode.physicsBody?.friction = 0
+                                tilePhysicsNode.physicsBody?.restitution = 0.0
+
+                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
+                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            case "Wall":
+                                // Create the physics body for wall tiles
+                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                                tilePhysicsNode.physicsBody?.isDynamic = false
+                                tilePhysicsNode.physicsBody?.friction = 0
+                                tilePhysicsNode.physicsBody?.restitution = 0.0
+
+                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
+                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            case "Death":
+                                // Create the physics body for death tiles
+                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                                tilePhysicsNode.physicsBody?.isDynamic = false
+                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
+                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
+                            default:
+                                // Default physics body for other tiles
+                                break
+                        }
+                    }
+                    
+                    // Add the physics node to the physics layer if it has a physics body
+                    if tilePhysicsNode.physicsBody != nil {
+                        physicsLayer.addChild(tilePhysicsNode)
+                    }
+                }
+            }
+        }
+        
+        tileNode.removeFromParent()
+        // Add the tile node to the scene
+        scene.addChild(tileNode)
     }
     
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {

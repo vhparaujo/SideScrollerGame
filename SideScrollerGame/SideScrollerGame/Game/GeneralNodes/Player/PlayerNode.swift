@@ -11,7 +11,7 @@ import Combine
 class PlayerNode: SKSpriteNode {
     
     internal var spawnPoint: CGPoint?
-    
+        
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameControllerManager {
         return GameControllerManager.shared
@@ -31,11 +31,10 @@ class PlayerNode: SKSpriteNode {
     var isPassedToPast = false
     
     //Box movement
-    weak var boxRef: BoxNode?
-//    internal var isGrabbed = false
+    var boxRef: BoxNode?
+    //    internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
     
-    // Elevator Movement
     weak var elevatorRef: ElevatorNode?
     
     private var currentActionKey = "PlayerAnimation"
@@ -71,7 +70,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.moveButton
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
@@ -94,39 +93,38 @@ class PlayerNode: SKSpriteNode {
     
     func handleKeyPress(action: GameActions) {
         switch action {
-        case .moveLeft:
-            playerInfo.isMovingLeft = true
-            playerInfo.facingRight = false
-            
-        case .moveRight:
-            playerInfo.isMovingRight = true
-            playerInfo.facingRight = true
-            
-        case .jump:
-            playerInfo.isJumping = true
-            
-        case .action:
-            if playerInfo.isGrounded {
-                if let box = boxRef {
-                    playerInfo.action = true
-                    box.isGrabbed = true
-                    box.enableMovement()
-                    boxOffset = box.position.x - self.position.x
-                }
-            }
+            case .moveLeft:
+                playerInfo.isMovingLeft = true
+                playerInfo.facingRight = false
+                
+            case .moveRight:
+                playerInfo.isMovingRight = true
+                playerInfo.facingRight = true
+                
+            case .jump:
+                playerInfo.isJumping = true
+                
+            case .action:
+                if playerInfo.isGrounded {
+                               if let box = boxRef {
+                                   playerInfo.action = true
+                                   box.isGrabbed = true
+                                   box.enableMovement()
+                                   boxOffset = box.position.x - self.position.x
+                               }
+                           }
 
-            if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
-                if let elevator = elevatorRef {
-                    playerInfo.action = true
-                    elevator.moveManual()
-                }
-            }
-
-        case .brintToPresent:
-           break
-            
-        default:
-            break
+                           if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
+                               if let elevator = elevatorRef {
+                                   playerInfo.action = true
+                                   elevator.moveManual()
+                               }
+                           }
+            case .brintToPresent:
+                break
+                
+            default:
+                break
         }
     }
     
@@ -154,74 +152,31 @@ class PlayerNode: SKSpriteNode {
     // Handle key releases
     func handleKeyRelease(action: GameActions) {
         switch action {
-        case .moveLeft:
-            playerInfo.isMovingLeft = false
-            
-        case .moveRight:
-            playerInfo.isMovingRight = false
-            if playerInfo.isMovingLeft {
-                playerInfo.facingRight = false
-                if !playerInfo.action {
-                    self.xScale = -abs(self.xScale)
+            case .moveLeft:
+                playerInfo.isMovingLeft = false
+                
+            case .moveRight:
+                playerInfo.isMovingRight = false
+                if playerInfo.isMovingLeft {
+                    playerInfo.facingRight = false
+                    if !playerInfo.action {
+                        self.xScale = -abs(self.xScale)
+                    }
                 }
-            }
-        case .action:
-            if playerInfo.action {
-                playerInfo.action = false
-                boxRef?.isGrabbed = false
-                boxRef?.disableMovement()
-                elevatorRef?.stopManualMove()
-            }
-        default:
-            break
-        }
-    }
-    
-    func triggerDeath() {
-        // Alterar estado para "morte" para evitar outras ações
-        playerInfo.isDying = true
-        
-        // Remover todas as ações anteriores
-        self.removeAllActions()
-        
-        // Desativar a física do jogador para evitar movimentação durante a animação
-        self.physicsBody?.isDynamic = false
-        
-        // **Parte 1: Salto para cima**
-        let jumpUp = SKAction.moveBy(x: 0, y: 300, duration: 0.3) // O personagem pula para fora da tela
-        let scaleDown = SKAction.scale(to: 7, duration: 0.3)    // O personagem encolhe enquanto sobe
-        
-        // **Parte 2: Queda rápida**
-        let fallDown = SKAction.moveBy(x: 0, y: -1000, duration: 0.8) // O personagem cai rapidamente
-        let scaleUp = SKAction.scale(to: 5, duration: 0.8)          // O personagem desaparece gradualmente durante a queda
-        
-        // **Animação de texturas durante o salto e queda**
-        let deathTextures = PlayerTextureState.hurt.textures(for: playerEra)
-        let deathAnimation = SKAction.animate(with: deathTextures, timePerFrame: 0.1)
-        
-        // **Repetir a animação até o final da sequência de morte**
-        let repeatDeathAnimation = SKAction.repeatForever(deathAnimation)
-        
-        // **Combinar a animação com o movimento de salto e queda**
-        let jumpAndAnimate = SKAction.group([SKAction.sequence([jumpUp, scaleDown, fallDown, scaleUp]), repeatDeathAnimation, SKAction.run { [weak self] in
-            self?.playerInfo.isDying = false
-            
-        }])
-        
-        // Executar a sequência de animação e movimento
-        let deathSequence = SKAction.sequence([jumpAndAnimate, SKAction.removeFromParent()])
-        
-        // Rodar a sequência de morte
-        self.run(deathSequence)
-        
-        if let spawnPoint = spawnPoint {
-            self.position = spawnPoint
+            case .action:
+                if playerInfo.action {
+                    playerInfo.action = false
+                    boxRef?.isGrabbed = false
+                    boxRef?.disableMovement()
+                    elevatorRef?.stopManualMove()
+                }
+            default:
+                break
         }
     }
     
     // Update player position and animation based on movement direction
-    func update(deltaTime: TimeInterval) {
-        
+    func update(deltaTime: TimeInterval) {        
         sendPlayerInfoToOthers()
         callJump()
         callMovements()
@@ -235,6 +190,10 @@ class PlayerNode: SKSpriteNode {
         } else {
             desiredVelocity = 0.0
         }
+        
+        
+
+        
         
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
@@ -263,9 +222,7 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
-        } else if playerInfo.isDying {
-            changeState(to: .hurt)
-        } else {
+        }else {
             changeState(to: .idle)
         }
     }
@@ -324,9 +281,16 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
-            
-        } else if otherCategory == PhysicsCategories.Death {
+        }
+        if otherCategory == PhysicsCategories.Death {
             triggerDeath()
+        }
+        
+        if otherCategory == PhysicsCategories.spawnPoint {
+            // Set the spawn point when the player touches it
+            if let spawnNode = otherBody.node as? SpawnPointNode {
+                self.spawnPoint = spawnNode.position
+            }
         }
     }
     
@@ -345,6 +309,25 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }
+        }
+    }
+    
+    func triggerDeath() {
+        playerInfo.isDying = true
+
+        if let scene = self.scene as? FirstScene {
+            // Create fade-in and fade-out actions
+            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
+            let resetPlayer = SKAction.run { [weak self] in
+                if let spawnPoint = self?.spawnPoint {
+                    self?.position = spawnPoint
+                }
+            }
+            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
+
+            // Run the sequence on the fade node
+            scene.fadeNode.run(sequence)
         }
     }
 }

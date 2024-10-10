@@ -26,6 +26,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var tileMapWidth: CGFloat = 0.0
     
+    var fadeNode: SKSpriteNode!
+    
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
     
     let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
@@ -55,6 +57,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
 //        addGeneralBoxes()
 //        addFutureBoxes()
         addSpawnPoint()
+        addFadeOverlay()
         
         if playerEra == .future {
             addBox(position: .init(x: 1418, y: 10))
@@ -70,13 +73,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addChild(elevator)
         
     }
-    override func keyUp(with event: NSEvent) {
-        
-    }
     
-    override func keyDown(with event: NSEvent) {
-        
-    }
+    override func keyUp(with event: NSEvent) {}
+    
+    override func keyDown(with event: NSEvent) {}
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
         let newBox = BoxNode(mpManager: mpManager)
@@ -86,7 +86,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         addChild(newBox)
         
         if !alreadyHadBox{
-            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
+//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
         }
     }
     
@@ -216,14 +216,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    //    func cameraAndBackgroundUpdate() {
-    //        cameraNode.position.x = playerNode.position.x
-    //        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
-    //        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
-    //        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
-    //        self.previousCameraXPosition = cameraNode.position.x
-    //
-    //    }
+    func addFadeOverlay() {
+        // Create a full-screen black node with zero alpha (fully transparent)
+        fadeNode = SKSpriteNode(color: .black, size: self.size)
+        fadeNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        fadeNode.alpha = 0
+        fadeNode.zPosition = 1000 // Ensure it's above all other nodes
+        fadeNode.name = "fadeNode"
+        self.addChild(fadeNode)
+    }
     
     
     func cameraAndBackgroundUpdate() {

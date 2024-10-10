@@ -22,7 +22,7 @@ struct ContentView: View {
 //            JoinGameView(managerMP: managerMP)
 //        }
         
-        GameView(currentSceneType: .first(.future), mpManager: managerMP)
+        GameView(currentSceneType: .first(.present), mpManager: managerMP)
         
     }
 }
