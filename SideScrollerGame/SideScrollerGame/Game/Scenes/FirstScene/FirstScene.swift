@@ -50,7 +50,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        addBoxes()
+        addGeneralBoxes()
+        addFutureBoxes()
         addSpawnPoint()
         
         let mapBuilder = MapBuilder(scene: self)
@@ -78,15 +79,16 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func addBoxes() {
+    func addFutureBoxes() {
+        if playerEra == .future{
+            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
+            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
+        }
+    }
+    
+    func addGeneralBoxes() {
         addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
-
         addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-
-        addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
-   
-        addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
-
         addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
     }
     
