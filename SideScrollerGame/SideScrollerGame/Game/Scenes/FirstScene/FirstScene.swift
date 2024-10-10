@@ -68,7 +68,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         if !alreadyHadBox{
 //            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
-            mpManager.firstSceneBoxes[newBox.id] = newBox.position
+            mpManager.firstSceneBoxes[newBox.id] = newBox
         }
     }
     
@@ -102,10 +102,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         if playerEra == .present {
             for n in mpManager.firstSceneBoxes.keys {
                 if (self.children.first(where: { $0.name == "\(n)" }) == nil) {
-                    addBox(position: mpManager.firstSceneBoxes[n] ?? .zero, id: n, alreadyHadBox: true)
+                    addBox(position: mpManager.firstSceneBoxes[n]?.position ?? .zero, id: n, alreadyHadBox: true)
                 }
             }
         }
+        
+        
         
         
         // Calculate deltaTime if needed

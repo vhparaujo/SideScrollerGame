@@ -112,7 +112,7 @@ class PlayerNode: SKSpriteNode {
         case .brintToPresent:
             if let box = boxRef {
                 if !isPassedToPast {
-                    mpManager.sendInfoToOtherPlayers(box: .init(position: box.position, id: box.id))
+                    mpManager.sendInfoToOtherPlayers(box: .init(mpManager: mpManager))
                     
                 }
             }
