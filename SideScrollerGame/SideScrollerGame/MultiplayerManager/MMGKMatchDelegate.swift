@@ -15,28 +15,24 @@ extension MultiplayerManager: GKMatchDelegate {
     func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         switch state {
         case .connected:
-            print("\(player.displayName) Connected")
             
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
-                
             }
         case .disconnected:
-            print("\(player.displayName) Disconnected")
             
             self.endMatch()
         default:
-            print("\(player.displayName) Connection Unknown")
             self.endMatch()
         }
     }
     
     /// Handles an error during the matchmaking process.
     func match(_ match: GKMatch, didFailWithError error: Error?) {
-        print("\n\nMatch object fails with error: \(error!.localizedDescription)")
+        endMatch()
     }
-
+    
     /// Reinvites a player when they disconnect from the match.
     func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
         return false
@@ -51,11 +47,18 @@ extension MultiplayerManager: GKMatchDelegate {
         if let dataReceived: PlayerInfo = decode(matchData: data) {
             self.otherPlayerInfo.value = dataReceived
             
-        }else if let dataReceived: PlayerEra = decode(matchData: data) {
-            self.gameStartInfo.otherPlayerEraSelection = dataReceived
+        }else if let dataReceived: PlayerStartInfo = decode(matchData: data) {
+            self.gameStartInfo.otherPlayerStartInfo = dataReceived
             
-        }else if let dataReceived: IsPressed = decode(matchData: data) {
-            self.gameStartInfo.isStartPressedByOtherPlayer = dataReceived
+        }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
+            if let index = self.boxes.firstIndex(where: { $0.id == dataReceived.id }) {
+                self.boxes[index].position = dataReceived.position
+            }else{
+                self.boxes.append(dataReceived)
+            }
         }
+        
     }
 }
+
+

@@ -8,8 +8,11 @@ import SpriteKit
 
 class BoxNode: SKSpriteNode {
     var isGrabbed: Bool = false
+    var id = UUID()
+    var mpManager: MultiplayerManager
 
-    init() {
+    init(mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         let texture = SKTexture(imageNamed: "box") // Replace with your box texture
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
@@ -27,8 +30,8 @@ class BoxNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true // Gravity enabled
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.box
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground
-        self.physicsBody?.collisionBitMask = PhysicsCategories.ground // Only collide with ground
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall
+        self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.wall
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
         self.physicsBody?.pinned = false // Start unpinned

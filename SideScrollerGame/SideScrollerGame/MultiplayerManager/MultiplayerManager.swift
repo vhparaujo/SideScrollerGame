@@ -4,10 +4,10 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    var selfPlayerInfo: PlayerInfo? 
+    var localPlayer: PlayerInfo? 
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(isStartPressedByPlayer: .no, isStartPressedByOtherPlayer: .no)
+    var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
@@ -18,6 +18,11 @@ class MultiplayerManager: NSObject {
     
     // Match information
     var opponent: GKPlayer? = nil
+    
+    //boxes
+//    var firstSceneBoxes: [UUID: CGPoint] = [:]
+    var boxes: [BoxTeletransport] = []
+
     
     /// The name of the match.
     var matchName: String {
@@ -37,7 +42,7 @@ class MultiplayerManager: NSObject {
     /// The root view controller of the window.
     override init() {
         super.init()
-        authenticatePlayer()
+        authenticateLocalPlayer()
         
     }
     
@@ -49,14 +54,14 @@ class MultiplayerManager: NSObject {
     }
     
     /// Authenticates the local player, initiates a multiplayer game, and adds the access point.
-    func authenticatePlayer() {
+    func authenticateLocalPlayer() {
         GKLocalPlayer.local.authenticateHandler = { viewController, error in
             if let viewController = viewController {
                 self.rootViewController?.presentAsModalWindow(viewController)
                 return
             }
             if let error = error {
-                print("Error: \(error.localizedDescription).")
+                print("Error authenticating player: \(error)")
                 return
             }
             GKLocalPlayer.local.register(self)
@@ -98,17 +103,17 @@ class MultiplayerManager: NSObject {
         playingGame = false
         choosingEra = false
         matchAvailable = true
-        selfPlayerInfo = nil
+        localPlayer = nil
         otherPlayerInfo.value = nil
+      
         opponent = nil
         GKAccessPoint.shared.isActive = true
         
-        print("Game has been stopped and reset.")
     }
 
     /// Sends player info to other players.
     func sendInfoToOtherPlayers(playerInfo: PlayerInfo) {
-        selfPlayerInfo = playerInfo
+        localPlayer = playerInfo
         do {
             let data = encode(content: playerInfo)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
@@ -117,8 +122,8 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(content: PlayerEra){
-        gameStartInfo.playerEraSelection = content
+    func sendInfoToOtherPlayers(content: PlayerStartInfo){
+        gameStartInfo.localPlayerStartInfo = content
         
         do {
             let data = encode(content: content)
@@ -128,11 +133,25 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(content: IsPressed){
-        gameStartInfo.isStartPressedByPlayer = content
+//    func sendInfoToOtherPlayers(content: BoxTeletransport){
+//        firstSceneBoxes[content.id] = content.position
+//        
+//        do {
+//            let data = encode(content: content)
+//            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+//        } catch {
+//            print("Error: \(error.localizedDescription).")
+//        }
+//    }
+    
+    func sendInfoToOtherPlayers(box: BoxTeletransport) {
+        if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
+            self.boxes[index].position = box.position
+        }
+//        firstSceneBoxes[box.id] = box
         
         do {
-            let data = encode(content: content)
+            let data = encode(content: box)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
         } catch {
             print("Error: \(error.localizedDescription).")

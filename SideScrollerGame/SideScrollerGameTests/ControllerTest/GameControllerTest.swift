@@ -10,10 +10,10 @@ import Testing
 
 struct GameControllerTest {
     
-    var gameController: GameController
+    var gameController: GameControllerManager
     
     init() async {
-        self.gameController = await GameController()
+        self.gameController = await GameControllerManager()
     }
     
     
