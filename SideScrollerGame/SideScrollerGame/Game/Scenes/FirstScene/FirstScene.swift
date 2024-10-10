@@ -100,9 +100,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         if playerEra == .present {
             for n in mpManager.boxes {
-                if let childNode = self.children.first(where: { $0.name == "\(n.id)" }) {
-                    childNode.position = n.position
-                }else {
+                if (self.children.first(where: { $0.name == "\(n.id)" }) == nil) {
                     addBox(position: n.position, id: n.id, alreadyHadBox: true)
                 }
             }
