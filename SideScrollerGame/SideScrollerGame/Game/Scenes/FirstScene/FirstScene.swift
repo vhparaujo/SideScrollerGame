@@ -60,14 +60,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
-        let newBox = BoxNode()
+        let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
         addChild(newBox)
         
         if !alreadyHadBox{
-            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
+//            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
+            mpManager.firstSceneBoxes[newBox.id] = newBox.position
         }
     }
     
@@ -99,9 +100,9 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         self.cameraAndBackgroundUpdate()
         
         if playerEra == .present {
-            for n in mpManager.boxes {
-                if (self.children.first(where: { $0.name == "\(n.id)" }) == nil) {
-                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
+            for n in mpManager.firstSceneBoxes.keys {
+                if (self.children.first(where: { $0.name == "\(n)" }) == nil) {
+                    addBox(position: mpManager.firstSceneBoxes[n] ?? .zero, id: n, alreadyHadBox: true)
                 }
             }
         }

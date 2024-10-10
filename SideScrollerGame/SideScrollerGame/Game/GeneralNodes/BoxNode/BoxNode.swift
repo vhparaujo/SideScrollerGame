@@ -9,8 +9,10 @@ import SpriteKit
 class BoxNode: SKSpriteNode {
     var isGrabbed: Bool = false
     var id = UUID()
+    var mpManager: MultiplayerManager
 
-    init() {
+    init(mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         let texture = SKTexture(imageNamed: "box") // Replace with your box texture
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
@@ -33,6 +35,15 @@ class BoxNode: SKSpriteNode {
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
         self.physicsBody?.pinned = false // Start unpinned
+    }
+    
+    func update(deltaTime: TimeInterval){
+        if isGrabbed {
+            mpManager.sendInfoToOtherPlayers(box: .init(position: self.position, id: self.id))
+        }
+            else{
+                self.position.x = mpManager.firstSceneBoxes[self.id]!.x
+        }
     }
 
     // Enable movement when grabbed
