@@ -30,6 +30,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
     
+    let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+    
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -52,14 +54,23 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        addGeneralBoxes()
-        addFutureBoxes()
+//        addGeneralBoxes()
+//        addFutureBoxes()
         addSpawnPoint()
         addFadeOverlay()
+        
+        if playerEra == .future {
+            addBox(position: .init(x: 1418, y: 10))
+        }
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
+
+        
+        
+        elevator.position = CGPoint(x: 1200, y: -430)
+        addChild(elevator)
         
     }
     
@@ -68,7 +79,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func keyDown(with event: NSEvent) {}
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
-        let newBox = BoxNode()
+        let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
@@ -79,18 +90,30 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func addFutureBoxes() {
-        if playerEra == .future{
-            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
-            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
-        }
-    }
+//    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
+//        let newBox = BoxNode()
+//        newBox.position = position
+//        newBox.id = id
+//        newBox.name = "\(newBox.id)"
+//        addChild(newBox)
+//        
+//        if !alreadyHadBox{
+//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
+//        }
+//    }
     
-    func addGeneralBoxes() {
-        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
-        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
-    }
+//    func addFutureBoxes() {
+//        if playerEra == .future{
+//            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
+//            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
+//        }
+//    }
+//    
+//    func addGeneralBoxes() {
+//        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
+//        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
+//        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
+//    }
     
     func addSpawnPoint() {
         spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
@@ -131,6 +154,17 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         
+        
+        if playerEra == .present {
+            for n in mpManager.boxes {
+                if (self.children.first(where: { $0.name == "\(n.id)" }) == nil) {
+                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
+                }
+            }
+        }
+        
+        
+        
         // Update the player
         playerNode.update(deltaTime: deltaTime)
         
@@ -152,6 +186,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 playerNode.boxRef = boxNode
             }
         }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+                playerNode.elevatorRef = moveButtonNode.parent as? ElevatorNode
+            }
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -166,6 +206,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 if playerNode.boxRef === boxNode {
                     playerNode.boxRef = nil
                 }
+            }
+        }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+                playerNode.elevatorRef = nil
             }
         }
     }
