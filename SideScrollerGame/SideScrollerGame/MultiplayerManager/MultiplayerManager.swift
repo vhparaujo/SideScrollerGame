@@ -20,8 +20,8 @@ class MultiplayerManager: NSObject {
     var opponent: GKPlayer? = nil
     
     //boxes
-//    var boxes: [BoxTeletransport] = []
-    var firstSceneBoxes: [UUID: BoxNode] = [:]
+    var boxes: [BoxTeletransport] = []
+//    var firstSceneBoxes: [UUID: BoxNode] = [:]
     
     /// The name of the match.
     var matchName: String {
@@ -132,11 +132,11 @@ class MultiplayerManager: NSObject {
         }
     }
     
-    func sendInfoToOtherPlayers(box: BoxNode) {
-//        if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
-//            self.boxes[index].position = box.position
-//        }
-        firstSceneBoxes[box.id] = box
+    func sendInfoToOtherPlayers(box: BoxTeletransport) {
+        if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
+            self.boxes[index].position = box.position
+        }
+//        firstSceneBoxes[box.id] = box
         
         do {
             let data = encode(content: box)
