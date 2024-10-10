@@ -28,6 +28,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
     
+    let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+    
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -61,6 +63,11 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
+
+        
+        
+        elevator.position = CGPoint(x: 1200, y: -430)
+        addChild(elevator)
         
     }
     override func keyUp(with event: NSEvent) {
@@ -179,6 +186,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 playerNode.boxRef = boxNode
             }
         }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+                playerNode.elevatorRef = moveButtonNode.parent as? ElevatorNode
+            }
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -193,6 +206,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 if playerNode.boxRef === boxNode {
                     playerNode.boxRef = nil
                 }
+            }
+        }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+                playerNode.elevatorRef = nil
             }
         }
     }
