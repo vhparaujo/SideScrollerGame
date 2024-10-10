@@ -50,9 +50,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        addGeneralBoxes()
-        addFutureBoxes()
+//        addGeneralBoxes()
+//        addFutureBoxes()
         addSpawnPoint()
+        
+        if playerEra == .future {
+            addBox(position: .init(x: 1418, y: 10))
+        }
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
@@ -68,29 +72,41 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
-        let newBox = BoxNode()
+        let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
         addChild(newBox)
         
         if !alreadyHadBox{
-            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
+            mpManager.boxes.append(.init(position: newBox.position, id: newBox.id))
         }
     }
     
-    func addFutureBoxes() {
-        if playerEra == .future{
-            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
-            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
-        }
-    }
+//    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
+//        let newBox = BoxNode()
+//        newBox.position = position
+//        newBox.id = id
+//        newBox.name = "\(newBox.id)"
+//        addChild(newBox)
+//        
+//        if !alreadyHadBox{
+//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
+//        }
+//    }
     
-    func addGeneralBoxes() {
-        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
-        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
-    }
+//    func addFutureBoxes() {
+//        if playerEra == .future{
+//            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
+//            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
+//        }
+//    }
+//    
+//    func addGeneralBoxes() {
+//        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
+//        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
+//        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
+//    }
     
     func addSpawnPoint() {
         spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
@@ -130,6 +146,17 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
+        
+        
+        if playerEra == .present {
+            for n in mpManager.boxes {
+                if (self.children.first(where: { $0.name == "\(n.id)" }) == nil) {
+                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
+                }
+            }
+        }
+        
+        
         
         // Update the player
         playerNode.update(deltaTime: deltaTime)

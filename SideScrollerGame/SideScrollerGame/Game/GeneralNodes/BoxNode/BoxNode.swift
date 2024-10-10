@@ -9,8 +9,10 @@ import SpriteKit
 class BoxNode: SKSpriteNode {
     var isGrabbed: Bool = false
     var id = UUID()
+    var mpManager: MultiplayerManager
 
-    init() {
+    init(mpManager: MultiplayerManager) {
+        self.mpManager = mpManager
         let texture = SKTexture(imageNamed: "box") // Replace with your box texture
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
