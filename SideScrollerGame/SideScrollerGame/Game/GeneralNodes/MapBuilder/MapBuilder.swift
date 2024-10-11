@@ -28,7 +28,6 @@ class MapBuilder {
             // Process the invisible tile map node
             if let invisibleTileNode = platformScene.childNode(withName: "Invisible Tile Map Node") as? SKTileMapNode {
                 
-                print("created invisible tile mapd")
                 // Set the alpha to 0 to make it invisible
                 invisibleTileNode.alpha = 0.0
                 processTileMapNode(invisibleTileNode)

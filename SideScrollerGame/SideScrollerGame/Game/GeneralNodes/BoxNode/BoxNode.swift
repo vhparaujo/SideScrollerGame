@@ -27,24 +27,23 @@ class BoxNode: SKSpriteNode {
     func update(deltaTime: TimeInterval) {
         if isGrabbed {
             mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id))
-            
+         
         }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position.x{
             self.position.x = posX
-            
         }
     }
 
     private func setupPhysicsBody() {
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
         self.physicsBody?.isDynamic = true
-        self.physicsBody?.affectedByGravity = true // Gravity enabled
+        self.physicsBody?.affectedByGravity = true 
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.box
         self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
         self.physicsBody?.friction = 100.0
         self.physicsBody?.restitution = 0.0
-        self.physicsBody?.pinned = false // Start unpinned
+        self.physicsBody?.pinned = false
     }
 
     // Enable movement when grabbed

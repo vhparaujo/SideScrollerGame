@@ -28,11 +28,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var fadeNode: SKSpriteNode!
     
-    private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
+    private var lastUpdateTime: TimeInterval = 0 
     
     let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
     
-    var boxes: [BoxNode] = []
+    
+    private var firstSceneGeneralBoxes: [BoxNode] = []
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -67,24 +68,31 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
-        
-        
         elevator.position = CGPoint(x: 1200, y: -430)
         addChild(elevator)
-        
     }
     
     override func keyUp(with event: NSEvent) {}
     
     override func keyDown(with event: NSEvent) {}
     
-    func addBox(position: CGPoint, id: UUID = .init()){
+    func addBoxWithoutSendingToOthers(position: CGPoint, id: UUID = .init()){
         let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
         addChild(newBox)
-        boxes.append(newBox)
+        firstSceneGeneralBoxes.append(newBox)
+    }
+    
+    func addPrimitiveBoxes(position: CGPoint, id: UUID = .init()){
+        let newBox = BoxNode(mpManager: mpManager)
+        newBox.position = position
+        newBox.id = id
+        newBox.name = "\(newBox.id)"
+        addChild(newBox)
+        firstSceneGeneralBoxes.append(newBox)
+        mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
     }
     
 //    func addFutureBoxes() {
@@ -96,9 +104,9 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
 
     func addGeneralBoxes() {
         if playerEra == .future{
-            addBox(position: CGPoint(x: size.width / 3 - 100, y: 10))
-            addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-            addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
+            addPrimitiveBoxes(position: CGPoint(x: size.width / 3 - 100, y: 10))
+            addPrimitiveBoxes(position: CGPoint(x: size.width + 550, y: size.height / 2))
+            addPrimitiveBoxes(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
         }
     }
     
@@ -137,23 +145,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
         
-        if playerEra == .present {
-            for box in mpManager.firstSceneGeneralBoxes {
-                if !self.children.contains(where: { node in
-                    "\(box.value.id)" == node.name
-                }){
-                    addBox(position: box.value.position, id: box.value.id)
-                }
-            }
-        }
-        
-        
+        self.updateBoxes()
         
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         
-        for box in boxes {
+        for box in firstSceneGeneralBoxes {
             box.update(deltaTime: deltaTime)
         }
         
@@ -162,6 +160,19 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+    }
+    
+    func updateBoxes(){
+        if playerEra == .present {
+            for box in mpManager.firstSceneGeneralBoxes {
+                if !self.children.contains(where: { node in
+                    "\(box.value.id)" == node.name
+                }){
+                    addBoxWithoutSendingToOthers(position: box.value.position, id: box.value.id)
+                    print("adicionou em FF")
+                }
+            }
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
