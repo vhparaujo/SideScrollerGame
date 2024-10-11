@@ -20,8 +20,8 @@ class MultiplayerManager: NSObject {
     var opponent: GKPlayer? = nil
     
     //boxes
-//    var firstSceneBoxes: [UUID: CGPoint] = [:]
-    var boxes: [BoxTeletransport] = []
+    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:] 
+//    var boxes: [BoxTeletransport] = []
 
     
     /// The name of the match.
@@ -133,25 +133,11 @@ class MultiplayerManager: NSObject {
         }
     }
     
-//    func sendInfoToOtherPlayers(content: BoxTeletransport){
-//        firstSceneBoxes[content.id] = content.position
-//        
-//        do {
-//            let data = encode(content: content)
-//            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
-//        } catch {
-//            print("Error: \(error.localizedDescription).")
-//        }
-//    }
-    
-    func sendInfoToOtherPlayers(box: BoxTeletransport) {
-        if let index = self.boxes.firstIndex(where: { $0.id == box.id }) {
-            self.boxes[index].position = box.position
-        }
-//        firstSceneBoxes[box.id] = box
+    func sendInfoToOtherPlayers(content: BoxTeletransport){
+        self.firstSceneGeneralBoxes[content.id] = content
         
         do {
-            let data = encode(content: box)
+            let data = encode(content: content)
             try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
         } catch {
             print("Error: \(error.localizedDescription).")

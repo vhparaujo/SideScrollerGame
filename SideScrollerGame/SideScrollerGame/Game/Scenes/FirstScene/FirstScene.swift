@@ -28,9 +28,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var fadeNode: SKSpriteNode!
     
-    private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
+    private var lastUpdateTime: TimeInterval = 0 
     
     let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+    
+    
+    private var firstSceneGeneralBoxes: [BoxNode] = []
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -54,53 +57,43 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-//        addGeneralBoxes()
+        addGeneralBoxes()
 //        addFutureBoxes()
+        
         addSpawnPoint()
         addFadeOverlay()
-        
-        if playerEra == .future {
-            addBox(position: .init(x: 1418, y: 10))
-        }
+      
         
         let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
-        
-        
         elevator.position = CGPoint(x: 1200, y: -430)
         addChild(elevator)
-        
     }
     
     override func keyUp(with event: NSEvent) {}
     
     override func keyDown(with event: NSEvent) {}
     
-    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
+    func addBoxWithoutSendingToOthers(position: CGPoint, id: UUID = .init()){
         let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
         addChild(newBox)
-        
-        if !alreadyHadBox{
-//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
-        }
+        firstSceneGeneralBoxes.append(newBox)
     }
     
-//    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false){
-//        let newBox = BoxNode()
-//        newBox.position = position
-//        newBox.id = id
-//        newBox.name = "\(newBox.id)"
-//        addChild(newBox)
-//        
-//        if !alreadyHadBox{
-//            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
-//        }
-//    }
+    func addPrimitiveBoxes(position: CGPoint, id: UUID = .init()){
+        let newBox = BoxNode(mpManager: mpManager)
+        newBox.position = position
+        newBox.id = id
+        newBox.name = "\(newBox.id)"
+        addChild(newBox)
+        firstSceneGeneralBoxes.append(newBox)
+        mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+    }
     
 //    func addFutureBoxes() {
 //        if playerEra == .future{
@@ -108,12 +101,14 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
 //            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
 //        }
 //    }
-//    
-//    func addGeneralBoxes() {
-//        addBox(position: CGPoint(x: size.width / 3 - 100, y: size.height / 2))
-//        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-//        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
-//    }
+
+    func addGeneralBoxes() {
+        if playerEra == .future{
+            addPrimitiveBoxes(position: CGPoint(x: size.width / 3 - 100, y: 10))
+            addPrimitiveBoxes(position: CGPoint(x: size.width + 550, y: size.height / 2))
+            addPrimitiveBoxes(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
+        }
+    }
     
     func addSpawnPoint() {
         spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
@@ -150,26 +145,34 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
         
+        self.updateBoxes()
+        
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         
-        
-        if playerEra == .present {
-            for n in mpManager.boxes {
-                if (self.children.first(where: { $0.name == "\(n.id)" }) == nil) {
-                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
-                }
-            }
+        for box in firstSceneGeneralBoxes {
+            box.update(deltaTime: deltaTime)
         }
-        
-        
         
         // Update the player
         playerNode.update(deltaTime: deltaTime)
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+    }
+    
+    func updateBoxes(){
+        if playerEra == .present {
+            for box in mpManager.firstSceneGeneralBoxes {
+                if !self.children.contains(where: { node in
+                    "\(box.value.id)" == node.name
+                }){
+                    addBoxWithoutSendingToOthers(position: box.value.position, id: box.value.id)
+                    print("adicionou em FF")
+                }
+            }
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -210,7 +213,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if otherCategory == PhysicsCategories.moveButton {
-            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+            if otherBody.node is SKSpriteNode {
                 playerNode.elevatorRef = nil
             }
         }
