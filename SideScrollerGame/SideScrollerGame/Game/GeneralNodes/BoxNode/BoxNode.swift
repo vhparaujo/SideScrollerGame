@@ -23,6 +23,16 @@ class BoxNode: SKSpriteNode {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func update(deltaTime: TimeInterval) {
+        if isGrabbed {
+            mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id))
+            print("mandando dados")
+        }else{
+            self.position.x = mpManager.firstSceneGeneralBoxes[self.id]?.position.x ?? .zero
+            print("i")
+        }
+    }
 
     private func setupPhysicsBody() {
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
