@@ -30,7 +30,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 
     
-    let elevator = ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+    let saw = SawNode(playerEra: .present, speed: 200, range: 500)
     
     
     private var firstSceneGeneralBoxes: [BoxNode] = []
@@ -68,8 +68,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
-        elevator.position = CGPoint(x: 1200, y: -430)
-        addChild(elevator)
+        saw.position = CGPoint(x: 1200, y: -30)
+        addChild(saw)
     }
     
     override func keyUp(with event: NSEvent) {}
