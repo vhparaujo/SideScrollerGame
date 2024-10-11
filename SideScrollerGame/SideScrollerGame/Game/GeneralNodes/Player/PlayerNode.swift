@@ -191,10 +191,6 @@ class PlayerNode: SKSpriteNode {
             desiredVelocity = 0.0
         }
         
-        
-
-        
-        
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
