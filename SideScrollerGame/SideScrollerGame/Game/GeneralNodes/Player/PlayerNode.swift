@@ -187,6 +187,25 @@ class PlayerNode: SKSpriteNode {
             sendPlayerInfoToOthers()
             callJump()
             callMovements()
+        
+        var desiredVelocity: CGFloat = 0.0
+        
+        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
+            desiredVelocity = -moveSpeed
+        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
+            desiredVelocity = moveSpeed
+        } else {
+            desiredVelocity = 0.0
+        }
+        
+        // Apply velocity to the player
+        self.physicsBody?.velocity.dx = desiredVelocity
+        
+        // Move the box with the player when grabbed
+        if playerInfo.action, let box = boxRef {
+            // Maintain the initial offset captured during grabbing
+            box.position.x = self.position.x + boxOffset
+            box.physicsBody?.velocity.dx = desiredVelocity
             
             var desiredVelocity: CGFloat = 0.0
             
@@ -232,6 +251,7 @@ class PlayerNode: SKSpriteNode {
             }else {
                 changeState(to: .idle)
             }
+        }
         }
     }
     

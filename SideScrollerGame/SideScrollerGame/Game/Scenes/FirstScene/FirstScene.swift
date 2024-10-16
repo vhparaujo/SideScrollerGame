@@ -15,9 +15,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var playerNode: PlayerNode!
     private var otherPlayer: OtherPlayerNode!
     
-    private var spawnPoint: SpawnPointNode!
-    private var spawnPoint2: SpawnPointNode!
-    
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
     
@@ -29,11 +26,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var fadeNode: SKSpriteNode!
     
     private var lastUpdateTime: TimeInterval = 0 
+        
     
     let saw = SawNode(playerEra: .present, speed: 200, range: 500)
     
     
     private var firstSceneGeneralBoxes: [BoxNode] = []
+
+    var firstSceneGeneralBoxes: [BoxNode] = []
+
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -57,19 +58,14 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        addGeneralBoxes()
-//        addFutureBoxes()
-        
-        addSpawnPoint()
-        addFadeOverlay()
-      
-        
-        let mapBuilder = MapBuilder(scene: self)
+        let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
 
         saw.position = CGPoint(x: 1200, y: -30)
         addChild(saw)
+
+
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -83,39 +79,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         newBox.name = "\(newBox.id)"
         addChild(newBox)
         firstSceneGeneralBoxes.append(newBox)
-    }
-    
-    func addPrimitiveBoxes(position: CGPoint, id: UUID = .init()){
-        let newBox = BoxNode(mpManager: mpManager)
-        newBox.position = position
-        newBox.id = id
-        newBox.name = "\(newBox.id)"
-        addChild(newBox)
-        firstSceneGeneralBoxes.append(newBox)
-        mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
-    }
-    
-//    func addFutureBoxes() {
-//        if playerEra == .future{
-//            addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250))
-//            addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250))
-//        }
-//    }
-
-    func addGeneralBoxes() {
-        if playerEra == .future{
-            addPrimitiveBoxes(position: CGPoint(x: size.width / 3 - 100, y: 10))
-            addPrimitiveBoxes(position: CGPoint(x: size.width + 550, y: size.height / 2))
-            addPrimitiveBoxes(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
-        }
-    }
-    
-    func addSpawnPoint() {
-        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
-        addChild(spawnPoint)
-        
-        spawnPoint2 = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width * 3, y: size.height / 2 + 200))
-        addChild(spawnPoint2)
     }
     
     func addPlayer() {
@@ -219,17 +182,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func addFadeOverlay() {
-        // Create a full-screen black node with zero alpha (fully transparent)
-        fadeNode = SKSpriteNode(color: .black, size: self.size)
-        fadeNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-        fadeNode.alpha = 0
-        fadeNode.zPosition = 1000 // Ensure it's above all other nodes
-        fadeNode.name = "fadeNode"
-        self.addChild(fadeNode)
-    }
-    
-    
     func cameraAndBackgroundUpdate() {
         // Calculate the visible size based on the camera's scale
         let visibleSize = CGSize(width: self.size.width / cameraNode.xScale, height: self.size.height / cameraNode.yScale)
@@ -258,8 +210,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let newY = currentY + deltaY * interpolationSpeed
         cameraNode.position.y = newY
     }
-    
-    
     
     func setupCamera() {
         self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)

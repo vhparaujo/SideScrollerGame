@@ -9,12 +9,14 @@ import SpriteKit
 class MapBuilder {
     
     var scene: SKScene
+    var mpManager: MultiplayerManager
     
     var tileMapWidth: CGFloat = 0
     
     // Initialize the BuildMap with the current scene
-    init(scene: SKScene) {
+    init(scene: SKScene, mpManager: MultiplayerManager) {
         self.scene = scene
+        self.mpManager = mpManager
     }
     
     // Function to build and embed the scene from a file
@@ -100,6 +102,17 @@ class MapBuilder {
                                 tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
                                 tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
                                 tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
+                            case "SpawnPoint":
+                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                                tilePhysicsNode.physicsBody?.isDynamic = false
+                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
+                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                                tilePhysicsNode.physicsBody?.collisionBitMask = 0
+                                
+                            case "Elevator":
+                                addElavator(position: tilePositionInScene)
+                            case "Box":
+                                addBox(position: tilePositionInScene)
                             default:
                                 // Default physics body for other tiles
                                 break
@@ -117,6 +130,30 @@ class MapBuilder {
         tileNode.removeFromParent()
         // Add the tile node to the scene
         scene.addChild(tileNode)
+        
+
+    }
+    
+    func addBox(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            if scene.playerEra == .future {
+                let newBox = BoxNode(mpManager: mpManager)
+                newBox.position = position
+                newBox.id = .init()
+                newBox.name = "\(newBox.id)"
+                scene.addChild(newBox)
+                scene.firstSceneGeneralBoxes.append(newBox)
+                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+            }
+        }
+    }
+    
+    func addElavator(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+                let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+                newElavator.position = position
+                scene.addChild(newElavator)
+            }
     }
     
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
