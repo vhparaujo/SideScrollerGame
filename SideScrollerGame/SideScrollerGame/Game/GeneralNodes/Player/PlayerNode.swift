@@ -37,6 +37,14 @@ class PlayerNode: SKSpriteNode {
     
     private var currentActionKey = "PlayerAnimation"
     
+    lazy var fadeInDeath: SKSpriteNode = {
+        let fadeIn = SKSpriteNode(color: .black, size: self.scene!.size)
+        fadeIn.anchorPoint = CGPointMake(0.5, 0.5)
+        fadeIn.alpha = 0
+        fadeIn.zPosition = 1000
+        return fadeIn
+    }()
+    
     var mpManager: MultiplayerManager
     
     init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
@@ -141,8 +149,6 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isMovingRight && !playerInfo.action {
             self.xScale = abs(self.xScale)
         }
-        
-        
     }
     
     
@@ -175,9 +181,10 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {        
-        sendPlayerInfoToOthers()
-        callJump()
-        callMovements()
+        if !playerInfo.isDying {
+            sendPlayerInfoToOthers()
+            callJump()
+            callMovements()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -203,26 +210,51 @@ class PlayerNode: SKSpriteNode {
             box.position.x = self.position.x + boxOffset
             box.physicsBody?.velocity.dx = desiredVelocity
             
-            // Prevent the box from flipping
-            box.xScale = abs(box.xScale)
+            var desiredVelocity: CGFloat = 0.0
+            
+            if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
+                desiredVelocity = -moveSpeed
+            } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
+                desiredVelocity = moveSpeed
+            } else {
+                desiredVelocity = 0.0
+            }
+            
+            
+
+            
+            
+            // Apply velocity to the player
+            self.physicsBody?.velocity.dx = desiredVelocity
+            
+            // Move the box with the player when grabbed
+            if playerInfo.action, let box = boxRef {
+                // Maintain the initial offset captured during grabbing
+                box.position.x = self.position.x + boxOffset
+                box.physicsBody?.velocity.dx = desiredVelocity
+                
+                // Prevent the box from flipping
+                box.xScale = abs(box.xScale)
+            }
+            
+            // Adjust player's position by the platform's movement delta
+            if let platform = currentPlatform {
+                let delta = platform.movementDelta()
+                self.position.x += delta.x
+                self.position.y += delta.y
+            }
+            
+            // Determine the appropriate state
+            if playerInfo.action {
+                changeState(to: .grabbing)
+            } else if !playerInfo.isGrounded {
+                changeState(to: .jumping)
+            } else if desiredVelocity != 0 {
+                changeState(to: .running)
+            }else {
+                changeState(to: .idle)
+            }
         }
-        
-        // Adjust player's position by the platform's movement delta
-        if let platform = currentPlatform {
-            let delta = platform.movementDelta()
-            self.position.x += delta.x
-            self.position.y += delta.y
-        }
-        
-        // Determine the appropriate state
-        if playerInfo.action {
-            changeState(to: .grabbing)
-        } else if !playerInfo.isGrounded {
-            changeState(to: .jumping)
-        } else if desiredVelocity != 0 {
-            changeState(to: .running)
-        }else {
-            changeState(to: .idle)
         }
     }
     
@@ -313,5 +345,34 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
+        self.physicsBody?.velocity = .zero
+        
+        // Adiciona o fadeInDeath à cena
+        if fadeInDeath.parent == nil {
+            self.addChild(fadeInDeath)
+        }
+        
+        // Cria a ação de aumentar a opacidade para 1 (fade in)
+        let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
+        
+        // Aguarda por um tempo antes do fade out
+        let wait = SKAction.wait(forDuration: 0.5)
+        
+        // Cria a ação de reposicionar o jogador
+        let resetPlayer = SKAction.run { [weak self] in
+            if let spawnPoint = self?.spawnPoint {
+                self?.position = spawnPoint
+            }
+            self?.playerInfo.isDying = false
+        }
+        
+        // Cria a ação de reduzir a opacidade para 0 (fade out)
+        let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
+        
+        // Cria a sequência de ações para o fade
+        let fadeSequence = SKAction.sequence([fadeInAction, wait, resetPlayer, fadeOutAction])
+        
+        // Executa a sequência de ações
+        fadeInDeath.run(fadeSequence)
     }
 }
