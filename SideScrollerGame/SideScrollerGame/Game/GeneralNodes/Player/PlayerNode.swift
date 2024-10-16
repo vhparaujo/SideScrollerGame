@@ -9,9 +9,7 @@ import Combine
 
 
 class PlayerNode: SKSpriteNode {
-    
-    internal var spawnPoint: CGPoint?
-        
+            
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameControllerManager {
         return GameControllerManager.shared
@@ -191,6 +189,11 @@ class PlayerNode: SKSpriteNode {
             desiredVelocity = 0.0
         }
         
+        if playerInfo.isDying {
+            self.position = mpManager.spawnpoint
+            playerInfo.isDying = false
+        }
+        
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
@@ -285,7 +288,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.spawnPoint {
             // Set the spawn point when the player touches it
             if let spawnNode = otherBody.node as? SpawnPointNode {
-                self.spawnPoint = spawnNode.position
+                mpManager.sendInfoToOtherPlayers(content: spawnNode.position)
             }
         }
     }
@@ -310,20 +313,5 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
-
-        if let scene = self.scene as? FirstScene {
-            // Create fade-in and fade-out actions
-            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
-            let resetPlayer = SKAction.run { [weak self] in
-                if let spawnPoint = self?.spawnPoint {
-                    self?.position = spawnPoint
-                }
-            }
-            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
-
-            // Run the sequence on the fade node
-            scene.fadeNode.run(sequence)
-        }
     }
 }

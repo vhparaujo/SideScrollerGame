@@ -31,8 +31,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     let saw = SawNode(playerEra: .present, speed: 200, range: 500)
     
     
-    private var firstSceneGeneralBoxes: [BoxNode] = []
-
     var firstSceneGeneralBoxes: [BoxNode] = []
 
     
