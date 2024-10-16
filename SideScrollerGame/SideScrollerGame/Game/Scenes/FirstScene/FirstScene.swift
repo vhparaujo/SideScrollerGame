@@ -28,7 +28,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var lastUpdateTime: TimeInterval = 0 
         
     
+    let saw = SawNode(playerEra: .present, speed: 200, range: 500)
+    
+    
+    private var firstSceneGeneralBoxes: [BoxNode] = []
+
     var firstSceneGeneralBoxes: [BoxNode] = []
+
     
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -55,6 +61,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
+
+        saw.position = CGPoint(x: 1200, y: -30)
+        addChild(saw)
+
 
     }
     
