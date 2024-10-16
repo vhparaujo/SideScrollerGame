@@ -39,6 +39,14 @@ class PlayerNode: SKSpriteNode {
     
     private var currentActionKey = "PlayerAnimation"
     
+    lazy var fadeInDeath: SKSpriteNode = {
+        let fadeIn = SKSpriteNode(color: .black, size: self.scene!.size)
+        fadeIn.anchorPoint = CGPointMake(0.5, 0.5)
+        fadeIn.alpha = 0
+        fadeIn.zPosition = 1000
+        return fadeIn
+    }()
+    
     var mpManager: MultiplayerManager
     
     init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
@@ -314,20 +322,32 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
-
-        if let scene = self.scene as? FirstScene {
-            // Create fade-in and fade-out actions
-            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
-            let resetPlayer = SKAction.run { [weak self] in
-                if let spawnPoint = self?.spawnPoint {
-                    self?.position = spawnPoint
-                }
-            }
-            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
-
-            // Run the sequence on the fade node
-            scene.fadeNode.run(sequence)
+        
+        // Adiciona o fadeInDeath à cena
+        if fadeInDeath.parent == nil {
+            self.addChild(fadeInDeath)
         }
+        
+        // Cria a ação de aumentar a opacidade para 1 (fade in)
+        let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
+        
+        // Aguarda por um tempo antes do fade out
+        let wait = SKAction.wait(forDuration: 0.5)
+        
+        // Cria a ação de reposicionar o jogador
+        let resetPlayer = SKAction.run { [weak self] in
+            if let spawnPoint = self?.spawnPoint {
+                self?.position = spawnPoint
+            }
+        }
+        
+        // Cria a ação de reduzir a opacidade para 0 (fade out)
+        let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
+        
+        // Cria a sequência de ações para o fade
+        let fadeSequence = SKAction.sequence([fadeInAction, wait, resetPlayer, fadeOutAction])
+        
+        // Executa a sequência de ações
+        fadeInDeath.run(fadeSequence)
     }
 }
