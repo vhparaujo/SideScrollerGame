@@ -54,7 +54,7 @@ extension MultiplayerManager: GKMatchDelegate {
             self.firstSceneGeneralBoxes[dataReceived.id] = dataReceived
 
         }else if let dataReceived: CGPoint = decode(matchData: data) {
-            self.playerRemote = dataReceived
+            self.spawnpoint = dataReceived
         }
     }
 }
