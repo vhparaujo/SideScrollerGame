@@ -151,8 +151,6 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isMovingRight && !playerInfo.action {
             self.xScale = abs(self.xScale)
         }
-        
-        
     }
     
     
@@ -185,53 +183,55 @@ class PlayerNode: SKSpriteNode {
     
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {        
-        sendPlayerInfoToOthers()
-        callJump()
-        callMovements()
-        
-        var desiredVelocity: CGFloat = 0.0
-        
-        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
-            desiredVelocity = -moveSpeed
-        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
-            desiredVelocity = moveSpeed
-        } else {
-            desiredVelocity = 0.0
-        }
-        
-        
-
-        
-        
-        // Apply velocity to the player
-        self.physicsBody?.velocity.dx = desiredVelocity
-        
-        // Move the box with the player when grabbed
-        if playerInfo.action, let box = boxRef {
-            // Maintain the initial offset captured during grabbing
-            box.position.x = self.position.x + boxOffset
-            box.physicsBody?.velocity.dx = desiredVelocity
+        if !playerInfo.isDying {
+            sendPlayerInfoToOthers()
+            callJump()
+            callMovements()
             
-            // Prevent the box from flipping
-            box.xScale = abs(box.xScale)
-        }
-        
-        // Adjust player's position by the platform's movement delta
-        if let platform = currentPlatform {
-            let delta = platform.movementDelta()
-            self.position.x += delta.x
-            self.position.y += delta.y
-        }
-        
-        // Determine the appropriate state
-        if playerInfo.action {
-            changeState(to: .grabbing)
-        } else if !playerInfo.isGrounded {
-            changeState(to: .jumping)
-        } else if desiredVelocity != 0 {
-            changeState(to: .running)
-        }else {
-            changeState(to: .idle)
+            var desiredVelocity: CGFloat = 0.0
+            
+            if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
+                desiredVelocity = -moveSpeed
+            } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
+                desiredVelocity = moveSpeed
+            } else {
+                desiredVelocity = 0.0
+            }
+            
+            
+
+            
+            
+            // Apply velocity to the player
+            self.physicsBody?.velocity.dx = desiredVelocity
+            
+            // Move the box with the player when grabbed
+            if playerInfo.action, let box = boxRef {
+                // Maintain the initial offset captured during grabbing
+                box.position.x = self.position.x + boxOffset
+                box.physicsBody?.velocity.dx = desiredVelocity
+                
+                // Prevent the box from flipping
+                box.xScale = abs(box.xScale)
+            }
+            
+            // Adjust player's position by the platform's movement delta
+            if let platform = currentPlatform {
+                let delta = platform.movementDelta()
+                self.position.x += delta.x
+                self.position.y += delta.y
+            }
+            
+            // Determine the appropriate state
+            if playerInfo.action {
+                changeState(to: .grabbing)
+            } else if !playerInfo.isGrounded {
+                changeState(to: .jumping)
+            } else if desiredVelocity != 0 {
+                changeState(to: .running)
+            }else {
+                changeState(to: .idle)
+            }
         }
     }
     
@@ -322,6 +322,7 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
+        self.physicsBody?.velocity = .zero
         
         // Adiciona o fadeInDeath à cena
         if fadeInDeath.parent == nil {
@@ -339,6 +340,7 @@ class PlayerNode: SKSpriteNode {
             if let spawnPoint = self?.spawnPoint {
                 self?.position = spawnPoint
             }
+            self?.playerInfo.isDying = false
         }
         
         // Cria a ação de reduzir a opacidade para 0 (fade out)
