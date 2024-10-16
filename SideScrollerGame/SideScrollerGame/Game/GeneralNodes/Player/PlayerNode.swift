@@ -9,9 +9,7 @@ import Combine
 
 
 class PlayerNode: SKSpriteNode {
-    
-    internal var spawnPoint: CGPoint?
-        
+            
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameControllerManager {
         return GameControllerManager.shared
@@ -198,6 +196,11 @@ class PlayerNode: SKSpriteNode {
             desiredVelocity = 0.0
         }
         
+        if playerInfo.isDying {
+            self.position = mpManager.spawnpoint
+            playerInfo.isDying = false
+        }
+        
         // Apply velocity to the player
         self.physicsBody?.velocity.dx = desiredVelocity
         
@@ -317,7 +320,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.spawnPoint {
             // Set the spawn point when the player touches it
             if let spawnNode = otherBody.node as? SpawnPointNode {
-                self.spawnPoint = spawnNode.position
+                mpManager.sendInfoToOtherPlayers(content: spawnNode.position)
             }
         }
     }

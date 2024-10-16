@@ -23,6 +23,10 @@ class MultiplayerManager: NSObject {
     var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:] 
 //    var boxes: [BoxTeletransport] = []
 
+    //spawnPoint
+    var spawnpoint: CGPoint = .zero
+    
+   
     
     /// The name of the match.
     var matchName: String {
@@ -143,4 +147,16 @@ class MultiplayerManager: NSObject {
             print("Error: \(error.localizedDescription).")
         }
     }
+    
+    func sendInfoToOtherPlayers(content: CGPoint){
+        self.spawnpoint = content
+        
+        do {
+            let data = encode(content: content)
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        } catch {
+            print("Error: \(error.localizedDescription).")
+        }
+    }
+
 }

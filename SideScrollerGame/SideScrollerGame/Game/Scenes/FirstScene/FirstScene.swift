@@ -31,8 +31,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     let saw = SawNode(playerEra: .present, speed: 200, range: 500)
     
     
-    private var firstSceneGeneralBoxes: [BoxNode] = []
-
     var firstSceneGeneralBoxes: [BoxNode] = []
 
     
@@ -132,7 +130,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                     "\(box.value.id)" == node.name
                 }){
                     addBoxWithoutSendingToOthers(position: box.value.position, id: box.value.id)
-                    print("adicionou em FF")
                 }
             }
         }
