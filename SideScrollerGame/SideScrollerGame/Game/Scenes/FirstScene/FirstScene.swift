@@ -128,7 +128,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                     "\(box.value.id)" == node.name
                 }){
                     addBoxWithoutSendingToOthers(position: box.value.position, id: box.value.id)
-                    print("adicionou em FF")
                 }
             }
         }
