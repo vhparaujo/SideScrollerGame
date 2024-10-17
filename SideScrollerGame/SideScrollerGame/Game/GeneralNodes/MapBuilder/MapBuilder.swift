@@ -103,11 +103,7 @@ class MapBuilder {
                                 tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
                                 tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
                             case "SpawnPoint":
-                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                                tilePhysicsNode.physicsBody?.collisionBitMask = 0
+                                addSpawnPoint(position: tilePositionInScene, size: tileSize)
                                 
                             case "Elevator":
                                 addElavator(position: tilePositionInScene)
