@@ -30,7 +30,7 @@ class GameControllerManager {
             .keyD: .moveRight, // D key
             .spacebar: .jump,  // Space key
             .keyE: .action,     // E key
-            .leftShift: .brintToPresent, // Left Shift key
+            .leftShift: .bringToPresent, // Left Shift key
                 .keyS: .down,
         ]
         

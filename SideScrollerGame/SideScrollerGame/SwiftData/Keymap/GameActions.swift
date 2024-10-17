@@ -13,7 +13,7 @@ enum GameActions: String, Codable, CaseIterable {
     case jump
     case climb
     case action
-    case brintToPresent
+    case bringToPresent
     case down
     
    
