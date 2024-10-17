@@ -17,13 +17,11 @@ class ElevatorNode: SKNode {
     let mode: ElevatorMode
     
     lazy var elevatorBody: SKSpriteNode = {
-        #warning("depois tem q arrumar os nodes aq")
         let bodyTexture = SKTexture(imageNamed: "\(playerEra == .present ? "elevator-body-present" : "player-idle-future")-1")
         return SKSpriteNode(texture: bodyTexture, color: .red, size: CGSize(width: 200, height: 400))
     }()
     
     lazy var elevatorPlatform: SKSpriteNode = {
-        #warning("depois tem q arrumar os nodes aq")
         let platformTexture = SKTexture(imageNamed: "\(playerEra == .present ? "elevator-platform-present" : "elevator-platform-future")-1")
         
         self.maxHeight = maxHeight - platformTexture.size().height / 2

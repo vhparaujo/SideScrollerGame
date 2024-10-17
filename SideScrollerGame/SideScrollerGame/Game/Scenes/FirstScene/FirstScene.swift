@@ -12,8 +12,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var mpManager: MultiplayerManager
     
-    private var playerNode: PlayerNode!
-    private var otherPlayer: OtherPlayerNode!
+    var playerNode: PlayerNode!
+    var otherPlayer: OtherPlayerNode!
     
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
@@ -28,7 +28,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     private var lastUpdateTime: TimeInterval = 0 
         
     
-    let saw = SawNode(playerEra: .present, speed: 200, range: 500)
+    
     
     var firstSceneGeneralBoxes: [BoxNode] = []
 
@@ -49,19 +49,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        addPlayer()
-        addOtherPlayer()
         setupBackground()
         setupCamera()
         
         let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
-
-        saw.position = CGPoint(x: 1200, y: -30)
-        addChild(saw)
-
-
+        
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -75,29 +69,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         newBox.name = "\(newBox.id)"
         addChild(newBox)
         firstSceneGeneralBoxes.append(newBox)
-    }
-    
-    func addPlayer() {
-        playerNode = PlayerNode(playerEra: playerEra, mpManager: mpManager)
-        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(playerNode)
-    }
-    
-    func addOtherPlayer() {
-        
-        var otherPlayerEra: PlayerEra
-        
-        if playerEra == .present {
-            otherPlayerEra = .future
-        } else {
-            otherPlayerEra = .present
-        }
-        
-        guard otherPlayer == nil else { return }
-        otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra, mpManager: mpManager)
-        otherPlayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(otherPlayer)
-        
     }
     
     // Update method to control player movement
@@ -218,5 +189,4 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(parallaxBackground!)
     }
-    
 }
