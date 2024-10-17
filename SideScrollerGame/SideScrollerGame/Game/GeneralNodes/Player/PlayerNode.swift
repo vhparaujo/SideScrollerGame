@@ -319,9 +319,9 @@ class PlayerNode: SKSpriteNode {
                 currentPlatform = otherBody.node as? PlatformNode
             }
         }
-//        if otherCategory == PhysicsCategories.Death {
-//            triggerDeath()
-//        }
+        if otherCategory == PhysicsCategories.Death {
+            triggerDeath()
+        }
         
         if otherCategory == PhysicsCategories.spawnPoint {
             // Set the spawn point when the player touches it
@@ -360,22 +360,22 @@ class PlayerNode: SKSpriteNode {
         
     }
     
-//    func triggerDeath() {
-//        playerInfo.isDying = true
-//
-//        if let scene = self.scene as? FirstScene {
-//            // Create fade-in and fade-out actions
-//            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
-//            let resetPlayer = SKAction.run { [weak self] in
-//                if let spawnPoint = self?.spawnPoint {
-//                    self?.position = spawnPoint
-//                }
-//            }
-//            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-//            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
-//
-//            // Run the sequence on the fade node
-//            scene.fadeNode.run(sequence)
-//        }
-//    }
+    func triggerDeath() {
+        playerInfo.isDying = true
+
+        if let scene = self.scene as? FirstScene {
+            // Create fade-in and fade-out actions
+            let fadeIn = SKAction.fadeIn(withDuration: 0.5)
+            let resetPlayer = SKAction.run { [weak self] in
+                if let spawnPoint = self?.spawnPoint {
+                    self?.position = spawnPoint
+                }
+            }
+            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+            let sequence = SKAction.sequence([fadeIn, resetPlayer, fadeOut])
+
+            // Run the sequence on the fade node
+            scene.fadeNode.run(sequence)
+        }
+    }
 }
