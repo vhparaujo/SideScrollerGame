@@ -9,7 +9,7 @@ import Combine
 
 
 class PlayerNode: SKSpriteNode {
-            
+    
     internal var cancellables: [AnyCancellable] = []
     internal var controller: GameControllerManager {
         return GameControllerManager.shared
@@ -32,6 +32,8 @@ class PlayerNode: SKSpriteNode {
     var boxRef: BoxNode?
     //    internal var isGrabbed = false
     internal var boxOffset: CGFloat = 0.0
+    
+    var bringBoxToPresent: Bool = false
     
     weak var elevatorRef: ElevatorNode?
     
@@ -103,35 +105,36 @@ class PlayerNode: SKSpriteNode {
     
     func handleKeyPress(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = true
-                playerInfo.facingRight = false
-                
-            case .moveRight:
-                playerInfo.isMovingRight = true
-                playerInfo.facingRight = true
-                
-            case .jump:
-                playerInfo.isJumping = true
-                
-            case .action:
-                if playerInfo.isGrounded {
-                               if let box = boxRef {
-                                   playerInfo.action = true
-                                   box.isGrabbed = true
-                                   box.enableMovement()
-                                   boxOffset = box.position.x - self.position.x
-                               }
-                           }
-
-                           if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
-                               if let elevator = elevatorRef {
-                                   playerInfo.action = true
-                                   elevator.moveManual()
-                               }
-                           }
-            case .brintToPresent:
-                break
+        case .moveLeft:
+            playerInfo.isMovingLeft = true
+            playerInfo.facingRight = false
+            
+        case .moveRight:
+            playerInfo.isMovingRight = true
+            playerInfo.facingRight = true
+            
+        case .jump:
+            playerInfo.isJumping = true
+            
+        case .action:
+            if playerInfo.isGrounded {
+                if let box = boxRef {
+                    playerInfo.action = true
+                    box.isGrabbed = true
+                    box.enableMovement()
+                    boxOffset = box.position.x - self.position.x
+                }
+            }
+            
+            if !(playerInfo.isMovingLeft || playerInfo.isMovingRight) && playerInfo.isGrounded {
+                if let elevator = elevatorRef {
+                    playerInfo.action = true
+                    elevator.moveManual()
+                }
+            }
+        case .brintToPresent:
+            self.bringBoxToPresent = true
+            
             
         case .climb:
             
@@ -147,93 +150,47 @@ class PlayerNode: SKSpriteNode {
             } else {
                 canDown = false
             }
-                
-            default:
-                break
         }
     }
-    
-    func callMovements() {
-        if playerInfo.isMovingRight {
-            playerInfo.facingRight = true
-            if !playerInfo.action {
-                self.xScale = abs(self.xScale)
-            }
-        }
-        
-        if playerInfo.isMovingLeft && !playerInfo.action{
-            self.xScale = -abs(self.xScale)
-        }
-        
-        if playerInfo.isMovingRight && !playerInfo.action {
-            self.xScale = abs(self.xScale)
-        }
-    }
-    
-    
     
     // Handle key releases
     func handleKeyRelease(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = false
-                
-            case .moveRight:
-                playerInfo.isMovingRight = false
-                if playerInfo.isMovingLeft {
-                    playerInfo.facingRight = false
-                    if !playerInfo.action {
-                        self.xScale = -abs(self.xScale)
-                    }
+        case .moveLeft:
+            playerInfo.isMovingLeft = false
+            
+        case .moveRight:
+            playerInfo.isMovingRight = false
+            if playerInfo.isMovingLeft {
+                playerInfo.facingRight = false
+                if !playerInfo.action {
+                    self.xScale = -abs(self.xScale)
                 }
-            case .action:
-                if playerInfo.action {
-                    playerInfo.action = false
-                    boxRef?.isGrabbed = false
-                    boxRef?.disableMovement()
-                    elevatorRef?.stopManualMove()
-                }
+            }
+        case .action:
+            if playerInfo.action {
+                playerInfo.action = false
+                boxRef?.isGrabbed = false
+                boxRef?.disableMovement()
+                elevatorRef?.stopManualMove()
+            }
         case .climb:
-                canClimb = false
+            canClimb = false
         case .down:
             canDown = false
+        case .brintToPresent:
+            self.bringBoxToPresent = false
             
-            
-            default:
-                break
+        default:
+            break
         }
     }
     
     // Update player position and animation based on movement direction
-    func update(deltaTime: TimeInterval) {        
+    func update(deltaTime: TimeInterval) {
         if !playerInfo.isDying {
             sendPlayerInfoToOthers()
-            callJump()
             callMovements()
-        
-        var desiredVelocity: CGFloat = 0.0
-        
-        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
-            desiredVelocity = -moveSpeed
-        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
-            desiredVelocity = moveSpeed
-        } else {
-            desiredVelocity = 0.0
-        }
-        
-        if playerInfo.isDying {
-            self.position = mpManager.spawnpoint
-            playerInfo.isDying = false
-        }
-        
-        // Apply velocity to the player
-        self.physicsBody?.velocity.dx = desiredVelocity
-        
-        // Move the box with the player when grabbed
-        if playerInfo.action, let box = boxRef {
-            // Maintain the initial offset captured during grabbing
-            box.position.x = self.position.x + boxOffset
-            box.physicsBody?.velocity.dx = desiredVelocity
             
             var desiredVelocity: CGFloat = 0.0
             
@@ -245,9 +202,10 @@ class PlayerNode: SKSpriteNode {
                 desiredVelocity = 0.0
             }
             
-            
-
-            
+            if playerInfo.isDying {
+                self.position = mpManager.spawnpoint
+                playerInfo.isDying = false
+            }
             
             // Apply velocity to the player
             self.physicsBody?.velocity.dx = desiredVelocity
@@ -258,28 +216,47 @@ class PlayerNode: SKSpriteNode {
                 box.position.x = self.position.x + boxOffset
                 box.physicsBody?.velocity.dx = desiredVelocity
                 
-                // Prevent the box from flipping
-                box.xScale = abs(box.xScale)
+                var desiredVelocity: CGFloat = 0.0
+                
+                if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
+                    desiredVelocity = -moveSpeed
+                } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
+                    desiredVelocity = moveSpeed
+                } else {
+                    desiredVelocity = 0.0
+                }
+                
+                // Apply velocity to the player
+                self.physicsBody?.velocity.dx = desiredVelocity
+                
+                // Move the box with the player when grabbed
+                if playerInfo.action, let box = boxRef {
+                    // Maintain the initial offset captured during grabbing
+                    box.position.x = self.position.x + boxOffset
+                    box.physicsBody?.velocity.dx = desiredVelocity
+                    
+                    // Prevent the box from flipping
+                    box.xScale = abs(box.xScale)
+                }
+                
+                // Adjust player's position by the platform's movement delta
+                if let platform = currentPlatform {
+                    let delta = platform.movementDelta()
+                    self.position.x += delta.x
+                    self.position.y += delta.y
+                }
+                
+                // Determine the appropriate state
+                if playerInfo.action {
+                    changeState(to: .grabbing)
+                } else if !playerInfo.isGrounded {
+                    changeState(to: .jumping)
+                } else if desiredVelocity != 0 {
+                    changeState(to: .running)
+                }else {
+                    changeState(to: .idle)
+                }
             }
-            
-            // Adjust player's position by the platform's movement delta
-            if let platform = currentPlatform {
-                let delta = platform.movementDelta()
-                self.position.x += delta.x
-                self.position.y += delta.y
-            }
-            
-            // Determine the appropriate state
-            if playerInfo.action {
-                changeState(to: .grabbing)
-            } else if !playerInfo.isGrounded {
-                changeState(to: .jumping)
-            } else if desiredVelocity != 0 {
-                changeState(to: .running)
-            }else {
-                changeState(to: .idle)
-            }
-        }
         }
         
         // Controla o movimento vertical quando o player está na escada
@@ -299,7 +276,22 @@ class PlayerNode: SKSpriteNode {
         
     }
     
-    func callJump() {
+    func callMovements() {
+        if playerInfo.isMovingRight {
+            playerInfo.facingRight = true
+            if !playerInfo.action {
+                self.xScale = abs(self.xScale)
+            }
+        }
+        
+        if playerInfo.isMovingLeft && !playerInfo.action{
+            self.xScale = -abs(self.xScale)
+        }
+        
+        if playerInfo.isMovingRight && !playerInfo.action {
+            self.xScale = abs(self.xScale)
+        }
+        
         if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             playerInfo.isGrounded = false
@@ -392,7 +384,6 @@ class PlayerNode: SKSpriteNode {
             isOnLadder = false
             self.physicsBody?.affectedByGravity = true
         }
-        
     }
     
     func triggerDeath() {

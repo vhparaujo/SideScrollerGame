@@ -103,12 +103,7 @@ class MapBuilder {
                             tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
                             tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
                         case "SpawnPoint":
-                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                            tilePhysicsNode.physicsBody?.isDynamic = false
-                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
-                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                            tilePhysicsNode.physicsBody?.collisionBitMask = 0
-                            
+                            addSpawnPoint(position: tilePositionInScene, size: tileSize)
                         case "Elevator":
                             addElavator(position: tilePositionInScene)
                         case "Box":
@@ -136,6 +131,13 @@ class MapBuilder {
         
     }
     
+    func addSpawnPoint(position: CGPoint, size: CGSize) {
+        if let scene = scene as? FirstScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
+        }
+    }
+    
     func addBox(position: CGPoint) {
         if let scene = scene as? FirstScene {
             if scene.playerEra == .future {
@@ -143,9 +145,10 @@ class MapBuilder {
                 newBox.position = position
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
-                scene.addChild(newBox)
-                scene.firstSceneGeneralBoxes.append(newBox)
-                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+                scene.addChild(newBox) 
+//                scene.firstSceneGeneralBoxes.append(newBox)
+//                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+#warning("aqui é o antigo lugar onde eu adicionava as caixas")
             }
         }
     }
@@ -166,13 +169,7 @@ class MapBuilder {
         }
     }
     
-    func addSpawnPoint(position: CGPoint, size: CGSize) {
-        if let scene = scene as? FirstScene {
-            let newSpawnPoint = SpawnPointNode(size: size, position: position)
-            scene.addChild(newSpawnPoint)
-        }
-    }
-    
+ 
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
         // Define the rectangle centered at (0,0) since the node's position is set accordingly
         let rect = CGRect(x: -tileSize.width / 2, y: -tileSize.height / 2, width: tileSize.width, height: tileSize.height)
