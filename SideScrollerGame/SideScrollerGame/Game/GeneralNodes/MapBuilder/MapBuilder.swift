@@ -103,12 +103,7 @@ class MapBuilder {
                             tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
                             tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
                         case "SpawnPoint":
-                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                            tilePhysicsNode.physicsBody?.isDynamic = false
-                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
-                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                            tilePhysicsNode.physicsBody?.collisionBitMask = 0
-                            
+                            addSpawnPoint(position: tilePositionInScene, size: tileSize)
                         case "Elevator":
                             addElavator(position: tilePositionInScene)
                         case "Box":
@@ -134,6 +129,13 @@ class MapBuilder {
         scene.addChild(tileNode)
         
         
+    }
+    
+    func addSpawnPoint(position: CGPoint, size: CGSize) {
+        if let scene = scene as? FirstScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
+        }
     }
     
     func addBox(position: CGPoint) {
