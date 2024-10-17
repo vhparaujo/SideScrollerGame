@@ -360,7 +360,7 @@ class PlayerNode: SKSpriteNode {
         
         // Cria a ação de reposicionar o jogador
         let resetPlayer = SKAction.run { [weak self] in
-            if let spawnPoint = self?.spawnPoint {
+            if let spawnPoint = self?.mpManager.spawnpoint {
                 self?.position = spawnPoint
             }
             self?.playerInfo.isDying = false
