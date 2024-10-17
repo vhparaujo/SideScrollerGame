@@ -110,6 +110,8 @@ class MapBuilder {
                             addBox(position: tilePositionInScene)
                         case "Ladder":
                             addLadder(position: tilePositionInScene)
+                        case "fan":
+                            addFan(position: tilePositionInScene)
                         default:
                             // Default physics body for other tiles
                             break
@@ -169,6 +171,13 @@ class MapBuilder {
         }
     }
     
+    func addFan(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let newFan = Fan()
+            newFan.position = position
+            scene.addChild(newFan)
+        }
+    }
  
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
         // Define the rectangle centered at (0,0) since the node's position is set accordingly

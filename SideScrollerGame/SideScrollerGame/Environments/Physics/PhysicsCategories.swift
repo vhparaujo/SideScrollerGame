@@ -19,5 +19,6 @@ struct PhysicsCategories {
     static let wall: UInt32    = 0x1 << 6
     static let spawnPoint: UInt32 = 0x1 << 7  // Add this line
     static let ladder: UInt32 = 0x1 << 8
+    static let fan: UInt32 = 0x1 << 9
 
 }
