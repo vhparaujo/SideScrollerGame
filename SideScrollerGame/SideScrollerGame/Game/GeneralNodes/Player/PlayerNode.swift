@@ -41,6 +41,8 @@ class PlayerNode: SKSpriteNode {
     private var canClimb = false
     private var canDown = false
     
+    private var isOnFan = false
+    
     private var currentActionKey = "PlayerAnimation"
     
     lazy var fadeInDeath: SKSpriteNode = {
@@ -82,7 +84,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
@@ -274,6 +276,13 @@ class PlayerNode: SKSpriteNode {
             }
         }
         
+        if isOnFan {
+            self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
+            self.physicsBody?.affectedByGravity = false
+        } else {
+            self.physicsBody?.affectedByGravity = true
+        }
+        
     }
     
     func callMovements() {
@@ -361,6 +370,10 @@ class PlayerNode: SKSpriteNode {
             isOnLadder = true
             self.physicsBody?.affectedByGravity = false
         }
+        
+        if otherCategory == PhysicsCategories.fan {
+            isOnFan = true
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -384,6 +397,11 @@ class PlayerNode: SKSpriteNode {
             isOnLadder = false
             self.physicsBody?.affectedByGravity = true
         }
+        
+        if otherCategory == PhysicsCategories.fan {
+            isOnFan = false
+        }
+        
     }
     
     func triggerDeath() {
