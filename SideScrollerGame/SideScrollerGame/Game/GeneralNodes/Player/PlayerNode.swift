@@ -35,6 +35,10 @@ class PlayerNode: SKSpriteNode {
     
     weak var elevatorRef: ElevatorNode?
     
+    private var isOnLadder = false
+    private var canClimb = false
+    private var canDown = false
+    
     private var currentActionKey = "PlayerAnimation"
     
     lazy var fadeInDeath: SKSpriteNode = {
@@ -76,7 +80,7 @@ class PlayerNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.player
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
         self.physicsBody?.friction = 0.0
         self.physicsBody?.restitution = 0.0
@@ -128,6 +132,21 @@ class PlayerNode: SKSpriteNode {
                            }
             case .brintToPresent:
                 break
+            
+        case .climb:
+            
+            if isOnLadder {
+                canClimb = true
+            } else {
+                canClimb = false
+            }
+            
+        case .down:
+            if isOnLadder {
+                canDown = true
+            } else {
+                canDown = false
+            }
                 
             default:
                 break
@@ -174,6 +193,12 @@ class PlayerNode: SKSpriteNode {
                     boxRef?.disableMovement()
                     elevatorRef?.stopManualMove()
                 }
+        case .climb:
+                canClimb = false
+        case .down:
+            canDown = false
+            
+            
             default:
                 break
         }
@@ -256,6 +281,22 @@ class PlayerNode: SKSpriteNode {
             }
         }
         }
+        
+        // Controla o movimento vertical quando o player está na escada
+        if isOnLadder {
+            if canClimb {
+                let moveUp = SKAction.moveBy(x: 0, y: 3, duration: 0.1)
+                self.run(moveUp)
+            }
+        }
+        
+        if isOnLadder {
+            if canDown {
+                let moveDown = SKAction.moveBy(x: 0, y: -3, duration: 0.1)
+                self.run(moveDown)
+            }
+        }
+        
     }
     
     func callJump() {
@@ -323,6 +364,11 @@ class PlayerNode: SKSpriteNode {
                 mpManager.sendInfoToOtherPlayers(content: spawnNode.position)
             }
         }
+        
+        if otherCategory == PhysicsCategories.ladder {
+            isOnLadder = true
+            self.physicsBody?.affectedByGravity = false
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -341,6 +387,12 @@ class PlayerNode: SKSpriteNode {
                 currentPlatform = nil
             }
         }
+        
+        if otherCategory == PhysicsCategories.ladder {
+            isOnLadder = false
+            self.physicsBody?.affectedByGravity = true
+        }
+        
     }
     
     func triggerDeath() {

@@ -30,10 +30,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     let saw = SawNode(playerEra: .present, speed: 200, range: 500)
     
-    
     var firstSceneGeneralBoxes: [BoxNode] = []
 
-    
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager

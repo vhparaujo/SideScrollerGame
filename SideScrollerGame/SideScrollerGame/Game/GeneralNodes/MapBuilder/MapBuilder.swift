@@ -75,43 +75,49 @@ class MapBuilder {
                     // Identify the tile type
                     if let tileName = tileDefinition.name {
                         switch tileName {
-                            case "Ground":
-                                // Create the physics body for ground tiles
-                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.friction = 0
-                                tilePhysicsNode.physicsBody?.restitution = 0.0
-
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            case "Wall":
-                                // Create the physics body for wall tiles
-                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.friction = 0
-                                tilePhysicsNode.physicsBody?.restitution = 0.0
-
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            case "Death":
-                                // Create the physics body for death tiles
-                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
-                            case "SpawnPoint":
-                                addSpawnPoint(position: tilePositionInScene, size: tileSize)
-                                
-                            case "Elevator":
-                                addElavator(position: tilePositionInScene)
-                            case "Box":
-                                addBox(position: tilePositionInScene)
-                            default:
-                                // Default physics body for other tiles
-                                break
+                        case "Ground":
+                            // Create the physics body for ground tiles
+                            tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.friction = 0
+                            tilePhysicsNode.physicsBody?.restitution = 0.0
+                            
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                        case "Wall":
+                            // Create the physics body for wall tiles
+                            tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.friction = 0
+                            tilePhysicsNode.physicsBody?.restitution = 0.0
+                            
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                        case "Death":
+                            // Create the physics body for death tiles
+                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
+                        case "SpawnPoint":
+                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                            tilePhysicsNode.physicsBody?.collisionBitMask = 0
+                            
+                        case "Elevator":
+                            addElavator(position: tilePositionInScene)
+                        case "Box":
+                            addBox(position: tilePositionInScene)
+                        case "Ladder":
+                            addLadder(position: tilePositionInScene)
+                        default:
+                            // Default physics body for other tiles
+                            break
                         }
                     }
                     
@@ -127,7 +133,7 @@ class MapBuilder {
         // Add the tile node to the scene
         scene.addChild(tileNode)
         
-
+        
     }
     
     func addBox(position: CGPoint) {
@@ -146,10 +152,18 @@ class MapBuilder {
     
     func addElavator(position: CGPoint) {
         if let scene = scene as? FirstScene {
-                let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
-                newElavator.position = position
-                scene.addChild(newElavator)
-            }
+            let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+            newElavator.position = position
+            scene.addChild(newElavator)
+        }
+    }
+    
+    func addLadder(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let newLadder = Ladder()
+            newLadder.position = position
+            scene.addChild(newLadder)
+        }
     }
     
     func addSpawnPoint(position: CGPoint, size: CGSize) {

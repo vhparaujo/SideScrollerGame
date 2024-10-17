@@ -14,6 +14,7 @@ enum GameActions: String, Codable, CaseIterable {
     case climb
     case action
     case brintToPresent
+    case down
     
    
 }

@@ -30,7 +30,8 @@ class GameControllerManager {
             .keyD: .moveRight, // D key
             .spacebar: .jump,  // Space key
             .keyE: .action,     // E key
-            .leftShift: .brintToPresent // Left Shift key
+            .leftShift: .brintToPresent, // Left Shift key
+                .keyS: .down,
         ]
         
         if let keymap = SwiftDataManager.shared.fetchFirstKeymap() {
