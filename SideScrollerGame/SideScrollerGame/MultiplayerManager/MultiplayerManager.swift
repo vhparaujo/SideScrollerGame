@@ -20,8 +20,8 @@ class MultiplayerManager: NSObject {
     var opponent: GKPlayer? = nil
     
     //boxes
-    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:] 
-//    var boxes: [BoxTeletransport] = []
+    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:]
+    
 
     //spawnPoint
     var spawnpoint: CGPoint = .zero

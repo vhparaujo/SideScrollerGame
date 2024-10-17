@@ -71,9 +71,21 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         firstSceneGeneralBoxes.append(newBox)
     }
     
+    func addBoxesToArray(){
+        if playerNode.bringBoxToPresent && playerEra == .future, let box = playerNode.boxRef{
+            if !self.firstSceneGeneralBoxes.contains(box){
+                self.firstSceneGeneralBoxes.append(box)
+                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id))
+                playerNode.bringBoxToPresent = false
+            }
+        }
+    }
+    
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
+        
+        self.addBoxesToArray()
         
         self.updateBoxes()
         

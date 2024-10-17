@@ -115,7 +115,8 @@ class MapBuilder {
                                 addBox(position: tilePositionInScene)
                             case "Ladder":
                                 addLadder(position: tilePositionInScene)
-                                
+                            case "fan":
+                            addFan(position: tilePositionInScene)
                             case "Player":
                                 addPlayer(position: tilePositionInScene)
                             case "OtherPlayer":
@@ -143,6 +144,13 @@ class MapBuilder {
         
     }
     
+    func addSpawnPoint(position: CGPoint, size: CGSize) {
+        if let scene = scene as? FirstScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
+        }
+    }
+    
     func addBox(position: CGPoint) {
         if let scene = scene as? FirstScene {
             if scene.playerEra == .future {
@@ -150,9 +158,10 @@ class MapBuilder {
                 newBox.position = position
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
-                scene.addChild(newBox)
-                scene.firstSceneGeneralBoxes.append(newBox)
-                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+                scene.addChild(newBox) 
+//                scene.firstSceneGeneralBoxes.append(newBox)
+//                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+#warning("aqui é o antigo lugar onde eu adicionava as caixas")
             }
         }
     }
@@ -173,10 +182,11 @@ class MapBuilder {
         }
     }
     
-    func addSpawnPoint(position: CGPoint, size: CGSize) {
+    func addFan(position: CGPoint) {
         if let scene = scene as? FirstScene {
-            let newSpawnPoint = SpawnPointNode(size: size, position: position)
-            scene.addChild(newSpawnPoint)
+            let newFan = Fan()
+            newFan.position = position
+            scene.addChild(newFan)
         }
     }
     
