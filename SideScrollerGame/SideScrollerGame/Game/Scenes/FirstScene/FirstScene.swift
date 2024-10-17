@@ -59,7 +59,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         tileMapWidth = mapBuilder.tileMapWidth
 
         saw.position = CGPoint(x: 1200, y: -30)
-        addChild(saw)
+//        addChild(saw)
+#warning("tirei a serra só pra debugar")
 
 
     }
@@ -229,5 +230,4 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(parallaxBackground!)
     }
-    
 }
