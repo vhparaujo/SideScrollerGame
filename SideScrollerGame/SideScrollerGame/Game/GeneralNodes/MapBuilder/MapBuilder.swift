@@ -169,13 +169,7 @@ class MapBuilder {
         }
     }
     
-    func addSpawnPoint(position: CGPoint, size: CGSize) {
-        if let scene = scene as? FirstScene {
-            let newSpawnPoint = SpawnPointNode(size: size, position: position)
-            scene.addChild(newSpawnPoint)
-        }
-    }
-    
+ 
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
         // Define the rectangle centered at (0,0) since the node's position is set accordingly
         let rect = CGRect(x: -tileSize.width / 2, y: -tileSize.height / 2, width: tileSize.width, height: tileSize.height)
