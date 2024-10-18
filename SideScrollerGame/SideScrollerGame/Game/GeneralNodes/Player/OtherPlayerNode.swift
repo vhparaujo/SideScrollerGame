@@ -26,7 +26,11 @@ class OtherPlayerNode: PlayerNode {
     @MainActor required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    required init?(coder aDecoder: NSCoder, playerEra: PlayerEra, mpManager: MultiplayerManager) {
+        fatalError("init(coder:playerEra:mpManager:) has not been implemented")
+    }
+    
     // Recebe atualizações de posição e estado do MultiplayerManager
     internal override func setupBindings() {
         mpManager.otherPlayerInfo

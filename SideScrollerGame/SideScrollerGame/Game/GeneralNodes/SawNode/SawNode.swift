@@ -13,7 +13,6 @@ class SawNode: SKNode {
     var range: CGFloat
     
     lazy var saw: SKSpriteNode = {
-        #warning("depois tem q arrumar os nodes aq")
         let bodyTexture = SKTexture(imageNamed: "\(playerEra == .present ? "saw-present" : "saw-future")-1")
         return SKSpriteNode(texture: bodyTexture, color: .red, size: CGSize(width: 200, height: 200))
     }()

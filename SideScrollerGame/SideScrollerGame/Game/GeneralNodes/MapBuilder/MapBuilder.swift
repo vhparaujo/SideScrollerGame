@@ -81,7 +81,7 @@ class MapBuilder {
                                 tilePhysicsNode.physicsBody?.isDynamic = false
                                 tilePhysicsNode.physicsBody?.friction = 0
                                 tilePhysicsNode.physicsBody?.restitution = 0.0
-
+                                
                                 tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
                                 tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
                                 tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
@@ -91,7 +91,7 @@ class MapBuilder {
                                 tilePhysicsNode.physicsBody?.isDynamic = false
                                 tilePhysicsNode.physicsBody?.friction = 0
                                 tilePhysicsNode.physicsBody?.restitution = 0.0
-
+                                
                                 tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
                                 tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
                                 tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
@@ -103,11 +103,7 @@ class MapBuilder {
                                 tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
                                 tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
                             case "SpawnPoint":
-                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.spawnPoint
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                                tilePhysicsNode.physicsBody?.collisionBitMask = 0
+                                addSpawnPoint(position: tilePositionInScene, size: tileSize)
                                 
                             case "Elevator":
                                 addElavator(position: tilePositionInScene)
@@ -143,7 +139,14 @@ class MapBuilder {
         // Add the tile node to the scene
         scene.addChild(tileNode)
         
-
+        
+    }
+    
+    func addSpawnPoint(position: CGPoint, size: CGSize) {
+        if let scene = scene as? FirstScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
+        }
     }
     
     func addBox(position: CGPoint) {
@@ -153,19 +156,69 @@ class MapBuilder {
                 newBox.position = position
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
-                scene.addChild(newBox)
-                scene.firstSceneGeneralBoxes.append(newBox)
-                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+                scene.addChild(newBox) 
+//                scene.firstSceneGeneralBoxes.append(newBox)
+//                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
+#warning("aqui é o antigo lugar onde eu adicionava as caixas")
             }
         }
     }
     
     func addElavator(position: CGPoint) {
         if let scene = scene as? FirstScene {
-                let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
-                newElavator.position = position
-                scene.addChild(newElavator)
+            let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+            newElavator.position = position
+            scene.addChild(newElavator)
+        }
+    }
+    
+    func addLadder(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let newLadder = Ladder()
+            newLadder.position = position
+            scene.addChild(newLadder)
+        }
+    }
+    
+    func addFan(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let newFan = Fan()
+            newFan.position = position
+            scene.addChild(newFan)
+        }
+    }
+    
+    func addPlayer(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            scene.playerNode = PlayerNode(playerEra: scene.playerEra, mpManager: mpManager)
+            scene.playerNode.position = position
+            scene.addChild(scene.playerNode)
+        }
+    }
+    
+    func addOtherPlayer(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            var otherPlayerEra: PlayerEra
+            
+            if scene.playerEra == .present {
+                otherPlayerEra = .future
+            } else {
+                otherPlayerEra = .present
             }
+            
+            guard scene.otherPlayer == nil else { return }
+            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra, mpManager: mpManager)
+            scene.otherPlayer.position = position
+            scene.addChild(scene.otherPlayer)
+        }
+    }
+    
+    func addSaw(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let saw = SawNode(playerEra: .present, speed: 200, range: 500)
+            saw.position = position
+            scene.addChild(saw)
+        }
     }
     
     func addNextSceneNode(position: CGPoint, size: CGSize) {
