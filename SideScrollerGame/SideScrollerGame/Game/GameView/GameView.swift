@@ -22,7 +22,6 @@ struct GameView: View {
                     .id(currentSceneType) // Force refresh when the scene type changes
                     .opacity(opacity)      // Use opacity to control fade in/out
                     .animation(.easeInOut(duration: 1.0), value: opacity) // Add animation to opacity
-                
             }
         }
     }

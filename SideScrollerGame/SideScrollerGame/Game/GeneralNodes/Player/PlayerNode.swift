@@ -46,6 +46,12 @@ class PlayerNode: SKSpriteNode {
     
     var isOnFan = false
     
+    
+#warning("Variaveis pra calcular a queda")
+   
+    var isFalling = false
+    var lastHeightInGround: CGFloat = 0
+    
     let currentActionKey = "PlayerAnimation"
     var mpManager: MultiplayerManager
     
@@ -188,6 +194,7 @@ class PlayerNode: SKSpriteNode {
         sendPlayerInfoToOthers()
         handleJump()
         updatePlayerOrientation()
+        handleDeath()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -244,6 +251,30 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
+    
+#warning("tô aqui")
+    func handleDeath() {
+        
+        if !playerInfo.isGrounded && !isFalling {
+            self.lastHeightInGround = self.position.y
+            isFalling = true
+            print("Player has jumped. Last height recorded: \(self.lastHeightInGround)")
+            
+        } else if !isFalling && playerInfo.isGrounded {
+            isFalling = false
+            let value = self.position.y - self.lastHeightInGround
+            print("Current height: \(self.position.y), Last height: \(self.lastHeightInGround), Difference: \(value)")
+            
+            if value > 100 {
+                print("morre parça")
+               
+            }
+        }
+    }
+
+
+    
+    
     private func handleJump() {
         if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
@@ -284,9 +315,11 @@ class PlayerNode: SKSpriteNode {
         self.run(animationAction, withKey: currentActionKey)
     }
     
+
     func didBegin(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
+        
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount += 1
@@ -321,6 +354,8 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
+
+        
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
             if groundContactCount == 0 {
@@ -340,7 +375,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
         }
-        
+      
     }
     
     private func triggerDeath() {
