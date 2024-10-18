@@ -46,9 +46,6 @@ class PlayerNode: SKSpriteNode {
     
     var isOnFan = false
     
-    
-#warning("Variaveis pra calcular a queda")
-    
     var isFalling = false
     var lastHeightInGround: CGFloat = 0
     
@@ -188,7 +185,6 @@ class PlayerNode: SKSpriteNode {
             self.xScale = -abs(self.xScale)
         }
     }
-#warning("Update")
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
         sendPlayerInfoToOthers()
@@ -251,8 +247,6 @@ class PlayerNode: SKSpriteNode {
         }
     }
     
-    
-#warning("tô aqui")
     func handleDeath() {
         
         if !playerInfo.isGrounded {
