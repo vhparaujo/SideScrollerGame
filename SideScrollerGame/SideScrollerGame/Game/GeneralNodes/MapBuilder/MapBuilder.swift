@@ -113,6 +113,18 @@ class MapBuilder {
                                 addElavator(position: tilePositionInScene)
                             case "Box":
                                 addBox(position: tilePositionInScene)
+                            case "Ladder":
+                                addLadder(position: tilePositionInScene)
+                            case "fan":
+                            addFan(position: tilePositionInScene)
+                            case "Player":
+                                addPlayer(position: tilePositionInScene)
+                            case "OtherPlayer":
+                                addOtherPlayer(position: tilePositionInScene)
+                            case "Saw":
+                                addSaw(position: tilePositionInScene)
+                            case "NextScene":
+                                addNextSceneNode(position: tilePositionInScene, size: tileSize)
                             default:
                                 // Default physics body for other tiles
                                 break
@@ -154,6 +166,13 @@ class MapBuilder {
                 newElavator.position = position
                 scene.addChild(newElavator)
             }
+    }
+    
+    func addNextSceneNode(position: CGPoint, size: CGSize) {
+        if let scene = scene as? FirstScene {
+            let nextSceneNode = NextSceneNode(size: size, position: position)
+            scene.addChild(nextSceneNode)
+        }
     }
     
     func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
