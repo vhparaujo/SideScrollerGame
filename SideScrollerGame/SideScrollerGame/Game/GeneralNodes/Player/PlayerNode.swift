@@ -101,14 +101,14 @@ class PlayerNode: SKSpriteNode {
     
     func setupBindings() {
         controller.keyPressPublisher
-            .sink { [weak self] action in
-                self?.handleKeyPress(action: action)
+            .sink { action in
+                self.handleKeyPress(action: action)
             }
             .store(in: &cancellables)
         
         controller.keyReleasePublisher
-            .sink { [weak self] action in
-                self?.handleKeyRelease(action: action)
+            .sink { action in
+                self.handleKeyRelease(action: action)
             }
             .store(in: &cancellables)
     }
