@@ -315,6 +315,12 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.fan {
             isOnFan = true
         }
+        
+        if otherCategory == PhysicsCategories.nextScene {
+            if let gameView = self.scene?.view as? GameView {
+                gameView.transitionScene(to: .first(playerEra)) // Adjust the new scene type as needed
+            }
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
