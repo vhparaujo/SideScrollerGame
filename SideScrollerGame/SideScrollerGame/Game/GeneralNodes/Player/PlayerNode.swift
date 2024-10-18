@@ -356,11 +356,11 @@ class PlayerNode: SKSpriteNode {
         // Create fade-in and fade-out actions
         let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
         let waitAction = SKAction.wait(forDuration: 0.5)
-        let resetPlayerAction = SKAction.run { [weak self] in
-            if let spawnPoint = self?.mpManager.spawnpoint {
-                self?.position = spawnPoint
-            }
-            self?.playerInfo.isDying = false
+        let resetPlayerAction = SKAction.run {
+            
+            self.position = self.mpManager.spawnpoint
+            
+            self.playerInfo.isDying = false
         }
         let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
         let removeFadeInDeath = SKAction.removeFromParent()
