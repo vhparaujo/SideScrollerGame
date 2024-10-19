@@ -47,6 +47,7 @@ class PlayerNode: SKSpriteNode {
     var isOnFan = false
     
     var isFalling = false
+    var alreadyFalling = false
     var lastHeightInGround: CGFloat = 0
     
     let currentActionKey = "PlayerAnimation"
@@ -246,41 +247,22 @@ class PlayerNode: SKSpriteNode {
             triggerDeath()
         }
     }
-    
     func handleDeath() {
-        
-        if !playerInfo.isGrounded {
-            // O jogador está no ar
-            if !isFalling {
-                // O jogador começa a cair
-                isFalling = true
-                self.lastHeightInGround = self.position.y
-            }
+        if isFalling && !alreadyFalling{
+            alreadyFalling = true
+            self.lastHeightInGround = self.position.y
         }
         
         else  {
-            // O jogador está no ar e já está caindo
             let value =  self.lastHeightInGround - self.position.y
-//            print("Current height: \(self.position.y), Last height: \(self.lastHeightInGround), Difference: \(value)")
-            if value > 130 {
-                print("morre parça")
+            if value > 260 {
                 print("value: \(value)")
                 self.playerInfo.isDying = true
-               
+                self.lastHeightInGround = 0
             }
-        }
-        
-        if playerInfo.isGrounded {
-            // O jogador está no chão
-            isFalling = false
-            self.lastHeightInGround = 0
         }
     }
 
-    
-    
-    
-    
     private func handleJump() {
         if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
@@ -327,9 +309,11 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         
-        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform || otherCategory == PhysicsCategories.wall{
             groundContactCount += 1
             playerInfo.isGrounded = true
+            isFalling = false
+            alreadyFalling = false
             playerInfo.isJumping = false
             playerInfo.alreadyJumping = false
             
@@ -371,6 +355,7 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }
+            isFalling = true
         }
         
         if otherCategory == PhysicsCategories.ladder {
