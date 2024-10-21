@@ -155,9 +155,6 @@ class MapBuilder {
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
                 scene.addChild(newBox) 
-//                scene.firstSceneGeneralBoxes.append(newBox)
-//                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
-#warning("aqui é o antigo lugar onde eu adicionava as caixas")
             }
         }
     }

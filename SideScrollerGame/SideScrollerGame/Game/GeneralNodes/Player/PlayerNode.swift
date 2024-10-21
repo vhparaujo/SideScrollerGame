@@ -46,6 +46,10 @@ class PlayerNode: SKSpriteNode {
     
     var isOnFan = false
     
+    var isFalling = false
+    var alreadyFalling = false
+    var lastHeightInGround: CGFloat = 0
+    
     let currentActionKey = "PlayerAnimation"
     var mpManager: MultiplayerManager
     
@@ -113,63 +117,63 @@ class PlayerNode: SKSpriteNode {
     
     private func handleKeyPress(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = true
-                playerInfo.facingRight = false
-            case .moveRight:
-                playerInfo.isMovingRight = true
-                playerInfo.facingRight = true
-            case .jump:
-                playerInfo.isJumping = true
-            case .action:
-                if playerInfo.isGrounded {
-                    if let box = boxRef {
-                        playerInfo.action = true
-                        box.isGrabbed = true
-                        box.enableMovement()
-                        boxOffset = box.position.x - self.position.x
-                    }
-                    if let elevator = elevatorRef {
-                        playerInfo.action = true
-                        elevator.moveManual()
-                    }
+        case .moveLeft:
+            playerInfo.isMovingLeft = true
+            playerInfo.facingRight = false
+        case .moveRight:
+            playerInfo.isMovingRight = true
+            playerInfo.facingRight = true
+        case .jump:
+            playerInfo.isJumping = true
+        case .action:
+            if playerInfo.isGrounded {
+                if let box = boxRef {
+                    playerInfo.action = true
+                    box.isGrabbed = true
+                    box.enableMovement()
+                    boxOffset = box.position.x - self.position.x
                 }
-            case .bringToPresent:
-                bringBoxToPresent = true
-            case .climb:
-                canClimb = isOnLadder
-            case .down:
-                canDown = isOnLadder
+                if let elevator = elevatorRef {
+                    playerInfo.action = true
+                    elevator.moveManual()
+                }
+            }
+        case .bringToPresent:
+            bringBoxToPresent = true
+        case .climb:
+            canClimb = isOnLadder
+        case .down:
+            canDown = isOnLadder
         }
     }
     
     private func handleKeyRelease(action: GameActions) {
         switch action {
-            case .moveLeft:
-                playerInfo.isMovingLeft = false
-            case .moveRight:
-                playerInfo.isMovingRight = false
-                if playerInfo.isMovingLeft {
-                    playerInfo.facingRight = false
-                    if !playerInfo.action {
-                        self.xScale = -abs(self.xScale)
-                    }
+        case .moveLeft:
+            playerInfo.isMovingLeft = false
+        case .moveRight:
+            playerInfo.isMovingRight = false
+            if playerInfo.isMovingLeft {
+                playerInfo.facingRight = false
+                if !playerInfo.action {
+                    self.xScale = -abs(self.xScale)
                 }
-            case .action:
-                if playerInfo.action {
-                    playerInfo.action = false
-                    boxRef?.isGrabbed = false
-                    boxRef?.disableMovement()
-                    elevatorRef?.stopManualMove()
-                }
-            case .bringToPresent:
-                bringBoxToPresent = false
-            case .climb:
-                canClimb = false
-            case .down:
-                canDown = false
-            default:
-                break
+            }
+        case .action:
+            if playerInfo.action {
+                playerInfo.action = false
+                boxRef?.isGrabbed = false
+                boxRef?.disableMovement()
+                elevatorRef?.stopManualMove()
+            }
+        case .bringToPresent:
+            bringBoxToPresent = false
+        case .climb:
+            canClimb = false
+        case .down:
+            canDown = false
+        default:
+            break
         }
     }
     
@@ -180,12 +184,12 @@ class PlayerNode: SKSpriteNode {
             self.xScale = -abs(self.xScale)
         }
     }
-    
     // Update player position and animation based on movement direction
     func update(deltaTime: TimeInterval) {
         sendPlayerInfoToOthers()
         handleJump()
         updatePlayerOrientation()
+        handleDeath()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -241,7 +245,22 @@ class PlayerNode: SKSpriteNode {
             triggerDeath()
         }
     }
-    
+    func handleDeath() {
+        if isFalling && !alreadyFalling{
+            alreadyFalling = true
+            self.lastHeightInGround = self.position.y
+        }
+        
+        else  {
+            let value =  self.lastHeightInGround - self.position.y
+            if value > 260 {
+                print("value: \(value)")
+                self.playerInfo.isDying = true
+                self.lastHeightInGround = 0
+            }
+        }
+    }
+
     private func handleJump() {
         if playerInfo.isJumping && !playerInfo.alreadyJumping && playerInfo.isGrounded && !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
@@ -282,13 +301,17 @@ class PlayerNode: SKSpriteNode {
         self.run(animationAction, withKey: currentActionKey)
     }
     
+    
     func didBegin(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
+        
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform || otherCategory == PhysicsCategories.wall{
             groundContactCount += 1
             playerInfo.isGrounded = true
+            isFalling = false
+            alreadyFalling = false
             playerInfo.isJumping = false
             playerInfo.alreadyJumping = false
             
@@ -319,6 +342,8 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
+        
+        
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
             if groundContactCount == 0 {
@@ -328,6 +353,7 @@ class PlayerNode: SKSpriteNode {
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }
+            isFalling = true
         }
         
         if otherCategory == PhysicsCategories.ladder {
