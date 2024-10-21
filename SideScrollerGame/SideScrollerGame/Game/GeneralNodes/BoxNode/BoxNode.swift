@@ -41,7 +41,7 @@ class BoxNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true 
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.box
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
         self.physicsBody?.friction = 100.0
         self.physicsBody?.restitution = 0.0
