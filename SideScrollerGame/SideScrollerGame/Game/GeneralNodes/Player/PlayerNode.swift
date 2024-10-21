@@ -128,10 +128,12 @@ class PlayerNode: SKSpriteNode {
         case .action:
             if playerInfo.isGrounded {
                 if let box = boxRef {
-                    playerInfo.action = true
-                    box.isGrabbed = true
-                    box.enableMovement()
-                    boxOffset = box.position.x - self.position.x
+                    if !box.isGrabbed {
+                        playerInfo.action = true
+                        box.isGrabbed = true
+                        box.enableMovement()
+                        boxOffset = box.position.x - self.position.x
+                    }
                 }
                 if let elevator = elevatorRef {
                     playerInfo.action = true

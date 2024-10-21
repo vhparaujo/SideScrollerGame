@@ -26,7 +26,7 @@ class BoxNode: SKSpriteNode {
     
     func update(deltaTime: TimeInterval) {
         if isGrabbed {
-            mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id))
+            mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id, isGrabbed: self.isGrabbed))
          
         }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position.x{
             self.position.x = posX

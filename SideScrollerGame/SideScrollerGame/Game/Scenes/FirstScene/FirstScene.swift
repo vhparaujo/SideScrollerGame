@@ -75,7 +75,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         if playerNode.bringBoxToPresent && playerEra == .future, let box = playerNode.boxRef{
             if !self.firstSceneGeneralBoxes.contains(box){
                 self.firstSceneGeneralBoxes.append(box)
-                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id))
+                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id, isGrabbed: false))
                 playerNode.bringBoxToPresent = false
             }
         }
