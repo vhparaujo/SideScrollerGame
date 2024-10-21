@@ -8,25 +8,29 @@ class OtherPlayerNode: PlayerNode {
     private var interpolationSpeed: CGFloat = 10.0
     private var updateTimer: Timer = .init()
     
+    private var lastState: PlayerTextureState = .idle
+    
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
-        
         super.init(playerEra: playerEra, mpManager: mpManager)
         
-        self.mpManager = mpManager
+        self.physicsBody?.affectedByGravity = false
         
+        self.mpManager = mpManager
         self.physicsBody?.categoryBitMask = PhysicsCategories.otherPlayer
 
         // Assinar para atualizações de outros jogadores
         setupBindings()
-        
         startPositionUpdateTimer()
-
     }
     
     @MainActor required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    required init?(coder aDecoder: NSCoder, playerEra: PlayerEra, mpManager: MultiplayerManager) {
+        fatalError("init(coder:playerEra:mpManager:) has not been implemented")
+    }
+    
     // Recebe atualizações de posição e estado do MultiplayerManager
     internal override func setupBindings() {
         mpManager.otherPlayerInfo
@@ -34,67 +38,64 @@ class OtherPlayerNode: PlayerNode {
                 guard let self = self, let playerInfo = playerInfo else { return }
                 self.playerInfo = playerInfo
                 
+                // Atualize a textura com base no estado do jogador
+                self.updateTexture(for: playerInfo.textureState)
             }
             .store(in: &cancellables)
     }
     
-    // Função para iniciar o timer de atualização
-        private func startPositionUpdateTimer() {
-            updateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
-//                self.position = playerInfo.position
-                
-                if let self = self {
-                    self.position = self.playerInfo.position
-                }
+    // Função para iniciar o timer de atualização de posição
+    private func startPositionUpdateTimer() {
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            if let self = self {
+                self.position = self.playerInfo.position
             }
         }
-    
-    
-    
+    }
     
     override func update(deltaTime: TimeInterval) {
-        callJump()
-        callMovements()
+        // Atualize a posição do jogador
+        if self.position != mpManager.otherPlayerInfo.value?.position {
+            self.position = mpManager.otherPlayerInfo.value?.position ?? .zero
+        }
+       
+       
 
-        var desiredVelocity: CGFloat = 0.0
-        
-        if playerInfo.isMovingLeft && !playerInfo.isMovingRight {
-            desiredVelocity = -moveSpeed
-        } else if playerInfo.isMovingRight && !playerInfo.isMovingLeft {
-            desiredVelocity = moveSpeed
-        } else {
-            desiredVelocity = 0.0
-        }
-        
-        // Apply velocity to the player
-        self.physicsBody?.velocity.dx = desiredVelocity
-        
-        // Move the box with the player when grabbed
-        if playerInfo.action, let box = boxRef {
-            // Maintain the initial offset captured during grabbing
-            box.position.x = self.position.x + boxOffset
-            box.physicsBody?.velocity.dx = desiredVelocity
-            
-            // Prevent the box from flipping
-            box.xScale = abs(box.xScale)
-        }
-        
-        // Adjust player's position by the platform's movement delta
-        if let platform = currentPlatform {
-            let delta = platform.movementDelta()
-            self.position.x += delta.x
-            self.position.y += delta.y
-        }
-        
-        // Determine the appropriate state
-        if playerInfo.action {
+        // Certifique-se de que a textura está sempre atualizada com base no estado
+        updateTexture(for: playerInfo.textureState)
+    }
+    
+    // Função para atualizar a textura com base no estado do jogador
+    private func updateTexture(for state: PlayerTextureState) {
+        switch state {
+        case .running:
+            if lastState != state{
+                changeState(to: .running)
+                self.lastState = state
+            }
+        case .idle:
+            if lastState != state{
+                changeState(to: .idle)
+                self.lastState = state
+            }
+        case .jumping:
+            if lastState != state{
+                changeState(to: .jumping)
+                self.lastState = state
+            }
+        case .climbing:
+            if lastState != state{
+                changeState(to: .climbing)
+                self.lastState = state
+            }
+        case .grabbing:
             changeState(to: .grabbing)
-        } else if !playerInfo.isGrounded {
-            changeState(to: .jumping)
-        } else if desiredVelocity != 0 {
-            changeState(to: .running)
-        } else {
-            changeState(to: .idle)
+            self.lastState = state
+        case .hurt:
+            if lastState != state{
+                changeState(to: .hurt)
+                self.lastState = state
+            }
         }
     }
 }

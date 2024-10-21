@@ -12,11 +12,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var mpManager: MultiplayerManager
     
-    private var playerNode: PlayerNode!
-    private var otherPlayer: OtherPlayerNode!
-    
-    private var spawnPoint: SpawnPointNode!
-    private var spawnPoint2: SpawnPointNode!
+    var playerNode: PlayerNode!
+    var otherPlayer: OtherPlayerNode!
     
     private var parallaxBackground: ParallaxBackground!
     var cameraNode: SKCameraNode = SKCameraNode()
@@ -26,9 +23,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var tileMapWidth: CGFloat = 0.0
     
-    private var lastUpdateTime: TimeInterval = 0 // Declare and initialize lastUpdateTime
+    var fadeNode: SKSpriteNode!
+    
+    private var lastUpdateTime: TimeInterval = 0 
+        
     
     
+    
+    var firstSceneGeneralBoxes: [BoxNode] = []
+
     init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -46,102 +49,71 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        addPlayer()
-        addOtherPlayer()
         setupBackground()
         setupCamera()
         
-        if playerEra == .future {
-            addBox(position: .init(x: 1418, y: 10))
-        }
-        addBoxes()
-        addSpawnPoint()
-        
-        let mapBuilder = MapBuilder(scene: self)
+        let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
         
     }
     
-    func addBox(position: CGPoint, id: UUID = .init(), alreadyHadBox: Bool = false, isDynamic: Bool = true){
-        let newBox = BoxNode()
+    override func keyUp(with event: NSEvent) {}
+    
+    override func keyDown(with event: NSEvent) {}
+    
+    func addBoxWithoutSendingToOthers(position: CGPoint, id: UUID = .init()){
+        let newBox = BoxNode(mpManager: mpManager)
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
-        newBox.physicsBody?.isDynamic = isDynamic
         addChild(newBox)
-        
-        if !alreadyHadBox{
-            mpManager.firstSceneBoxes.append(.init(position: newBox.position, id: newBox.id))
+        firstSceneGeneralBoxes.append(newBox)
+    }
+    
+    func addBoxesToArray(){
+        if playerNode.bringBoxToPresent && playerEra == .future, let box = playerNode.boxRef{
+            if !self.firstSceneGeneralBoxes.contains(box){
+                self.firstSceneGeneralBoxes.append(box)
+                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id, isGrabbed: false))
+                playerNode.bringBoxToPresent = false
+            }
         }
-    }
-    func addBoxes() {
-        addBox(position: CGPoint(x: size.width / 2, y: size.height / 2))
-
-        addBox(position: CGPoint(x: size.width + 550, y: size.height / 2))
-
-        addBox(position: CGPoint(x: size.width * 3.5 + 150, y: size.height / 2 + 250), isDynamic: false)
-   
-        addBox(position: CGPoint(x: size.width * 3.5 + 500, y: size.height / 2 + 250), isDynamic: false)
-
-        addBox(position: CGPoint(x: size.width * 5 + 700, y: size.height / 2))
-    }
-    
-    func addSpawnPoint() {
-        spawnPoint = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width / 2, y: size.height / 8))
-        addChild(spawnPoint)
-        
-        spawnPoint2 = SpawnPointNode(size: CGSize(width: 50, height: 50), position: CGPoint(x: size.width * 3, y: size.height / 2 + 200))
-        addChild(spawnPoint2)
-    }
-    
-    func addPlayer() {
-        playerNode = PlayerNode(playerEra: playerEra, mpManager: mpManager)
-        playerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(playerNode)
-    }
-    
-    func addOtherPlayer() {
-        
-        var otherPlayerEra: PlayerEra
-        
-        if playerEra == .present {
-            otherPlayerEra = .future
-        } else {
-            otherPlayerEra = .present
-        }
-        
-        guard otherPlayer == nil else { return }
-        otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra, mpManager: mpManager)
-        otherPlayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        addChild(otherPlayer)
-        
     }
     
     // Update method to control player movement
     override func update(_ currentTime: TimeInterval) {
         self.cameraAndBackgroundUpdate()
         
-        if playerEra == .present {
-            for n in mpManager.firstSceneBoxes {
-                if let childNode = self.children.first(where: { $0.name == "\(n.id)" }) {
-                    childNode.position = n.position
-                }else {
-                    addBox(position: n.position, id: n.id, alreadyHadBox: true)
-                }
-            }
-        }
+        self.addBoxesToArray()
         
+        self.updateBoxes()
         
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
+        
+        for box in firstSceneGeneralBoxes {
+            box.update(deltaTime: deltaTime)
+        }
         
         // Update the player
         playerNode.update(deltaTime: deltaTime)
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+    }
+    
+    func updateBoxes(){
+        if playerEra == .present {
+            for box in mpManager.firstSceneGeneralBoxes {
+                if !self.children.contains(where: { node in
+                    "\(box.value.id)" == node.name
+                }){
+                    addBoxWithoutSendingToOthers(position: box.value.position, id: box.value.id)
+                }
+            }
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -158,6 +130,12 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 playerNode.boxRef = boxNode
             }
         }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if let moveButtonNode = otherBody.node as? SKSpriteNode {
+                playerNode.elevatorRef = moveButtonNode.parent as? ElevatorNode
+            }
+        }
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -170,21 +148,27 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
             if let boxNode = otherBody.node as? BoxNode {
                 // Only set boxRef to nil if it's the same box the player was interacting with
                 if playerNode.boxRef === boxNode {
+                    playerNode.boxRef?.disableMovement()
                     playerNode.boxRef = nil
                 }
             }
         }
+        
+        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
+        let otherBox = boxBody.categoryBitMask
+        
+        if otherBox == PhysicsCategories.box {
+            if let boxNode = otherBody.node as? BoxNode {
+                boxNode.disableMovement()
+            }
+        }
+        
+        if otherCategory == PhysicsCategories.moveButton {
+            if otherBody.node is SKSpriteNode {
+                playerNode.elevatorRef = nil
+            }
+        }
     }
-    
-    //    func cameraAndBackgroundUpdate() {
-    //        cameraNode.position.x = playerNode.position.x
-    //        let cameraMovementX = cameraNode.position.x - previousCameraXPosition
-    //        self.parallaxBackground.moveParallaxBackground(cameraMovementX: cameraMovementX)
-    //        self.parallaxBackground.paginateBackgroundLayers(cameraNode: cameraNode)
-    //        self.previousCameraXPosition = cameraNode.position.x
-    //
-    //    }
-    
     
     func cameraAndBackgroundUpdate() {
         // Calculate the visible size based on the camera's scale
@@ -215,8 +199,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         cameraNode.position.y = newY
     }
     
-    
-    
     func setupCamera() {
         self.cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
         self.addChild(self.cameraNode)
@@ -229,5 +211,4 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(parallaxBackground!)
     }
-    
 }

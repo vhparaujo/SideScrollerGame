@@ -15,15 +15,11 @@ extension MultiplayerManager: GKMatchDelegate {
     func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         switch state {
         case .connected:
-            
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
-                
             }
-        case .disconnected:
             
-            self.endMatch()
         default:
             self.endMatch()
         }
@@ -31,8 +27,9 @@ extension MultiplayerManager: GKMatchDelegate {
     
     /// Handles an error during the matchmaking process.
     func match(_ match: GKMatch, didFailWithError error: Error?) {
+        endMatch()
     }
-
+    
     /// Reinvites a player when they disconnect from the match.
     func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
         return false
@@ -49,16 +46,13 @@ extension MultiplayerManager: GKMatchDelegate {
             
         }else if let dataReceived: PlayerStartInfo = decode(matchData: data) {
             self.gameStartInfo.otherPlayerStartInfo = dataReceived
-
-        }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
             
-            if let index = self.firstSceneBoxes.firstIndex(where: { $0.id == dataReceived.id }) {
-                self.firstSceneBoxes[index].position = dataReceived.position
-            }else{
-                self.firstSceneBoxes.append(dataReceived)
-            }
+        }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
+            self.firstSceneGeneralBoxes[dataReceived.id] = dataReceived
+
+        }else if let dataReceived: CGPoint = decode(matchData: data) {
+            self.spawnpoint = dataReceived
         }
-        
     }
 }
 

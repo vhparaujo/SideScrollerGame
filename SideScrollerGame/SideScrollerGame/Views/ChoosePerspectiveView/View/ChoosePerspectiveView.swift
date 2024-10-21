@@ -23,8 +23,7 @@ struct ChoosePerspectiveView: View {
                         mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     }
                     .padding()
-                    .background(self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
-                    .background(self.mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection == perspective ? Color.red : Color.gray)
+                    .background(self.mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection == perspective ? Color.red : self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
