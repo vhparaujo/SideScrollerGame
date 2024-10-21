@@ -162,6 +162,9 @@ class PlayerNode: SKSpriteNode {
                 }
             }
         case .action:
+            if let box = boxRef {
+                box.isGrabbed = false
+            }
             if playerInfo.action {
                 playerInfo.action = false
                 boxRef?.isGrabbed = false
