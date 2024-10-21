@@ -68,8 +68,7 @@ class GameControllerManager {
     }
     
     func setupKeyboardInput(_ keyboardInput: GCKeyboardInput) {
-        keyboardInput.keyChangedHandler = { [weak self] keyboard, key, keyCode, pressed in
-            guard let self = self else { return }
+        keyboardInput.keyChangedHandler = { keyboard, key, keyCode, pressed in
             let keyMap = self.keymapModel.getKeyMap()
             if let action = keyMap[keyCode] {
                 if pressed {
@@ -78,6 +77,10 @@ class GameControllerManager {
                     self.keyReleasePublisher.send(action)
                 }
             }
+        }
+        
+        NSEvent.addLocalMonitorForEvents(matching: [.keyDown,.keyUp]) { event in
+            return nil
         }
     }
     

@@ -67,13 +67,11 @@ class PlayerNode: SKSpriteNode {
         self.mpManager = mpManager
         
         // Start with the idle texture for the given era
-        let textureName = playerEra == .present ? "player-idle-present-1" : "player-idle-future-1"
+        let textureName = playerEra == .present ? "player-present-idle-right" : "player-idle-future-1"
         let texture = SKTexture(imageNamed: textureName)
         super.init(texture: texture, color: .clear, size: texture.size())
-        
         self.zPosition = 1
-        self.setScale(4)  // Adjust as needed
-        
+
         setupPhysicsBody()
         setupBindings()
         changeState(to: .idle)
@@ -105,14 +103,14 @@ class PlayerNode: SKSpriteNode {
     
     func setupBindings() {
         controller.keyPressPublisher
-            .sink { [weak self] action in
-                self?.handleKeyPress(action: action)
+            .sink { action in
+                self.handleKeyPress(action: action)
             }
             .store(in: &cancellables)
         
         controller.keyReleasePublisher
-            .sink { [weak self] action in
-                self?.handleKeyRelease(action: action)
+            .sink { action in
+                self.handleKeyRelease(action: action)
             }
             .store(in: &cancellables)
     }
@@ -382,11 +380,11 @@ class PlayerNode: SKSpriteNode {
         // Create fade-in and fade-out actions
         let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
         let waitAction = SKAction.wait(forDuration: 0.5)
-        let resetPlayerAction = SKAction.run { [weak self] in
-            if let spawnPoint = self?.mpManager.spawnpoint {
-                self?.position = spawnPoint
-            }
-            self?.playerInfo.isDying = false
+        let resetPlayerAction = SKAction.run {
+            
+            self.position = self.mpManager.spawnpoint
+            
+            self.playerInfo.isDying = false
         }
         let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
         let removeFadeInDeath = SKAction.removeFromParent()
