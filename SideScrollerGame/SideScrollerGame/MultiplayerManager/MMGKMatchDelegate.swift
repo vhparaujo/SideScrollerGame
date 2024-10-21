@@ -19,6 +19,7 @@ extension MultiplayerManager: GKMatchDelegate {
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
             }
+            
         default:
             self.endMatch()
         }

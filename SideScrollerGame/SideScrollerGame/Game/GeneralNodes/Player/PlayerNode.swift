@@ -189,7 +189,7 @@ class PlayerNode: SKSpriteNode {
         sendPlayerInfoToOthers()
         handleJump()
         updatePlayerOrientation()
-        handleDeath()
+//        handleDeath()
         
         var desiredVelocity: CGFloat = 0.0
         
