@@ -148,8 +148,18 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
             if let boxNode = otherBody.node as? BoxNode {
                 // Only set boxRef to nil if it's the same box the player was interacting with
                 if playerNode.boxRef === boxNode {
+                    playerNode.boxRef?.disableMovement()
                     playerNode.boxRef = nil
                 }
+            }
+        }
+        
+        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
+        let otherBox = boxBody.categoryBitMask
+        
+        if otherBox == PhysicsCategories.box {
+            if let boxNode = otherBody.node as? BoxNode {
+                boxNode.disableMovement()
             }
         }
         

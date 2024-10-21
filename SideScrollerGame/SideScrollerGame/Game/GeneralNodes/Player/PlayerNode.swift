@@ -342,8 +342,6 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        
-        
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             groundContactCount = max(groundContactCount - 1, 0)
             if groundContactCount == 0 {
@@ -364,7 +362,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
         }
-        
+    
     }
     
     private func triggerDeath() {
