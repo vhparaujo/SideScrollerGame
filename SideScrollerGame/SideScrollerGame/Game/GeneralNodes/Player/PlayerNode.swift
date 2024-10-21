@@ -66,11 +66,13 @@ class PlayerNode: SKSpriteNode {
         self.playerEra = playerEra
         self.mpManager = mpManager
         
+    
         // Start with the idle texture for the given era
-        let textureName = playerEra == .present ? "player-present-idle-right" : "player-idle-future-1"
+        let textureName = playerEra == .present ? "player-idle-present-1" : "player-idle-future-1"
         let texture = SKTexture(imageNamed: textureName)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.zPosition = 1
+        self.setScale(4)
 
         setupPhysicsBody()
         setupBindings()

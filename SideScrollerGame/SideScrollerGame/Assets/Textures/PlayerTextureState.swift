@@ -19,12 +19,12 @@ enum PlayerTextureState: Codable {
     func textures(for era: PlayerEra) -> [SKTexture] {
         switch (self, era) {
             case (.running, .present):
-                return SKSpriteNode.loadTextures(prefix: "player-present-walk-right", count: 45)
+                return SKSpriteNode.loadTextures(prefix: "player-run-present", count: 6)
             case (.running, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-run-future", count: 6)
 
             case (.idle, .present):
-                return SKSpriteNode.loadTextures(prefix: "player-present-idle-right", count: 1)
+                return SKSpriteNode.loadTextures(prefix: "player-idle-present", count: 4)
             case (.idle, .future):
                 return SKSpriteNode.loadTextures(prefix: "player-idle-future", count: 4)
                 
