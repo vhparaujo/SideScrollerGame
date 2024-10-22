@@ -27,7 +27,7 @@ extension MultiplayerManager: GKMatchDelegate {
     
     /// Handles an error during the matchmaking process.
     func match(_ match: GKMatch, didFailWithError error: Error?) {
-        endMatch()
+//        endMatch()
     }
     
     /// Reinvites a player when they disconnect from the match.
