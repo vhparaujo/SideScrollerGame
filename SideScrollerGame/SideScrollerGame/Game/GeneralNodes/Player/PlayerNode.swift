@@ -345,9 +345,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            if let gameView = self.scene?.view as? GameView {
-                gameView.transitionScene(to: .first(playerEra)) // Adjust the new scene type as needed
-            }
+            GameViewModel.shared.transitionScene(to: .first(.future))
         }
     }
     
