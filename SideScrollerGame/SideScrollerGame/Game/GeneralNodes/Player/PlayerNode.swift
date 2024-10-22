@@ -142,8 +142,6 @@ class PlayerNode: SKSpriteNode {
                 canDescend = false
             case .jump:
                 break
-            default:
-                break
         }
     }
     
