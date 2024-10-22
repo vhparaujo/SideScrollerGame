@@ -117,7 +117,7 @@ class PlayerNode: SKSpriteNode {
                 handleActionKeyPress()
             case .bringToPresent:
                 // Handle bring to present logic if needed
-                break
+                bringBoxToPresent = true
             case .climb:
                 canClimb = isOnLadder
             case .down:
@@ -135,7 +135,7 @@ class PlayerNode: SKSpriteNode {
                 handleActionKeyRelease()
             case .bringToPresent:
                 // Handle bring to present logic if needed
-                break
+                bringBoxToPresent = false
             case .climb:
                 canClimb = false
             case .down:
@@ -312,6 +312,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.fan {
             isOnFan = true
         }
+        
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
@@ -319,6 +320,10 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
+            
+            if otherCategory == PhysicsCategories.ground {
+                isGrounded = false
+            }
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
