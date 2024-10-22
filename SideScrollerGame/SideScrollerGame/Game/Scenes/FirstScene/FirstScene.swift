@@ -102,6 +102,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+        
+        
     }
     
     func updateBoxes(){
@@ -131,6 +133,17 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
+        let otherBox = boxBody.categoryBitMask
+        
+        if otherBox == PhysicsCategories.box {
+            if let boxNode = otherBody.node as? BoxNode {
+                boxNode.disableMovement()
+                boxNode.stopBox()
+                print("caixa encostou")
+            }
+        }
+        
         if otherCategory == PhysicsCategories.moveButton {
             if let moveButtonNode = otherBody.node as? SKSpriteNode {
                 playerNode.elevatorRef = moveButtonNode.parent as? ElevatorNode
@@ -153,15 +166,16 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        
-        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
-        let otherBox = boxBody.categoryBitMask
-        
-        if otherBox == PhysicsCategories.box {
-            if let boxNode = otherBody.node as? BoxNode {
-                boxNode.disableMovement()
-            }
-        }
+//        
+//        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
+//        let otherBox = boxBody.categoryBitMask
+//        
+//        if otherBox == PhysicsCategories.box {
+//            if let boxNode = otherBody.node as? BoxNode {
+//                boxNode.disableMovement()
+//                print("caixa encostou")
+//            }
+//        }
         
         if otherCategory == PhysicsCategories.moveButton {
             if otherBody.node is SKSpriteNode {
