@@ -208,6 +208,7 @@ class PlayerNode: SKSpriteNode {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleJump()
+        handleDeath()
         updatePlayerOrientation()
         
         var desiredVelocity: CGFloat = 0.0
@@ -260,6 +261,13 @@ class PlayerNode: SKSpriteNode {
         // Handle death and respawn
         if playerInfo.isDying {
             triggerDeath()
+        }
+    }
+    
+    private func handleDeath() {
+        if playerInfo.isDying {
+            self.position = mpManager.spawnpoint
+            playerInfo.isDying = false
         }
     }
 
@@ -343,26 +351,5 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
-        physicsBody?.velocity = .zero
-        
-        // Add fade-in effect to the scene
-        if let scene = self.scene, fadeInDeath.parent == nil {
-            scene.addChild(fadeInDeath)
-            fadeInDeath.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
-        }
-        
-        // Create fade-in and fade-out actions
-        let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
-        let waitAction = SKAction.wait(forDuration: 0.5)
-        let resetPlayerAction = SKAction.run { [weak self] in
-            guard let self = self else { return }
-            self.position = self.mpManager.spawnpoint
-            self.playerInfo.isDying = false
-        }
-        let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
-        let removeFadeInDeath = SKAction.removeFromParent()
-        let fadeSequence = SKAction.sequence([fadeInAction, waitAction, resetPlayerAction, fadeOutAction, removeFadeInDeath])
-        
-        fadeInDeath.run(fadeSequence)
     }
 }
