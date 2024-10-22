@@ -45,15 +45,6 @@ class PlayerNode: SKSpriteNode {
     
     let currentActionKey = "PlayerAnimation"
     
-    // Fade-in effect for death
-    private lazy var fadeInDeath: SKSpriteNode = {
-        let fadeIn = SKSpriteNode(color: .black, size: self.scene?.size ?? .zero)
-        fadeIn.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        fadeIn.alpha = 0
-        fadeIn.zPosition = 1000
-        return fadeIn
-    }()
-    
     init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -249,8 +240,6 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if !isGrounded {
-            changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
         } else {
@@ -285,10 +274,7 @@ class PlayerNode: SKSpriteNode {
     private func handleJump() {
         if isJumping && isGrounded {
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-            isGrounded = false
-            isJumping = false
             changeState(to: .jumping)
-        }else {
             isJumping = false
         }
     }
@@ -316,8 +302,9 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             isGrounded = true
+            
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
@@ -347,11 +334,9 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             
-            if otherCategory == PhysicsCategories.ground {
-                isGrounded = false
-            }
+            isGrounded = false
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
