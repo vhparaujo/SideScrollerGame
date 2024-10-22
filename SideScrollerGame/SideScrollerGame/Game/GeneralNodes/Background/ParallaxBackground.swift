@@ -13,15 +13,17 @@ import SpriteKit
 class ParallaxBackground: SKNode {
     let screenWidth: CGFloat
     let screenHeight: CGFloat
+    let backgroundHeight: CGFloat
     
     let backgroundImages: [String]
     var background: [[SKSpriteNode]]
     let parallaxFactors: [CGFloat] = [0.2, 0.4, 0.6, 0.8] // Furthest to closest
     
     
-    init(screenSize: CGSize, background: [String]) {
+    init(mapHeight: CGFloat, screenSize: CGSize, background: [String]) {
         self.screenWidth = screenSize.width
         self.screenHeight = screenSize.height
+        self.backgroundHeight = mapHeight + screenHeight
         
         self.backgroundImages = background
         self.background = Array(repeating: [SKSpriteNode](), count: backgroundImages.count)
@@ -34,8 +36,8 @@ class ParallaxBackground: SKNode {
     func setupParallaxBackground() {
         for (backgroundIndex, backgroundImageName) in backgroundImages.enumerated() {
             for i in -1...1 {
-                let bg = BackgroundNode(backgroundImageName, screenSize: CGSize(width: screenWidth, height: screenHeight))
-                bg.position = CGPoint(x: CGFloat(i) * screenWidth, y: screenHeight / 2)
+                let bg = BackgroundNode(backgroundImageName, screenSize: CGSize(width: screenWidth, height: backgroundHeight))
+                bg.position = CGPoint(x: CGFloat(i) * screenWidth, y: backgroundHeight / 2 - screenHeight)
                 bg.zPosition = CGFloat(-backgroundIndex)
                 self.addChild(bg)
                 self.background[backgroundIndex].append(bg)

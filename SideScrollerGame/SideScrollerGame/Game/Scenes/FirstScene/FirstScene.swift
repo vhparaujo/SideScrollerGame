@@ -22,6 +22,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var platform: PlatformNode!
     
     var tileMapWidth: CGFloat = 0.0
+    var tileMapHeight: CGFloat = 0.0
     
     var fadeNode: SKSpriteNode!
     
@@ -49,13 +50,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        setupBackground()
-        setupCamera()
-        
         let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
+        tileMapHeight = mapBuilder.tileMapHeight
         
+        setupBackground()
+        setupCamera()
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -122,14 +123,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         // Determine which body is the player and which is the box
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
-        
-        if otherCategory == PhysicsCategories.box {
-            
-            // Cast the other node to BoxNode to get the specific box
-            if let boxNode = otherBody.node as? BoxNode {
-                playerNode.boxRef = boxNode
-            }
-        }
         
         if otherCategory == PhysicsCategories.moveButton {
             if let moveButtonNode = otherBody.node as? SKSpriteNode {
@@ -207,7 +200,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupBackground() {
-        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
+        self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
         
         self.addChild(parallaxBackground!)
     }
