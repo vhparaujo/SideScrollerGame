@@ -40,4 +40,5 @@ enum IsPressed: Codable{
 struct BoxTeletransport: Codable{
     var position: CGPoint
     var id: UUID
+    var isGrabbed: Bool
 }

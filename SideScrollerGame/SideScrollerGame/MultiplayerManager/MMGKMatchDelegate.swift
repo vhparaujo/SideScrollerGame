@@ -15,14 +15,11 @@ extension MultiplayerManager: GKMatchDelegate {
     func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         switch state {
         case .connected:
-            
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
             }
-        case .disconnected:
             
-            self.endMatch()
         default:
             self.endMatch()
         }

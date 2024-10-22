@@ -13,10 +13,11 @@ class BoxNode: SKSpriteNode {
 
     init(mpManager: MultiplayerManager) {
         self.mpManager = mpManager
-        let texture = SKTexture(imageNamed: "box") // Replace with your box texture
+        let texture = SKTexture(imageNamed: "Box") // Replace with your box texture
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
         self.zPosition = 1
+        self.setScale(4)
         setupPhysicsBody()
     }
 
@@ -26,10 +27,11 @@ class BoxNode: SKSpriteNode {
     
     func update(deltaTime: TimeInterval) {
         if isGrabbed {
-            mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id))
+            mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id, isGrabbed: self.isGrabbed))
          
-        }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position.x{
-            self.position.x = posX
+        }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position {
+            self.disableMovement()
+            self.position = posX
         }
     }
 
@@ -39,7 +41,7 @@ class BoxNode: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true 
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.box
-        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.ground | PhysicsCategories.wall
         self.physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.wall | PhysicsCategories.box
         self.physicsBody?.friction = 100.0
         self.physicsBody?.restitution = 0.0

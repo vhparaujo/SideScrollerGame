@@ -20,6 +20,8 @@ struct GameView: View {
                 SpriteView(scene: createScene(size: CGSize(width: 1920, height: 1080)), debugOptions: [.showsFPS, .showsNodeCount, .showsPhysics])
                     .ignoresSafeArea()
                     .id(currentSceneType) // Force refresh when the scene type changes
+                    .opacity(opacity)      // Use opacity to control fade in/out
+                    .animation(.easeInOut(duration: 1.0), value: opacity) // Add animation to opacity
             }
         }
     }

@@ -99,10 +99,11 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match and cleans up resources.
     func endMatch() {
-        if let match = myMatch {
-            match.disconnect()
-            myMatch = nil
-        }
+        gameStartInfo.localPlayerStartInfo.eraSelection = nil
+        gameStartInfo.localPlayerStartInfo.isStartPressed = .no
+        
+        myMatch?.disconnect()
+        myMatch = nil
         
         playingGame = false
         choosingEra = false
@@ -112,7 +113,6 @@ class MultiplayerManager: NSObject {
       
         opponent = nil
         GKAccessPoint.shared.isActive = true
-        
     }
 
     /// Sends player info to other players.

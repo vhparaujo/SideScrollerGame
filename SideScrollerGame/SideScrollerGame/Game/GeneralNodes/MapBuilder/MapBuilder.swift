@@ -12,6 +12,7 @@ class MapBuilder {
     var mpManager: MultiplayerManager
     
     var tileMapWidth: CGFloat = 0
+    var tileMapHeight: CGFloat = 0
     
     // Initialize the BuildMap with the current scene
     init(scene: SKScene, mpManager: MultiplayerManager) {
@@ -42,6 +43,7 @@ class MapBuilder {
         tileNode.setScale(5)
         
         self.tileMapWidth = tileNode.mapSize.width * tileNode.xScale
+        self.tileMapHeight = tileNode.mapSize.height * tileNode.yScale
         
         // Position the tile map at the center of the screen
         tileNode.position = CGPoint(x: tileMapWidth / 2, y: scene.size.height / 2)
@@ -157,9 +159,6 @@ class MapBuilder {
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
                 scene.addChild(newBox) 
-//                scene.firstSceneGeneralBoxes.append(newBox)
-//                mpManager.sendInfoToOtherPlayers(content: .init(position: newBox.position, id: newBox.id))
-#warning("aqui é o antigo lugar onde eu adicionava as caixas")
             }
         }
     }

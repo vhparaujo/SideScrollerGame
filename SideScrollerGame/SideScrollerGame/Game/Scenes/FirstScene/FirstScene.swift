@@ -22,6 +22,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var platform: PlatformNode!
     
     var tileMapWidth: CGFloat = 0.0
+    var tileMapHeight: CGFloat = 0.0
     
     var fadeNode: SKSpriteNode!
     
@@ -49,13 +50,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        setupBackground()
-        setupCamera()
-        
         let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
+        tileMapHeight = mapBuilder.tileMapHeight
         
+        setupBackground()
+        setupCamera()
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -75,7 +76,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         if playerNode.bringBoxToPresent && playerEra == .future, let box = playerNode.boxRef{
             if !self.firstSceneGeneralBoxes.contains(box){
                 self.firstSceneGeneralBoxes.append(box)
-                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id))
+                mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id, isGrabbed: false))
                 playerNode.bringBoxToPresent = false
             }
         }
@@ -148,8 +149,18 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
             if let boxNode = otherBody.node as? BoxNode {
                 // Only set boxRef to nil if it's the same box the player was interacting with
                 if playerNode.boxRef === boxNode {
+                    playerNode.boxRef?.disableMovement()
                     playerNode.boxRef = nil
                 }
+            }
+        }
+        
+        let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
+        let otherBox = boxBody.categoryBitMask
+        
+        if otherBox == PhysicsCategories.box {
+            if let boxNode = otherBody.node as? BoxNode {
+                boxNode.disableMovement()
             }
         }
         
@@ -197,7 +208,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupBackground() {
-        self.parallaxBackground = ParallaxBackground(screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
+        self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
         
         self.addChild(parallaxBackground!)
     }
