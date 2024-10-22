@@ -11,8 +11,7 @@ class PlayerNode: SKSpriteNode {
     // Movement properties
     let moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 7700.0
-    private var groundContacts = 0
-
+    
     var playerInfo = PlayerInfo(
         textureState: .idle,
         facingRight: true,
@@ -186,13 +185,13 @@ class PlayerNode: SKSpriteNode {
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
-            
+
             if let box = node as? BoxNode {
                 
                 let distanceToBox = abs(box.position.x - self.position.x)
                 if distanceToBox <= pickUpRange {
                     if (self.xScale > 0 && box.position.x > self.position.x) ||
-                        (self.xScale < 0 && box.position.x < self.position.x) {
+                       (self.xScale < 0 && box.position.x < self.position.x) {
                         return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
                     }
                 }
@@ -200,8 +199,8 @@ class PlayerNode: SKSpriteNode {
         }
         return nil
     }
-    
-    
+
+
     
     func update(deltaTime: TimeInterval) {
 #warning("arruma isso ai")
@@ -262,7 +261,7 @@ class PlayerNode: SKSpriteNode {
             triggerDeath()
         }
     }
-    
+
     private func handleJump() {
         if isJumping {
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
@@ -296,8 +295,7 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
-            groundContacts += 1
-            isGrounded = groundContacts > 0
+            isGrounded = true
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
@@ -323,9 +321,10 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
-            groundContacts -= 1
-            if groundContacts < 0 { groundContacts = 0 } // Safety check
-            isGrounded = groundContacts > 0
+            
+            if otherCategory == PhysicsCategories.ground {
+                isGrounded = false
+            }
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
