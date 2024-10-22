@@ -75,7 +75,7 @@ class PlayerNode: SKSpriteNode {
     
     private func setupPhysicsBody() {
         let bodySize = self.size
-        physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+        physicsBody = createRoundedRectanglePhysicsBody(tileSize: bodySize)
         physicsBody?.isDynamic = true
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = false
@@ -87,6 +87,19 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.mass = 10.0
     }
     
+    func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
+        // Define the rectangle centered at (0,0) since the node's position is set accordingly
+        let rect = CGRect(x: -tileSize.width / 2, y: -tileSize.height / 2, width: tileSize.width, height: tileSize.height)
+        // Define the corner radius (adjust as needed)
+        let cornerRadius = min(tileSize.width, tileSize.height) * 0.2 // 20% of the smallest dimension
+        // Create the rounded rectangle path
+        let path = CGPath(roundedRect: rect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        // Create the physics body from the path
+        let physicsBody = SKPhysicsBody(polygonFrom: path)
+        // Enable precise collision detection if necessary
+        physicsBody.usesPreciseCollisionDetection = true
+        return physicsBody
+    }
     private func setupBindings() {
         controller.keyPressPublisher
             .sink { [weak self] action in
