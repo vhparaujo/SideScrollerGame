@@ -311,10 +311,14 @@ class PlayerNode: SKSpriteNode {
             }
         }
         
-        if otherCategory == PhysicsCategories.Death {
+        if otherCategory == PhysicsCategories.spawnPoint {
           if let spanwPointNode = otherBody.node as? SpawnPointNode {
               mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
             }
+        }
+        
+        if otherCategory == PhysicsCategories.Death {
+            triggerDeath()
         }
         
         if otherCategory == PhysicsCategories.ladder {
