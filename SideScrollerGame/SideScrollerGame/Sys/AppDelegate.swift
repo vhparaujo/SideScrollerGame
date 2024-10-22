@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private func configureWindow(_ window: NSWindow) {
         // Remove window controls
-        window.standardWindowButton(.closeButton)?.isHidden = true
+//        window.standardWindowButton(.closeButton)?.isHidden = true
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.titleVisibility = .hidden
@@ -48,8 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let options: NSApplication.PresentationOptions = [
             .hideDock,
             .hideMenuBar,
-            .disableProcessSwitching, // Disable Command + Tab
-//            .disableSessionTermination,
+//            .disableProcessSwitching, // Disable Command + Tab
             .disableHideApplication
         ]
         NSApp.presentationOptions = options
