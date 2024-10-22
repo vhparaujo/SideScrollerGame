@@ -182,6 +182,7 @@ class PlayerNode: SKSpriteNode {
     }
     func checkForNearbyBox() -> BoxNode? {
         let pickUpRange: CGFloat = 150
+        let pickUpRangeHeight: CGFloat = self.frame.height * 0.98
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
@@ -189,7 +190,8 @@ class PlayerNode: SKSpriteNode {
             if let box = node as? BoxNode {
                 
                 let distanceToBox = abs(box.position.x - self.position.x)
-                if distanceToBox <= pickUpRange {
+                let distanceHeithgToBox = abs(box.position.y - self.position.y)
+                if distanceToBox <= pickUpRange, distanceHeithgToBox <= pickUpRangeHeight{
                     if (self.xScale > 0 && box.position.x > self.position.x) ||
                        (self.xScale < 0 && box.position.x < self.position.x) {
                         return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
@@ -203,7 +205,6 @@ class PlayerNode: SKSpriteNode {
 
     
     func update(deltaTime: TimeInterval) {
-#warning("arruma isso ai")
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleJump()
