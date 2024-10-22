@@ -20,7 +20,6 @@ struct ContentView: View {
         }else{
             JoinGameView(managerMP: managerMP)
         }
-#warning("mexe ai")
 //        GameView(currentSceneType: .first(.future), mpManager: managerMP)
 //        GameView(currentSceneType: .first(.present), mpManager: managerMP)
 
