@@ -123,15 +123,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         // Determine which body is the player and which is the box
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
-
-        if otherCategory == PhysicsCategories.box {
-            
-#warning("mata isso")
-//            // Cast the other node to BoxNode to get the specific box
-//            if let boxNode = otherBody.node as? BoxNode {
-//                playerNode.boxRef = boxNode
-//            }
-        }
         
         if otherCategory == PhysicsCategories.moveButton {
             if let moveButtonNode = otherBody.node as? SKSpriteNode {
