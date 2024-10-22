@@ -79,7 +79,7 @@ class MapBuilder {
                         switch tileName {
                             case "Ground":
                                 // Create the physics body for ground tiles
-                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
                                 tilePhysicsNode.physicsBody?.isDynamic = false
                                 tilePhysicsNode.physicsBody?.friction = 0
                                 tilePhysicsNode.physicsBody?.restitution = 0.0
