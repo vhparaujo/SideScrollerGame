@@ -316,7 +316,6 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
             isGrounded = true
-            isJumping = false
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
