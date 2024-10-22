@@ -270,11 +270,11 @@ class PlayerNode: SKSpriteNode {
     }
 
     private func handleJump() {
-        if isJumping {
+        if isJumping && isGrounded {
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             isGrounded = false
+            isJumping = true
             changeState(to: .jumping)
-            isJumping = false
         }
     }
     
@@ -303,6 +303,7 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
             isGrounded = true
+            isJumping = false
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
