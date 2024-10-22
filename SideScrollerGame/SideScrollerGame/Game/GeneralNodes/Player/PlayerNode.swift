@@ -191,8 +191,33 @@ class PlayerNode: SKSpriteNode {
             self.xScale = -abs(self.xScale)
         }
     }
-    // Update player position and animation based on movement direction
+    
+    func checkForNearbyBox() -> BoxNode? {
+        let pickUpRange: CGFloat = 150
+        let nearbyNodes = self.scene?.children ?? []
+        print(self.boxRef)
+        
+        for node in nearbyNodes {
+
+            if let box = node as? BoxNode {
+                
+                let distanceToBox = abs(box.position.x - self.position.x)
+                if distanceToBox <= pickUpRange {
+                    if (self.xScale > 0 && box.position.x > self.position.x) ||
+                       (self.xScale < 0 && box.position.x < self.position.x) {
+                        return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
+                    }
+                }
+            }
+        }
+        return nil
+    }
+
+
+    
     func update(deltaTime: TimeInterval) {
+#warning("arruma isso ai")
+        self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleJump()
         updatePlayerOrientation()
@@ -252,6 +277,7 @@ class PlayerNode: SKSpriteNode {
             triggerDeath()
         }
     }
+    
     func handleDeath() {
         if isFalling && !alreadyFalling{
             alreadyFalling = true
