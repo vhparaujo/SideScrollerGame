@@ -150,17 +150,19 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleActionKeyPress() {
-        if isGrounded {
-            if let box = boxRef, !box.isGrabbed {
-                playerInfo.action = true
-                box.isGrabbed = true
-                box.enableMovement()
-                boxOffset = box.position.x - self.position.x
-            } else if let elevator = elevatorRef {
+
+            if let box = boxRef {
+                if !box.isGrabbed {
+                    playerInfo.action = true
+                    box.isGrabbed = true
+                    box.enableMovement()
+                    boxOffset = box.position.x - self.position.x
+                }
+            }
+            if let elevator = elevatorRef {
                 playerInfo.action = true
                 elevator.moveManual()
             }
-        }
     }
     
     private func handleActionKeyRelease() {
@@ -208,6 +210,7 @@ class PlayerNode: SKSpriteNode {
     
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
+        print(boxRef)
         sendPlayerInfoToOthers()
         handleJump()
         handleDeath()
