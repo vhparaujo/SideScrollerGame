@@ -210,7 +210,6 @@ class PlayerNode: SKSpriteNode {
     
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
-        print(boxRef)
         sendPlayerInfoToOthers()
         handleJump()
         handleDeath()
@@ -276,6 +275,7 @@ class PlayerNode: SKSpriteNode {
 
     private func handleJump() {
         if isJumping && isGrounded {
+            isGrounded = false
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             changeState(to: .jumping)
             isJumping = false
@@ -306,7 +306,10 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
-            isGrounded = true
+            
+            if !isJumping {
+                isGrounded = true
+            }
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
@@ -338,8 +341,6 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
-            
-            isGrounded = false
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
