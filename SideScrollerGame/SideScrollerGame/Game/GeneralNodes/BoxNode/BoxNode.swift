@@ -30,8 +30,8 @@ class BoxNode: SKSpriteNode {
             mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id, isGrabbed: self.isGrabbed))
          
         }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position {
-            self.disableMovement()
-            self.position = posX
+//            self.disableMovement()
+            self.position.x = posX.x
         }
     }
 

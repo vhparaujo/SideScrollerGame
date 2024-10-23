@@ -124,14 +124,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory == PhysicsCategories.box {
-            
-            // Cast the other node to BoxNode to get the specific box
-            if let boxNode = otherBody.node as? BoxNode {
-                playerNode.boxRef = boxNode
-            }
-        }
-        
         if otherCategory == PhysicsCategories.moveButton {
             if let moveButtonNode = otherBody.node as? SKSpriteNode {
                 playerNode.elevatorRef = moveButtonNode.parent as? ElevatorNode

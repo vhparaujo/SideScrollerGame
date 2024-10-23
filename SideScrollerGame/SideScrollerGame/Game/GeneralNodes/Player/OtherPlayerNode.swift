@@ -32,7 +32,7 @@ class OtherPlayerNode: PlayerNode {
     }
     
     // Recebe atualizações de posição e estado do MultiplayerManager
-    internal override func setupBindings() {
+    internal func setupBindings() {
         mpManager.otherPlayerInfo
             .sink { [weak self] (playerInfo: PlayerInfo?) in
                 guard let self = self, let playerInfo = playerInfo else { return }
@@ -66,7 +66,7 @@ class OtherPlayerNode: PlayerNode {
     }
     
     // Função para atualizar a textura com base no estado do jogador
-    private func updateTexture(for state: PlayerTextureState) {
+    func updateTexture(for state: PlayerTextureState) {
         switch state {
         case .running:
             if lastState != state{
