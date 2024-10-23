@@ -4,7 +4,14 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    var localPlayer: PlayerInfo? 
+    
+    static var shared = MultiplayerManager()
+    
+//    private override init() {
+//        super.init()
+//    }
+    
+    var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
     var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
@@ -15,6 +22,7 @@ class MultiplayerManager: NSObject {
     var choosingEra = false
     var myMatch: GKMatch? = nil
     var automatch = false
+    var gameFinished = false
     
     // Match information
     var opponent: GKPlayer? = nil

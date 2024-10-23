@@ -20,5 +20,6 @@ struct PhysicsCategories {
     static let spawnPoint: UInt32 = 0x1 << 7  // Add this line
     static let ladder: UInt32 = 0x1 << 8
     static let fan: UInt32 = 0x1 << 9
+    static let nextScene: UInt32 = 0x1 << 10
 
 }
