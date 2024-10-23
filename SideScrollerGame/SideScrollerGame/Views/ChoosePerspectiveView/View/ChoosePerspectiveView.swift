@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct ChoosePerspectiveView: View {
-    @Bindable var mpManager: MultiplayerManager
+    @Bindable var mpManager: MultiplayerManager = .shared
     @State var playerStartInfo: PlayerStartInfo
     
     

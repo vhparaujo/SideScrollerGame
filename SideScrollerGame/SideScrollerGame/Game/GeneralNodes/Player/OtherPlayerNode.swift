@@ -10,7 +10,7 @@ class OtherPlayerNode: PlayerNode {
     
     private var lastState: PlayerTextureState = .idle
     
-    override init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
+    override init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
         super.init(playerEra: playerEra, mpManager: mpManager)
         
         self.physicsBody?.affectedByGravity = false

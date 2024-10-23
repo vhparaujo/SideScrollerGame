@@ -15,7 +15,7 @@ class MapBuilder {
     var tileMapHeight: CGFloat = 0
     
     // Initialize the BuildMap with the current scene
-    init(scene: SKScene, mpManager: MultiplayerManager) {
+    init(scene: SKScene, mpManager: MultiplayerManager = .shared) {
         self.scene = scene
         self.mpManager = mpManager
     }
@@ -154,7 +154,7 @@ class MapBuilder {
     func addBox(position: CGPoint) {
         if let scene = scene as? FirstScene {
             if scene.playerEra == .future {
-                let newBox = BoxNode(mpManager: mpManager)
+                let newBox = BoxNode()
                 newBox.position = position
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
@@ -189,7 +189,7 @@ class MapBuilder {
     
     func addPlayer(position: CGPoint) {
         if let scene = scene as? FirstScene {
-            scene.playerNode = PlayerNode(playerEra: scene.playerEra, mpManager: mpManager)
+            scene.playerNode = PlayerNode(playerEra: scene.playerEra)
             scene.playerNode.position = position
             scene.addChild(scene.playerNode)
         }
@@ -206,7 +206,7 @@ class MapBuilder {
             }
             
             guard scene.otherPlayer == nil else { return }
-            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra, mpManager: mpManager)
+            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
             scene.otherPlayer.position = position
             scene.addChild(scene.otherPlayer)
         }

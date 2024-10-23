@@ -54,7 +54,7 @@ class PlayerNode: SKSpriteNode {
         return fadeIn
     }()
     
-    init(playerEra: PlayerEra, mpManager: MultiplayerManager) {
+    init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
         self.playerEra = playerEra
         self.mpManager = mpManager
         
@@ -316,7 +316,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            GameViewModel.shared.transitionScene(to: .first(.future))
+//            GameViewModel.shared.transitionScene(to: .first(.future))
+            mpManager.gameFinished = true
         }
     }
     

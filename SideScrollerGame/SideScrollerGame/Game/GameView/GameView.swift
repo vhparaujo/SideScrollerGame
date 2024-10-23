@@ -8,9 +8,7 @@
 import SwiftUI
 import SpriteKit
 
-struct GameView: View {
-    @Bindable var mpManager: MultiplayerManager
-    
+struct GameView: View {    
     @StateObject var viewModel: GameViewModel = .shared
     
     var body: some View {

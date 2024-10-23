@@ -33,7 +33,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var firstSceneGeneralBoxes: [BoxNode] = []
 
-    init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
+    init(size: CGSize, mpManager: MultiplayerManager = .shared, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
         super.init(size: size)
@@ -50,7 +50,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
+        let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
         tileMapHeight = mapBuilder.tileMapHeight
@@ -64,7 +64,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func keyDown(with event: NSEvent) {}
     
     func addBoxWithoutSendingToOthers(position: CGPoint, id: UUID = .init()){
-        let newBox = BoxNode(mpManager: mpManager)
+        let newBox = BoxNode()
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
