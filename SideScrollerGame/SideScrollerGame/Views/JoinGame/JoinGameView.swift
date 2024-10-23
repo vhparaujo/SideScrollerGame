@@ -9,7 +9,7 @@ import SwiftUI
 import GameKit
 
 struct JoinGameView: View {
-    @Bindable var managerMP: MultiplayerManager
+    @Bindable var managerMP: MultiplayerManager = .shared
     var body: some View {
         Button("Start Game"){
             if managerMP.automatch {

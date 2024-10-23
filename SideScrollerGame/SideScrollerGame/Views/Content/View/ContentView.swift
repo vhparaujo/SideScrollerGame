@@ -8,19 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Bindable var managerMP = MultiplayerManager()
+    @State var mpManager = MultiplayerManager.shared
+    
     var body: some View {
-        if managerMP.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes && managerMP.gameStartInfo.otherPlayerStartInfo.isStartPressed == .yes {
-            
-            if let era = managerMP.gameStartInfo.localPlayerStartInfo.eraSelection {
-        GameView(currentSceneType: .first(era), mpManager: managerMP)
+        if mpManager.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes && mpManager.gameStartInfo.otherPlayerStartInfo.isStartPressed == .yes {
+            if let era = mpManager.gameStartInfo.localPlayerStartInfo.eraSelection {
+        GameView()
             }
-        }else if managerMP.choosingEra {
-            ChoosePerspectiveView(mpManager: managerMP, playerStartInfo: .init( isStartPressed: .no))
+            
+        }else if mpManager.choosingEra {
+            ChoosePerspectiveView(playerStartInfo: .init( isStartPressed: .no))
         }else{
-            JoinGameView(managerMP: managerMP)
+            JoinGameView()
         }
-//        GameView(currentSceneType: .first(.future), mpManager: managerMP)
+//        if !mpManager.gameFinished {
+//            GameView()
+//        } else {
+//            EndGameView()
+//        }
 //        GameView(currentSceneType: .first(.present), mpManager: managerMP)
 
     }

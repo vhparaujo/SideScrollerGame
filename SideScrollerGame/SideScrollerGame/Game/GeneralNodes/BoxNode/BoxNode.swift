@@ -11,7 +11,7 @@ class BoxNode: SKSpriteNode {
     var id = UUID()
     var mpManager: MultiplayerManager
 
-    init(mpManager: MultiplayerManager) {
+    init(mpManager: MultiplayerManager = .shared) {
         self.mpManager = mpManager
         let texture = SKTexture(imageNamed: "Box") // Replace with your box texture
         super.init(texture: texture, color: .clear, size: texture.size())
