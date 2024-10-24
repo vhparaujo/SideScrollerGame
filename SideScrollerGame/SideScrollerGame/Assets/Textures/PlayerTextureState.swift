@@ -9,8 +9,11 @@ import SpriteKit
 
 
 enum PlayerTextureState: Codable {
-    case running
-    case idle
+    case runningR
+    case runningL
+    
+    case idleR
+    case idleL
     case jumping
     case climbing
     case grabbing
@@ -18,15 +21,24 @@ enum PlayerTextureState: Codable {
     
     func textures(for era: PlayerEra) -> [SKTexture] {
         switch (self, era) {
-            case (.running, .present):
-                return SKSpriteNode.loadTextures(prefix: "player-run-present", count: 6)
-            case (.running, .future):
-                return SKSpriteNode.loadTextures(prefix: "player-run-future", count: 6)
-
-            case (.idle, .present):
-                return SKSpriteNode.loadTextures(prefix: "player-idle-present", count: 4)
-            case (.idle, .future):
-                return SKSpriteNode.loadTextures(prefix: "player-idle-future", count: 4)
+            //running
+            case (.runningR, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-present-walk-right", count: 45)
+            case (.runningR, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-future-walk-right", count: 45)
+            case (.runningL, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-present-walk-left", count: 45)
+            case (.runningL, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-future-walk-left", count: 45)
+            //idle
+            case (.idleR, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-future-idle-right", count: 1)
+            case (.idleR, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-future-idle-right", count: 1)
+            case (.idleL, .present):
+                return SKSpriteNode.loadTextures(prefix: "player-future-idle-left", count: 1)
+            case (.idleL, .future):
+                return SKSpriteNode.loadTextures(prefix: "player-future-idle-left", count: 1)
                 
             case (.jumping, .present):
                 return SKSpriteNode.loadTextures(prefix: "player-jump-present", count: 2)
@@ -52,9 +64,13 @@ enum PlayerTextureState: Codable {
     
     var timePerFrame: TimeInterval {
         switch self {
-            case .running:
-                return 0.1
-            case .idle:
+            case .runningR:
+                return 1/90
+            case .runningL:
+                return 1/90
+            case .idleR:
+                return 0.2
+            case .idleL:
                 return 0.2
             case .jumping:
                 return 0.15

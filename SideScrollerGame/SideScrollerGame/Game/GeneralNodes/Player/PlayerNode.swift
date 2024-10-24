@@ -14,7 +14,7 @@ class PlayerNode: SKSpriteNode {
     let jumpImpulse: CGFloat = 7700.0
     
     var playerInfo = PlayerInfo(
-        textureState: .idle,
+        textureState: .idleR,
         facingRight: true,
         action: false,
         isDying: false,
@@ -50,15 +50,16 @@ class PlayerNode: SKSpriteNode {
         self.playerEra = playerEra
         self.mpManager = mpManager
         
-        let textureName = playerEra == .present ? "player-idle-present-1" : "player-idle-future-1"
+        let textureName = playerEra == .present ? "player-present-walk-right-1" : "player-future-walk-right-1"
         let texture = SKTexture(imageNamed: textureName)
+        
         super.init(texture: texture, color: .clear, size: texture.size())
         self.zPosition = 1
-        self.setScale(4)
+        self.setScale(0.25)
         
         setupPhysicsBody()
         setupBindings()
-        changeState(to: .idle)
+        changeState(to: .idleR)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -214,7 +215,7 @@ class PlayerNode: SKSpriteNode {
         sendPlayerInfoToOthers()
         handleJump()
         handleDeath()
-        updatePlayerOrientation()
+        //        updatePlayerOrientation()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -243,10 +244,12 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if desiredVelocity != 0 {
-            changeState(to: .running)
-        } else {
-            changeState(to: .idle)
+        } else if desiredVelocity != 0 && !isMovingLeft{
+            changeState(to: .runningR)
+        } else if desiredVelocity != 0 && isMovingLeft {
+            changeState(to: .runningL)
+        }else {
+            changeState(to: .idleR)
         }
         
         // Handle ladder movement
