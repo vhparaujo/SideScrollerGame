@@ -114,7 +114,7 @@ class PlayerNode: SKSpriteNode {
                 isMovingRight = true
                 playerInfo.facingRight = true
             case .jump:
-                if isGrounded && !playerInfo.action {
+                if isGrounded && !playerInfo.action && !isJumping {
                     isJumping = true
                 }
             case .action:
