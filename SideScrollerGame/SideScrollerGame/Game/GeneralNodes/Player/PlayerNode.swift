@@ -178,12 +178,15 @@ class PlayerNode: SKSpriteNode {
     }
     
     func checkForNearbyBox() -> BoxNode? {
-        let pickUpRangeX: CGFloat = self.frame.width * 2
-        let pickUpRangeY: CGFloat = self.frame.height * 0.98
+//        let pickUpRangeX: CGFloat = self.frame.width * 2
+ 
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
             if let box = node as? BoxNode {
+                let pickUpRangeY: CGFloat = box.frame.height * 0.98
+                let pickUpRangeX: CGFloat = box.frame.width * 0.9
+
                 let distanceXToBox = box.position.x - self.position.x
                 let distanceYToBox = abs(box.position.y - self.position.y)
 

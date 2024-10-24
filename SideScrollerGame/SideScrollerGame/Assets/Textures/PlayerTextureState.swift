@@ -65,9 +65,9 @@ enum PlayerTextureState: Codable {
     var timePerFrame: TimeInterval {
         switch self {
             case .runningR:
-                return 1/90
+                return 1/100
             case .runningL:
-                return 1/90
+                return 1/100
             case .idleR:
                 return 0.2
             case .idleL:
