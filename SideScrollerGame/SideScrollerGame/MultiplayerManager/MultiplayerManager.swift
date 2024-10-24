@@ -118,7 +118,8 @@ class MultiplayerManager: NSObject {
         matchAvailable = true
         localPlayer = nil
         otherPlayerInfo.value = nil
-      
+        gameStartInfo.localPlayerStartInfo.eraSelection = nil
+        gameStartInfo.otherPlayerStartInfo.eraSelection = nil
         opponent = nil
         GKAccessPoint.shared.isActive = true
     }
