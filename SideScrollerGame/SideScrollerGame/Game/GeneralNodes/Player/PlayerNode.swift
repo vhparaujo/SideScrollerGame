@@ -45,15 +45,6 @@ class PlayerNode: SKSpriteNode {
     
     let currentActionKey = "PlayerAnimation"
     
-    // Fade-in effect for death
-    private lazy var fadeInDeath: SKSpriteNode = {
-        let fadeIn = SKSpriteNode(color: .black, size: self.scene?.size ?? .zero)
-        fadeIn.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        fadeIn.alpha = 0
-        fadeIn.zPosition = 1000
-        return fadeIn
-    }()
-    
     init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -75,7 +66,7 @@ class PlayerNode: SKSpriteNode {
     
     private func setupPhysicsBody() {
         let bodySize = self.size
-        physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+        physicsBody = createRoundedRectanglePhysicsBody(tileSize: bodySize)
         physicsBody?.isDynamic = true
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = false
@@ -87,6 +78,19 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.mass = 10.0
     }
     
+    func createRoundedRectanglePhysicsBody(tileSize: CGSize) -> SKPhysicsBody? {
+        // Define the rectangle centered at (0,0) since the node's position is set accordingly
+        let rect = CGRect(x: -tileSize.width / 2, y: -tileSize.height / 2, width: tileSize.width, height: tileSize.height)
+        // Define the corner radius (adjust as needed)
+        let cornerRadius = min(tileSize.width, tileSize.height) * 0.2 // 20% of the smallest dimension
+        // Create the rounded rectangle path
+        let path = CGPath(roundedRect: rect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        // Create the physics body from the path
+        let physicsBody = SKPhysicsBody(polygonFrom: path)
+        // Enable precise collision detection if necessary
+        physicsBody.usesPreciseCollisionDetection = true
+        return physicsBody
+    }
     private func setupBindings() {
         controller.keyPressPublisher
             .sink { [weak self] action in
@@ -142,23 +146,23 @@ class PlayerNode: SKSpriteNode {
                 canDescend = false
             case .jump:
                 break
-            default:
-                break
         }
     }
     
     private func handleActionKeyPress() {
-        if isGrounded {
-            if let box = boxRef, !box.isGrabbed {
-                playerInfo.action = true
-                box.isGrabbed = true
-                box.enableMovement()
-                boxOffset = box.position.x - self.position.x
-            } else if let elevator = elevatorRef {
+
+            if let box = boxRef {
+                if !box.isGrabbed {
+                    playerInfo.action = true
+                    box.isGrabbed = true
+                    box.enableMovement()
+                    boxOffset = box.position.x - self.position.x
+                }
+            }
+            if let elevator = elevatorRef {
                 playerInfo.action = true
                 elevator.moveManual()
             }
-        }
     }
     
     private func handleActionKeyRelease() {
@@ -208,6 +212,7 @@ class PlayerNode: SKSpriteNode {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleJump()
+        handleDeath()
         updatePlayerOrientation()
         
         var desiredVelocity: CGFloat = 0.0
@@ -237,8 +242,6 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if !isGrounded {
-            changeState(to: .jumping)
         } else if desiredVelocity != 0 {
             changeState(to: .running)
         } else {
@@ -262,11 +265,18 @@ class PlayerNode: SKSpriteNode {
             triggerDeath()
         }
     }
+    
+    private func handleDeath() {
+        if playerInfo.isDying {
+            self.position = mpManager.spawnpoint
+            playerInfo.isDying = false
+        }
+    }
 
     private func handleJump() {
-        if isJumping {
-            physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+        if isJumping && isGrounded {
             isGrounded = false
+            physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             changeState(to: .jumping)
             isJumping = false
         }
@@ -295,11 +305,20 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
-            isGrounded = true
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
+            
+            if !isJumping {
+                isGrounded = true
+            }
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
+            }
+        }
+        
+        if otherCategory == PhysicsCategories.spawnPoint {
+          if let spanwPointNode = otherBody.node as? SpawnPointNode {
+              mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
             }
         }
         
@@ -325,11 +344,7 @@ class PlayerNode: SKSpriteNode {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory & (PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform) != 0 {
-            
-            if otherCategory == PhysicsCategories.ground {
-                isGrounded = false
-            }
+        if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
@@ -347,26 +362,5 @@ class PlayerNode: SKSpriteNode {
     
     func triggerDeath() {
         playerInfo.isDying = true
-        physicsBody?.velocity = .zero
-        
-        // Add fade-in effect to the scene
-        if let scene = self.scene, fadeInDeath.parent == nil {
-            scene.addChild(fadeInDeath)
-            fadeInDeath.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
-        }
-        
-        // Create fade-in and fade-out actions
-        let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 1.0)
-        let waitAction = SKAction.wait(forDuration: 0.5)
-        let resetPlayerAction = SKAction.run { [weak self] in
-            guard let self = self else { return }
-            self.position = self.mpManager.spawnpoint
-            self.playerInfo.isDying = false
-        }
-        let fadeOutAction = SKAction.fadeAlpha(to: 0.0, duration: 1.0)
-        let removeFadeInDeath = SKAction.removeFromParent()
-        let fadeSequence = SKAction.sequence([fadeInAction, waitAction, resetPlayerAction, fadeOutAction, removeFadeInDeath])
-        
-        fadeInDeath.run(fadeSequence)
     }
 }
