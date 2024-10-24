@@ -13,14 +13,14 @@ class GameViewModel: ObservableObject {
     @Published var currentSceneType: SceneType
     @Published var opacity: Double = 1.0
     
-    init(currentSceneType: SceneType = .first(.future)) {
+    init(currentSceneType: SceneType = .first) {
         self.currentSceneType = currentSceneType
     }
     
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
-            case .first(let playerEra):
-            return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
+            case .first:
+                return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: MultiplayerManager.shared.gameStartInfo.localPlayerStartInfo.eraSelection ?? .future)
         }
     }
     

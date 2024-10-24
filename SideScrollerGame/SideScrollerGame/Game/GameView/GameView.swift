@@ -27,5 +27,5 @@ struct GameView: View {
 }
 
 enum SceneType: Hashable {
-    case first(PlayerEra)
+    case first
 }
