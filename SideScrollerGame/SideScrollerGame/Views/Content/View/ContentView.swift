@@ -22,7 +22,12 @@ struct ContentView: View {
         }
 
 //        GameView()
-
+// if !mpManager.gameFinished {
+//             GameView(currentSceneType: .first(.present))
+//         } else {
+//             EndGameView()
+//         }
+    
     }
 }
 
