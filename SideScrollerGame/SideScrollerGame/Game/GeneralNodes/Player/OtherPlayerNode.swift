@@ -8,7 +8,7 @@ class OtherPlayerNode: PlayerNode {
     private var interpolationSpeed: CGFloat = 10.0
     private var updateTimer: Timer = .init()
     
-    private var lastState: PlayerTextureState = .idle
+    private var lastState: PlayerTextureState = .idleR
     
     override init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
         super.init(playerEra: playerEra, mpManager: mpManager)
@@ -68,14 +68,24 @@ class OtherPlayerNode: PlayerNode {
     // Função para atualizar a textura com base no estado do jogador
     func updateTexture(for state: PlayerTextureState) {
         switch state {
-        case .running:
+        case .runningR:
             if lastState != state{
-                changeState(to: .running)
+                changeState(to: .runningR)
                 self.lastState = state
             }
-        case .idle:
+        case .runningL:
             if lastState != state{
-                changeState(to: .idle)
+                changeState(to: .runningR)
+                self.lastState = state
+            }
+        case .idleR:
+            if lastState != state{
+                changeState(to: .idleR)
+                self.lastState = state
+            }
+        case .idleL:
+            if lastState != state{
+                changeState(to: .idleL)
                 self.lastState = state
             }
         case .jumping:
