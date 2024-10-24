@@ -231,7 +231,9 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if desiredVelocity != 0 && !isMovingLeft{
+        } else if !isGrounded{
+            changeState(to: .jumping)
+        }else if desiredVelocity != 0 && !isMovingLeft{
             changeState(to: .runningR)
         } else if desiredVelocity != 0 && isMovingLeft {
             changeState(to: .runningL)
@@ -240,6 +242,7 @@ class PlayerNode: SKSpriteNode {
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
         }
+      
         
         // Handle ladder movement
         if isOnLadder {
@@ -271,6 +274,7 @@ class PlayerNode: SKSpriteNode {
             isGrounded = false
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             changeState(to: .jumping)
+           
             isJumping = false
         }
     }
