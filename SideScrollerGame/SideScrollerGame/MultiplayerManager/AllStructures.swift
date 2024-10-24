@@ -18,8 +18,8 @@ struct PlayerInfo: Codable {
 }
 
 struct GameStartInfo: Codable{
-    var localPlayerStartInfo: PlayerStartInfo
-    var otherPlayerStartInfo: PlayerStartInfo
+    var local: PlayerStartInfo
+    var other: PlayerStartInfo
 }
 
 struct PlayerStartInfo: Codable{

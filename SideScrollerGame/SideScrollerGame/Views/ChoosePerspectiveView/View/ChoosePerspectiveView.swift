@@ -23,13 +23,13 @@ struct ChoosePerspectiveView: View {
                         mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     }
                     .padding()
-                    .background(self.mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection == perspective ? Color.red : self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
+                    .background(self.mpManager.gameStartInfo.other.eraSelection == perspective ? Color.red : self.playerStartInfo.eraSelection == perspective ? Color.blue : Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
             }
         
-            if (mpManager.gameStartInfo.localPlayerStartInfo.eraSelection != mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection) && (mpManager.gameStartInfo.localPlayerStartInfo.eraSelection != nil && mpManager.gameStartInfo.otherPlayerStartInfo.eraSelection != nil) {
+            if (mpManager.gameStartInfo.local.eraSelection != mpManager.gameStartInfo.other.eraSelection) && (mpManager.gameStartInfo.local.eraSelection != nil && mpManager.gameStartInfo.other.eraSelection != nil) {
                 
                 Button {
                         playerStartInfo.isStartPressed = .yes

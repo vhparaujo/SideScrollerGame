@@ -20,12 +20,8 @@ struct ContentView: View {
         }else{
             JoinGameView()
         }
-//        if !mpManager.gameFinished {
-//            GameView()
-//        } else {
-//            EndGameView()
-//        }
-//        GameView(currentSceneType: .first(.present), mpManager: managerMP)
+
+//        GameView()
 
     }
 }
