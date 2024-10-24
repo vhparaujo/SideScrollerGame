@@ -122,7 +122,6 @@ class PlayerNode: SKSpriteNode {
             case .action:
                 handleActionKeyPress()
             case .bringToPresent:
-                // Handle bring to present logic if needed
                 bringBoxToPresent = true
             case .climb:
                 canClimb = isOnLadder
@@ -153,18 +152,18 @@ class PlayerNode: SKSpriteNode {
     
     private func handleActionKeyPress() {
 
-            if let box = boxRef {
-                if !box.isGrabbed {
-                    playerInfo.action = true
-                    box.isGrabbed = true
-                    box.enableMovement()
-                    boxOffset = box.position.x - self.position.x
-                }
-            }
-            if let elevator = elevatorRef {
+        if let box = boxRef {
+            if !box.isGrabbed {
                 playerInfo.action = true
-                elevator.moveManual()
+                box.isGrabbed = true
+                box.enableMovement()
+                boxOffset = box.position.x - self.position.x
             }
+        }
+        if let elevator = elevatorRef {
+            playerInfo.action = true
+            elevator.moveManual()
+        }
     }
     
     private func handleActionKeyRelease() {
@@ -178,44 +177,29 @@ class PlayerNode: SKSpriteNode {
         playerInfo.action = false
     }
     
-    private func updatePlayerOrientation() {
-        guard !playerInfo.action else { return }
-        if playerInfo.facingRight {
-            xScale = abs(xScale)
-        } else {
-            xScale = -abs(xScale)
-        }
-    }
     func checkForNearbyBox() -> BoxNode? {
-        let pickUpRange: CGFloat = 150
-        let pickUpRangeHeight: CGFloat = self.frame.height * 0.98
+        let pickUpRangeX: CGFloat = self.frame.width * 2
+        let pickUpRangeY: CGFloat = self.frame.height * 0.98
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
-
             if let box = node as? BoxNode {
-                
-                let distanceToBox = abs(box.position.x - self.position.x)
-                let distanceHeithgToBox = abs(box.position.y - self.position.y)
-                if distanceToBox <= pickUpRange, distanceHeithgToBox <= pickUpRangeHeight{
-                    if (self.xScale > 0 && box.position.x > self.position.x) ||
-                       (self.xScale < 0 && box.position.x < self.position.x) {
-                        return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
-                    }
+                let distanceXToBox = box.position.x - self.position.x
+                let distanceYToBox = abs(box.position.y - self.position.y)
+
+                if abs(distanceXToBox) <= pickUpRangeX, distanceYToBox <= pickUpRangeY {
+                    return box
                 }
             }
         }
         return nil
     }
-
-
     
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleJump()
         handleDeath()
-        //        updatePlayerOrientation()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -248,8 +232,10 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .runningR)
         } else if desiredVelocity != 0 && isMovingLeft {
             changeState(to: .runningL)
-        }else {
+        }else if playerInfo.facingRight{
             changeState(to: .idleR)
+        }else if !playerInfo.facingRight{
+            changeState(to: .idleL)
         }
         
         // Handle ladder movement
