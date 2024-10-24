@@ -1,5 +1,6 @@
 import SpriteKit
 import Combine
+import SwiftUI
 
 class PlayerNode: SKSpriteNode {
     
@@ -323,6 +324,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.Death {
+            GameViewModel.shared.fadeInDeath()
             triggerDeath()
         }
         
@@ -335,8 +337,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-//            GameViewModel.shared.transitionScene(to: .first(.future))
-            mpManager.gameFinished = true
+            GameViewModel.shared.transitionScene(to: .first(.future))
+//            mpManager.gameFinished = true
         }
     }
     

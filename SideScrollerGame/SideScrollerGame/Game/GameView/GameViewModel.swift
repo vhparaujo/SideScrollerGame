@@ -25,12 +25,26 @@ class GameViewModel: ObservableObject {
     }
     
     func transitionScene(to newScene: SceneType) {
-        withAnimation {
-            currentSceneType = newScene
-            opacity = 0.0
+        DispatchQueue.main.async {
+            withAnimation {
+                self.currentSceneType = newScene
+                self.opacity = 0.0
 
-            withAnimation(.default.delay(1.0)) {
-                self.opacity = 1.0
+                withAnimation(.default.delay(1.0)) {
+                    self.opacity = 1.0
+                }
+            }
+        }
+    }
+    
+    func fadeInDeath() {
+        DispatchQueue.main.async {
+            withAnimation {
+                self.opacity = 0.0
+            } completion: {
+                withAnimation(.default.delay(1.0)) {
+                    self.opacity = 1.0
+                }
             }
         }
     }
