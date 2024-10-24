@@ -11,7 +11,7 @@ struct ContentView: View {
     @State var mpManager = MultiplayerManager.shared
     
     var body: some View {
-        if mpManager.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes && mpManager.gameStartInfo.otherPlayerStartInfo.isStartPressed == .yes {
+        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes {
         GameView()
             
             
