@@ -13,7 +13,7 @@ class GameViewModel: ObservableObject {
     @Published var currentSceneType: SceneType
     @Published var opacity: Double = 1.0
     
-    init(currentSceneType: SceneType = .second(.present)) {
+    init(currentSceneType: SceneType = .second(.future)) {
         self.currentSceneType = currentSceneType
     }
     
