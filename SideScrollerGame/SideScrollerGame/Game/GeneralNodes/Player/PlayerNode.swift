@@ -320,8 +320,9 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.Death {
-            GameViewModel.shared.fadeInDeath()
-            triggerDeath()
+            GameViewModel.shared.fadeInDeath {
+                self.triggerDeath()
+            }
         }
         
         if otherCategory == PhysicsCategories.ladder {

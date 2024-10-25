@@ -21,7 +21,7 @@ struct ContentView: View {
 //            JoinGameView()
 //        }
 
-        GameView()
+        GameView(currentSceneType: .first(.future))
 // if !mpManager.gameFinished {
 //             GameView(currentSceneType: .first(.present))
 //         } else {

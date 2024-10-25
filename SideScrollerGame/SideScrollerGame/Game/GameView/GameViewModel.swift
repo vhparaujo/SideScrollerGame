@@ -13,7 +13,7 @@ class GameViewModel: ObservableObject {
     @Published var currentSceneType: SceneType
     @Published var opacity: Double = 1.0
     
-    init(currentSceneType: SceneType = .first(.present)) {
+    init(currentSceneType: SceneType = .first(.future)) {
         self.currentSceneType = currentSceneType
     }
     
@@ -37,13 +37,15 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    func fadeInDeath() {
+    func fadeInDeath(completion: @escaping () -> Void) {
         DispatchQueue.main.async {
             withAnimation {
                 self.opacity = 0.0
             } completion: {
                 withAnimation(.default.delay(1.0)) {
                     self.opacity = 1.0
+                } completion: {
+                    completion()
                 }
             }
         }
