@@ -28,7 +28,7 @@ class MultiplayerManager: NSObject {
     var opponent: GKPlayer? = nil
     
     //boxes
-    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:]
+    var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
     
 
     //spawnPoint
@@ -146,7 +146,7 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: BoxTeletransport){
-        self.firstSceneGeneralBoxes[content.id] = content
+        self.scenesGeneralBoxes[content.id] = content
         
         do {
             let data = encode(content: content)

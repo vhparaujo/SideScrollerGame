@@ -48,7 +48,7 @@ extension MultiplayerManager: GKMatchDelegate {
             self.gameStartInfo.otherPlayerStartInfo = dataReceived
             
         }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
-            self.firstSceneGeneralBoxes[dataReceived.id] = dataReceived
+            self.scenesGeneralBoxes[dataReceived.id] = dataReceived
 
         }else if let dataReceived: CGPoint = decode(matchData: data) {
             self.spawnpoint = dataReceived

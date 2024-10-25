@@ -77,55 +77,55 @@ class MapBuilder {
                     // Identify the tile type
                     if let tileName = tileDefinition.name {
                         switch tileName {
-                            case "Ground":
-                                // Create the physics body for ground tiles
-                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.friction = 0
-                                tilePhysicsNode.physicsBody?.restitution = 0.0
-                                
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            case "Wall":
-                                // Create the physics body for wall tiles
-                                tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.friction = 0
-                                tilePhysicsNode.physicsBody?.restitution = 0.0
-                                
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            case "Death":
-                                // Create the physics body for death tiles
-                                tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
-                                tilePhysicsNode.physicsBody?.isDynamic = false
-                                tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
-                                tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
-                                tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
-                            case "SpawnPoint":
-                                addSpawnPoint(position: tilePositionInScene, size: tileSize)
-                                
-                            case "Elevator":
-                                addElavator(position: tilePositionInScene)
-                            case "Box":
-                                addBox(position: tilePositionInScene)
-                            case "Ladder":
-                                addLadder(position: tilePositionInScene)
-                            case "fan":
+                        case "Ground":
+                            // Create the physics body for ground tiles
+                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.friction = 0
+                            tilePhysicsNode.physicsBody?.restitution = 0.0
+                            
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.ground
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                        case "Wall":
+                            // Create the physics body for wall tiles
+                            tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.friction = 0
+                            tilePhysicsNode.physicsBody?.restitution = 0.0
+                            
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                        case "Death":
+                            // Create the physics body for death tiles
+                            tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
+                            tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.Death
+                            tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player
+                            tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
+                        case "SpawnPoint":
+                            addSpawnPoint(position: tilePositionInScene, size: tileSize)
+                            
+                        case "Elevator":
+                            addElevator(position: tilePositionInScene)
+                        case "Box":
+                            addBox(position: tilePositionInScene)
+                        case "Ladder":
+                            addLadder(position: tilePositionInScene)
+                        case "fan":
                             addFan(position: tilePositionInScene)
-                            case "Player":
-                                addPlayer(position: tilePositionInScene)
-                            case "OtherPlayer":
-                                addOtherPlayer(position: tilePositionInScene)
-                            case "Saw":
-                                addSaw(position: tilePositionInScene)
-                            case "NextScene":
-                                addNextSceneNode(position: tilePositionInScene, size: tileSize)
-                            default:
-                                // Default physics body for other tiles
-                                break
+                        case "Player":
+                            addPlayer(position: tilePositionInScene)
+                        case "OtherPlayer":
+                            addOtherPlayer(position: tilePositionInScene)
+                        case "Saw":
+                            addSaw(position: tilePositionInScene)
+                        case "NextScene":
+                            addNextSceneNode(position: tilePositionInScene, size: tileSize)
+                        default:
+                            // Default physics body for other tiles
+                            break
                         }
                     }
                     
@@ -148,6 +148,9 @@ class MapBuilder {
         if let scene = scene as? FirstScene {
             let newSpawnPoint = SpawnPointNode(size: size, position: position)
             scene.addChild(newSpawnPoint)
+        } else if let scene = scene as? SecondScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
         }
     }
     
@@ -158,13 +161,21 @@ class MapBuilder {
                 newBox.position = position
                 newBox.id = .init()
                 newBox.name = "\(newBox.id)"
-                scene.addChild(newBox) 
+                scene.addChild(newBox)
+            }
+        } else if let scene = scene as? SecondScene {
+            if scene.playerEra == .future {
+                let newBox = BoxNode()
+                newBox.position = position
+                newBox.id = .init()
+                newBox.name = "\(newBox.id)"
+                scene.addChild(newBox)
             }
         }
     }
     
-    func addElavator(position: CGPoint) {
-        if let scene = scene as? FirstScene {
+    func addElevator(position: CGPoint) {
+        if let scene = scene as? SecondScene {
             let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
             newElavator.position = position
             scene.addChild(newElavator)
@@ -172,7 +183,7 @@ class MapBuilder {
     }
     
     func addLadder(position: CGPoint) {
-        if let scene = scene as? FirstScene {
+        if let scene = scene as? SecondScene {
             let newLadder = Ladder()
             newLadder.position = position
             scene.addChild(newLadder)
@@ -180,7 +191,7 @@ class MapBuilder {
     }
     
     func addFan(position: CGPoint) {
-        if let scene = scene as? FirstScene {
+        if let scene = scene as? SecondScene {
             let newFan = Fan()
             newFan.position = position
             scene.addChild(newFan)
@@ -189,6 +200,10 @@ class MapBuilder {
     
     func addPlayer(position: CGPoint) {
         if let scene = scene as? FirstScene {
+            scene.playerNode = PlayerNode(playerEra: scene.playerEra)
+            scene.playerNode.position = position
+            scene.addChild(scene.playerNode)
+        } else if let scene = scene as? SecondScene {
             scene.playerNode = PlayerNode(playerEra: scene.playerEra)
             scene.playerNode.position = position
             scene.addChild(scene.playerNode)
@@ -209,11 +224,24 @@ class MapBuilder {
             scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
             scene.otherPlayer.position = position
             scene.addChild(scene.otherPlayer)
+        } else if let scene = scene as? SecondScene {
+            var otherPlayerEra: PlayerEra
+            
+            if scene.playerEra == .present {
+                otherPlayerEra = .future
+            } else {
+                otherPlayerEra = .present
+            }
+            
+            guard scene.otherPlayer == nil else { return }
+            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
+            scene.otherPlayer.position = position
+            scene.addChild(scene.otherPlayer)
         }
     }
     
     func addSaw(position: CGPoint) {
-        if let scene = scene as? FirstScene {
+        if let scene = scene as? SecondScene {
             let saw = SawNode(playerEra: .present, speed: 200, range: 500)
             saw.position = position
             scene.addChild(saw)
@@ -222,6 +250,9 @@ class MapBuilder {
     
     func addNextSceneNode(position: CGPoint, size: CGSize) {
         if let scene = scene as? FirstScene {
+            let nextSceneNode = NextSceneNode(size: size, position: position)
+            scene.addChild(nextSceneNode)
+        } else if let scene = scene as? SecondScene {
             let nextSceneNode = NextSceneNode(size: size, position: position)
             scene.addChild(nextSceneNode)
         }
