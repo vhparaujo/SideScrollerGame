@@ -1,5 +1,5 @@
 //
-//  PlatformNode.swift
+//  PlatformNodeY.swift
 //  SideScrollerGame
 //
 //  Created by Eduardo on 26/09/24.
@@ -7,21 +7,17 @@
 
 import SpriteKit
 
-protocol PlatformNodeProtocol {
-    func update(deltaTime: TimeInterval)
-}
-
-class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
-    var moveSpeed: CGFloat = 100.0 // Adjust speed as needed
-    var movingRight: Bool = true
-    var minX: CGFloat
-    var maxX: CGFloat
+class PlatformNodeY: SKSpriteNode, PlatformNodeProtocol {
+    var moveSpeed: CGFloat = 100 // Adjust speed as needed
+    var movingUp: Bool = true
+    var minY: CGFloat
+    var maxY: CGFloat
 
     private var previousPosition: CGPoint = .zero // Store previous position
 
-    init(minX: CGFloat, maxX: CGFloat, position: CGPoint, moveSpeed: CGFloat) {
-        self.minX = minX
-        self.maxX = maxX
+    init(minY: CGFloat, maxY: CGFloat, position: CGPoint, moveSpeed: CGFloat) {
+        self.minY = minY
+        self.maxY = maxY
         
         self.moveSpeed = moveSpeed
 
@@ -29,7 +25,7 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
         super.init(texture: texture, color: .clear, size: texture.size())
         self.position = position
         
-        self.zPosition = 1 // Adjust as needed
+        self.zPosition = 0 // Adjust as needed
 
         // Set up physics body
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
@@ -56,17 +52,17 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
         previousPosition = self.position
 
         // Move the platform
-        if movingRight {
-            self.position.x += distance
-            if self.position.x >= maxX {
-                self.position.x = maxX
-                movingRight = false
+        if movingUp {
+            self.position.y += distance
+            if self.position.y >= maxY {
+                self.position.y = maxY
+                movingUp = false
             }
         } else {
-            self.position.x -= distance
-            if self.position.x <= minX {
-                self.position.x = minX
-                movingRight = true
+            self.position.y -= distance
+            if self.position.y <= minY {
+                self.position.y = minY
+                movingUp = true
             }
         }
     }

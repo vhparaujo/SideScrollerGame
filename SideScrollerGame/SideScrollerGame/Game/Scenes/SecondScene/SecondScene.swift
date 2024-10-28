@@ -10,6 +10,8 @@ import SpriteKit
 class SecondScene: SKScene, SKPhysicsContactDelegate {
     var playerEra: PlayerEra!
     
+    var platforms: [PlatformNodeProtocol] = []
+    
     var mpManager: MultiplayerManager
     
     var playerNode: PlayerNode!
@@ -19,7 +21,6 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode = SKCameraNode()
     
     var previousCameraXPosition: CGFloat = 0.0
-    var platform: PlatformNode!
     
     var tileMapWidth: CGFloat = 0.0
     var tileMapHeight: CGFloat = 0.0
@@ -100,6 +101,10 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+        
+        for platform in platforms {
+            platform.update(deltaTime: deltaTime)
+        }
     }
     
     func updateBoxes(){

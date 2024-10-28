@@ -40,7 +40,7 @@ class MapBuilder {
     
     // Function to process a tile map node
     func processTileMapNode(_ tileNode: SKTileMapNode) {
-        tileNode.setScale(5)
+        tileNode.setScale(7)
         
         self.tileMapWidth = tileNode.mapSize.width * tileNode.xScale
         self.tileMapHeight = tileNode.mapSize.height * tileNode.yScale
@@ -123,6 +123,29 @@ class MapBuilder {
                             addSaw(position: tilePositionInScene)
                         case "NextScene":
                             addNextSceneNode(position: tilePositionInScene, size: tileSize)
+                        case "platform1":
+                            addPlatform1(position: tilePositionInScene)
+                        case "platform2":
+                            addPlatform2(position: tilePositionInScene)
+                        case "platform3":
+                            addPlatform3(position: tilePositionInScene)
+                        case "platform4":
+                            addPlatform4(position: tilePositionInScene)
+                        case "platform5":
+                            addPlatform5(position: tilePositionInScene)
+                        case "platform6":
+                            addPlatform6(position: tilePositionInScene)
+                        case "platform7":
+                            addPlatform7(position: tilePositionInScene)
+                        case "platform8":
+                            addPlatform8(position: tilePositionInScene)
+                        case "platform9":
+                            addPlatform9(position: tilePositionInScene)
+                        case "platform10":
+                            addPlatform10(position: tilePositionInScene)
+                        case "platform11":
+                            addPlatform11(position: tilePositionInScene)
+                            
                         default:
                             // Default physics body for other tiles
                             break
@@ -140,8 +163,94 @@ class MapBuilder {
         tileNode.removeFromParent()
         // Add the tile node to the scene
         scene.addChild(tileNode)
-        
-        
+    }
+    
+    func addPlatform1(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 100, maxY: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform2(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 0, maxY: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform3(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 0, maxY: 400, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform4(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 0, maxY: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform5(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 100, maxY: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform6(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNodeY(minY: 50, maxY: 900, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform7(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform8(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform9(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform10(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform11(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
     }
     
     func addSpawnPoint(position: CGPoint, size: CGSize) {
