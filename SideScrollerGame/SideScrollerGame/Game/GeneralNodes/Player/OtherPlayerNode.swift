@@ -70,6 +70,10 @@ class OtherPlayerNode: PlayerNode {
         
     }
     
+    override func didEnd(_ contact: SKPhysicsContact) {
+        
+    }
+    
     // Função para atualizar a textura com base no estado do jogador
     func updateTexture(for state: PlayerTextureState) {
         switch state {
