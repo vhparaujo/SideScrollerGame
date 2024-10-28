@@ -114,7 +114,9 @@ class PlayerNode: SKSpriteNode {
                 isMovingRight = true
                 playerInfo.facingRight = true
             case .jump:
-                isJumping = true
+                if !isJumping && isGrounded {
+                    isJumping = true
+                }
             case .action:
                 handleActionKeyPress()
             case .bringToPresent:
@@ -209,7 +211,9 @@ class PlayerNode: SKSpriteNode {
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
-        handleJump()
+        if isJumping && isGrounded {
+            handleJump()
+        }
         handleDeath()
         updatePlayerOrientation()
         
