@@ -73,7 +73,7 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = false
         physicsBody?.categoryBitMask = PhysicsCategories.player
-        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan
+        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan | PhysicsCategories.buttonDoor
         physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
         physicsBody?.friction = 0.0
         physicsBody?.restitution = 0.0
@@ -165,19 +165,23 @@ class PlayerNode: SKSpriteNode {
             elevator.moveManual()
         }
         
-        if let button = self.scene?.childNode(withName: "ButtonsNode") as? ButtonsNode {
-            for child in button.children {
-                if let spriteChild = child as? SKSpriteNode, self.intersects(spriteChild) {
-                    if spriteChild.name == "ButtonOne" {
-                        button.buttonOnePressed.toggle()
+        if let buttons = self.scene?.childNode(withName: "ButtonsNode") as? ButtonsNode {
+            for child in buttons.children {
+                if let buttonNode = child as? ButtonNode {
+                    if buttonNode.intersects(self) {
+                        if buttonNode.name == "button-one" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
+                        if buttonNode.name == "button-two" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
+                        if buttonNode.name == "button-three" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
                     }
-                    if spriteChild.name == "ButtonTwo" {
-                        button.buttonTwoPressed.toggle()
-                    }
-                    if spriteChild.name == "ButtonThree" {
-                        button.buttonThreePressed.toggle()
-                    }
-                    break
                 }
             }
         }

@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-class ButtonNode: SKNode {
+class ButtonNode: SKSpriteNode {
     let playerEra: PlayerEra
     let spriteNode: SKSpriteNode
     
@@ -23,13 +23,14 @@ class ButtonNode: SKNode {
     
     init(playerEra: PlayerEra, buttonName: String) {
         self.playerEra = playerEra
-        self.name = buttonName
         
-        super.init()
-        
-        let buttonTwoTexture = SKTexture(imageNamed: "\(playerEra == .present ? "\(buttonName)-present" : "\(buttonName)-future")-1")
-        self.spriteNode = SKSpriteNode(texture: buttonTwoTexture, color: .red, size: CGSize(width: 200, height: 200))
+        let buttonTexture = SKTexture(imageNamed: "\(playerEra == .present ? "\(buttonName)-present" : "\(buttonName)-future")-1")
+        self.spriteNode = SKSpriteNode(texture: buttonTexture, color: .red, size: CGSize(width: 200, height: 200))
         self.spriteNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        
+        super.init(texture: buttonTexture, color: .clear, size: buttonTexture.size())
+    
+        self.name = buttonName
         
         setPhysicsBody(node: self, size: self.spriteNode.size)
         
