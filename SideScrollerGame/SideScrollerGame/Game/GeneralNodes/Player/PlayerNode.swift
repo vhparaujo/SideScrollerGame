@@ -185,6 +185,7 @@ class PlayerNode: SKSpriteNode {
             xScale = -abs(xScale)
         }
     }
+    
     func checkForNearbyBox() -> BoxNode? {
         let pickUpRange: CGFloat = 150
         let pickUpRangeHeight: CGFloat = self.frame.height * 0.98
@@ -210,60 +211,60 @@ class PlayerNode: SKSpriteNode {
     
     
     func update(deltaTime: TimeInterval) {
-//        self.boxRef = checkForNearbyBox()
-//        sendPlayerInfoToOthers()
-//        handleDeath()
-//        updatePlayerOrientation()
-//        
-//        var desiredVelocity: CGFloat = 0.0
-//        
-//        if isMovingLeft {
-//            desiredVelocity = -moveSpeed
-//        } else if isMovingRight {
-//            desiredVelocity = moveSpeed
-//        }
-//        
-//        physicsBody?.velocity.dx = desiredVelocity
-//        
-//        // Move the box with the player when grabbed
-//        if playerInfo.action, let box = boxRef {
-//            box.position.x = self.position.x + boxOffset
-//            box.physicsBody?.velocity.dx = desiredVelocity
-//            box.xScale = abs(box.xScale)
-//        }
-//        
-//        // Adjust player's position by the platform's movement delta
-//        if let platform = currentPlatform {
-//            let delta = platform.movementDelta()
-//            position.x += delta.x
-//            position.y += delta.y
-//        }
-//        
-//        // Update animation state
-//        if playerInfo.action {
-//            changeState(to: .grabbing)
-//        } else if desiredVelocity != 0 {
-//            changeState(to: .running)
-//        } else {
-//            changeState(to: .idle)
-//        }
-//        
-//        // Handle ladder movement
-//        if isOnLadder {
-//            physicsBody?.affectedByGravity = false
-//            if canClimb {
-//                position.y += 300 * CGFloat(deltaTime)
-//            } else if canDescend {
-//                position.y -= 300 * CGFloat(deltaTime)
-//            }
-//        } else {
-//            physicsBody?.affectedByGravity = true
-//        }
-//        
-//        // Handle death and respawn
-//        if playerInfo.isDying {
-//            triggerDeath()
-//        }
+        self.boxRef = checkForNearbyBox()
+        sendPlayerInfoToOthers()
+        handleDeath()
+        updatePlayerOrientation()
+        
+        var desiredVelocity: CGFloat = 0.0
+        
+        if isMovingLeft {
+            desiredVelocity = -moveSpeed
+        } else if isMovingRight {
+            desiredVelocity = moveSpeed
+        }
+        
+        physicsBody?.velocity.dx = desiredVelocity
+        
+        // Move the box with the player when grabbed
+        if playerInfo.action, let box = boxRef {
+            box.position.x = self.position.x + boxOffset
+            box.physicsBody?.velocity.dx = desiredVelocity
+            box.xScale = abs(box.xScale)
+        }
+        
+        // Adjust player's position by the platform's movement delta
+        if let platform = currentPlatform {
+            let delta = platform.movementDelta()
+            position.x += delta.x
+            position.y += delta.y
+        }
+        
+        // Update animation state
+        if playerInfo.action {
+            changeState(to: .grabbing)
+        } else if desiredVelocity != 0 {
+            changeState(to: .running)
+        } else {
+            changeState(to: .idle)
+        }
+        
+        // Handle ladder movement
+        if isOnLadder {
+            physicsBody?.affectedByGravity = false
+            if canClimb {
+                position.y += 300 * CGFloat(deltaTime)
+            } else if canDescend {
+                position.y -= 300 * CGFloat(deltaTime)
+            }
+        } else {
+            physicsBody?.affectedByGravity = true
+        }
+        
+        // Handle death and respawn
+        if playerInfo.isDying {
+            triggerDeath()
+        }
     }
     
     private func handleDeath() {
@@ -274,12 +275,14 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleJump() {
-        if !playerInfo.action {
+        if !playerInfo.action && isGrounded {
             guard let dyVelocity = physicsBody?.velocity.dy else { return }
             if dyVelocity <= 0.0 {
                 physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                isGrounded = false
             }
             changeState(to: .jumping)
+
         }
     }
     
