@@ -24,7 +24,7 @@ struct ContentView: View {
 //        GameView(currentSceneType: .first(.future))
         
         if !mpManager.gameFinished {
-            GameView(currentSceneType: .first(.future))
+            GameView()
          } else {
              EndGameView()
          }
