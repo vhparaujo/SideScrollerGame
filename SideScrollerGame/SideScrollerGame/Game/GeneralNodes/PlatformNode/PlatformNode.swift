@@ -24,12 +24,12 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
         self.maxX = maxX
         
         self.moveSpeed = moveSpeed
-
+        
         let texture = SKTexture(imageNamed: "platform") // Replace with your platform image
         super.init(texture: texture, color: .clear, size: texture.size())
         self.position = position
         
-        self.zPosition = 1 // Adjust as needed
+        self.zPosition = 0 // Adjust as needed
 
         // Set up physics body
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
@@ -56,19 +56,8 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
         previousPosition = self.position
 
         // Move the platform
-        if movingRight {
-            self.position.x += distance
-            if self.position.x >= maxX {
-                self.position.x = maxX
-                movingRight = false
-            }
-        } else {
-            self.position.x -= distance
-            if self.position.x <= minX {
-                self.position.x = minX
-                movingRight = true
-            }
-        }
+        print(distance)
+        
     }
 
     // Function to get movement delta

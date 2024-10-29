@@ -83,7 +83,7 @@ class ElevatorNode: SKNode {
         self.elevatorBody.anchorPoint = CGPoint(x: 0.5, y: 0.0)
         self.elevatorPlatform.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        self.elevatorPlatform.position = CGPoint(x: 0, y: 400)
+//        self.elevatorPlatform.position = CGPoint(x: 0, y: 400)
     }
     
     private func moveAutomatic() {

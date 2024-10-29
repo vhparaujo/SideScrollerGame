@@ -54,6 +54,7 @@ class PlatformNodeY: SKSpriteNode, PlatformNodeProtocol {
         // Move the platform
         if movingUp {
             self.position.y += distance
+            
             if self.position.y >= maxY {
                 self.position.y = maxY
                 movingUp = false

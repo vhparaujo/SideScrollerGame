@@ -11,7 +11,7 @@ class Ladder: SKSpriteNode {
         
     init() {
         let texture = SKTexture(imageNamed: "Ladder") // Replace with your box texture
-        super.init(texture: texture, color: .clear, size: CGSize(width: 80, height: 600))
+        super.init(texture: texture, color: .clear, size: CGSize(width: 80, height: 2000))
         self.name = "Ladder"
         self.zPosition = 1
         setupPhysicsBody()

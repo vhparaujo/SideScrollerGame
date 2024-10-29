@@ -150,19 +150,19 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleActionKeyPress() {
-
-            if let box = boxRef {
-                if !box.isGrabbed {
-                    playerInfo.action = true
-                    box.isGrabbed = true
-                    box.enableMovement()
-                    boxOffset = box.position.x - self.position.x
-                }
-            }
-            if let elevator = elevatorRef {
+        
+        if let box = boxRef {
+            if !box.isGrabbed {
                 playerInfo.action = true
-                elevator.moveManual()
+                box.isGrabbed = true
+                box.enableMovement()
+                boxOffset = box.position.x - self.position.x
             }
+        }
+        if let elevator = elevatorRef {
+            playerInfo.action = true
+            elevator.moveManual()
+        }
     }
     
     private func handleActionKeyRelease() {
@@ -190,14 +190,14 @@ class PlayerNode: SKSpriteNode {
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
-
+            
             if let box = node as? BoxNode {
                 
                 let distanceToBox = abs(box.position.x - self.position.x)
                 let distanceHeithgToBox = abs(box.position.y - self.position.y)
                 if distanceToBox <= pickUpRange, distanceHeithgToBox <= pickUpRangeHeight{
                     if (self.xScale > 0 && box.position.x > self.position.x) ||
-                       (self.xScale < 0 && box.position.x < self.position.x) {
+                        (self.xScale < 0 && box.position.x < self.position.x) {
                         return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
                     }
                 }
@@ -205,8 +205,8 @@ class PlayerNode: SKSpriteNode {
         }
         return nil
     }
-
-
+    
+    
     
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
@@ -264,6 +264,13 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isDying {
             triggerDeath()
         }
+        
+        if isOnFan {
+            self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
+            self.physicsBody?.affectedByGravity = false
+        } else {
+            self.physicsBody?.affectedByGravity = true
+        }
     }
     
     private func handleDeath() {
@@ -272,7 +279,7 @@ class PlayerNode: SKSpriteNode {
             playerInfo.isDying = false
         }
     }
-
+    
     private func handleJump() {
         if isJumping && isGrounded {
             isGrounded = false
@@ -317,8 +324,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.spawnPoint {
-          if let spanwPointNode = otherBody.node as? SpawnPointNode {
-              mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
+            if let spanwPointNode = otherBody.node as? SpawnPointNode {
+                mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
             }
         }
         
@@ -335,7 +342,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-//            GameViewModel.shared.transitionScene(to: .first(.future))
+            //            GameViewModel.shared.transitionScene(to: .first(.future))
             mpManager.gameFinished = true
         }
     }

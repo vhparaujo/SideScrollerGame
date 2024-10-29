@@ -40,7 +40,7 @@ class MapBuilder {
     
     // Function to process a tile map node
     func processTileMapNode(_ tileNode: SKTileMapNode) {
-        tileNode.setScale(7)
+        tileNode.setScale(5)
         
         self.tileMapWidth = tileNode.mapSize.width * tileNode.xScale
         self.tileMapHeight = tileNode.mapSize.height * tileNode.yScale
@@ -215,9 +215,10 @@ class MapBuilder {
     
     func addPlatform7(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 0, maxX: 0, position: position, moveSpeed: 200)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
+            
         }
     }
     
