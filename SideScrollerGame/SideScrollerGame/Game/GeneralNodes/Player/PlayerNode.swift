@@ -357,6 +357,10 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
         }
+        
+        if otherCategory == PhysicsCategories.nextScene {
+            mpManager.endMatch()
+        }
     }
     
     func triggerDeath() {

@@ -113,6 +113,7 @@ class MultiplayerManager: NSObject {
         myMatch?.disconnect()
         myMatch = nil
         
+        gameFinished = true
         playingGame = false
         choosingEra = false
         matchAvailable = true
