@@ -33,7 +33,7 @@ enum PlayerTextureState: Codable {
                 return SKSpriteNode.loadTextures(prefix: "player-future-walk-left", count: 45)
             //idle
             case (.idleR, .present):
-                return SKSpriteNode.loadTextures(prefix: "player-present-idle-right", count: 1)
+                return SKSpriteNode.loadTextures(prefix: "player-present-idle-left", count: 1)
             case (.idleL, .present):
                 return SKSpriteNode.loadTextures(prefix: "player-present-idle-left", count: 1)
             case (.idleR, .future):
@@ -74,7 +74,7 @@ enum PlayerTextureState: Codable {
         case .idleR, .idleL:
             return 0.2
         case .jumpingL, .jumpingR:
-                return 1/35
+                return 1/50
             case .climbing:
                 return 0.2
             case .grabbing:
