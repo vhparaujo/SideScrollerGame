@@ -231,9 +231,11 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if !isGrounded{
-            changeState(to: .jumping)
-        }else if desiredVelocity != 0 && !isMovingLeft{
+        } else if !isGrounded && isMovingLeft{
+            changeState(to: .jumpingL)
+        }else if !isGrounded && isMovingRight{
+            changeState(to: .jumpingR)
+        }else if desiredVelocity != 0 && isMovingRight{
             changeState(to: .runningR)
         } else if desiredVelocity != 0 && isMovingLeft {
             changeState(to: .runningL)
@@ -273,7 +275,7 @@ class PlayerNode: SKSpriteNode {
         if isJumping && isGrounded {
             isGrounded = false
             physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-            changeState(to: .jumping)
+            changeState(to: .jumpingL)
            
             isJumping = false
         }
@@ -356,6 +358,10 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
+        }
+        
+        if otherCategory == PhysicsCategories.nextScene {
+            mpManager.endMatch()
         }
     }
     

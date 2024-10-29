@@ -88,9 +88,14 @@ class OtherPlayerNode: PlayerNode {
                 changeState(to: .idleL)
                 self.lastState = state
             }
-        case .jumping:
+        case .jumpingL:
             if lastState != state{
-                changeState(to: .jumping)
+                changeState(to: .jumpingL)
+                self.lastState = state
+            }
+        case .jumpingR:
+            if lastState != state{
+                changeState(to: .jumpingR)
                 self.lastState = state
             }
         case .climbing:
