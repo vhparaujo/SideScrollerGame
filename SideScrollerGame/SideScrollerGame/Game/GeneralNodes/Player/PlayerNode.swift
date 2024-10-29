@@ -164,6 +164,23 @@ class PlayerNode: SKSpriteNode {
             playerInfo.action = true
             elevator.moveManual()
         }
+        
+        if let button = self.scene?.childNode(withName: "ButtonsNode") as? ButtonsNode {
+            for child in button.children {
+                if let spriteChild = child as? SKSpriteNode, self.intersects(spriteChild) {
+                    if spriteChild.name == "ButtonOne" {
+                        button.buttonOnePressed.toggle()
+                    }
+                    if spriteChild.name == "ButtonTwo" {
+                        button.buttonTwoPressed.toggle()
+                    }
+                    if spriteChild.name == "ButtonThree" {
+                        button.buttonThreePressed.toggle()
+                    }
+                    break
+                }
+            }
+        }
     }
     
     private func handleActionKeyRelease() {

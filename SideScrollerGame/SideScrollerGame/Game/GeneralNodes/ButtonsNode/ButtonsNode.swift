@@ -7,25 +7,68 @@
 
 import SpriteKit
 
+class ButtonNode: SKNode {
+    let playerEra: PlayerEra
+    let spriteNode: SKSpriteNode
+    
+    var buttonPressed: Bool = false {
+        didSet {
+            if buttonPressed {
+                self.spriteNode.run(SKAction.move(by: CGVector(dx: 0, dy: Int(-self.spriteNode.size.height)), duration: 1))
+            } else {
+                self.spriteNode.run(SKAction.move(by: CGVector(dx: 0, dy: Int(self.spriteNode.size.height)), duration: 1))
+            }
+        }
+    }
+    
+    init(playerEra: PlayerEra, buttonName: String) {
+        self.playerEra = playerEra
+        self.name = buttonName
+        
+        super.init()
+        
+        let buttonTwoTexture = SKTexture(imageNamed: "\(playerEra == .present ? "\(buttonName)-present" : "\(buttonName)-future")-1")
+        self.spriteNode = SKSpriteNode(texture: buttonTwoTexture, color: .red, size: CGSize(width: 200, height: 200))
+        self.spriteNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        
+        setPhysicsBody(node: self, size: self.spriteNode.size)
+        
+        self.addChild(self.spriteNode)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setPhysicsBody(node: SKNode, size: CGSize) {
+        node.physicsBody = SKPhysicsBody(rectangleOf: size)
+        
+        node.physicsBody?.affectedByGravity = false
+        node.physicsBody?.isDynamic = false
+        node.physicsBody?.friction = 0
+        
+        node.physicsBody?.categoryBitMask = PhysicsCategories.buttonDoor
+        node.physicsBody?.collisionBitMask = 0
+        node.physicsBody?.contactTestBitMask = PhysicsCategories.player
+    }
+}
+
 class ButtonsNode: SKNode {
     let playerEra: PlayerEra
-    var buttonOnePressed: Bool = false
-    var buttonTwoPressed: Bool = false
-    var buttonThreePressed: Bool = false
     
-    lazy var buttonOne: SKSpriteNode = {
-        let buttonOneTexture = SKTexture(imageNamed: "\(playerEra == .present ? "button-one-present" : "button-one-future")-1")
-        return SKSpriteNode(texture: buttonOneTexture, color: .red, size: CGSize(width: 200, height: 200))
+    lazy var buttonOne: SKNode = {
+        let button = ButtonNode(playerEra: self.playerEra, buttonName: "button-one")
+        return button
     }()
     
-    lazy var buttonTwo: SKSpriteNode = {
-        let buttonTwoTexture = SKTexture(imageNamed: "\(playerEra == .present ? "button-two-present" : "button-two-future")-1")
-        return SKSpriteNode(texture: buttonTwoTexture, color: .red, size: CGSize(width: 200, height: 200))
+    lazy var buttonTwo: SKNode = {
+        let button = ButtonNode(playerEra: self.playerEra, buttonName: "button-two")
+        return button
     }()
     
-    lazy var buttonThree: SKSpriteNode = {
-        let buttonThreeTexture = SKTexture(imageNamed: "\(playerEra == .present ? "button-three-present" : "button-three-future")-1")
-        return SKSpriteNode(texture: buttonThreeTexture, color: .red, size: CGSize(width: 200, height: 200))
+    lazy var buttonThree: SKNode = {
+        let button = ButtonNode(playerEra: self.playerEra, buttonName: "button-three")
+        return button
     }()
     
     init(playerEra: PlayerEra) {
@@ -42,46 +85,15 @@ class ButtonsNode: SKNode {
     
     private func setup() {
         setPosition()
-        setPhysicsBody()
-    }
-    
-    private func setPhysicsBody() {
-        buttonOne.physicsBody = SKPhysicsBody(rectangleOf: buttonOne.size)
         
-        buttonOne.physicsBody?.affectedByGravity = false
-        buttonOne.physicsBody?.isDynamic = false
-        buttonOne.physicsBody?.friction = 0
+        self.name = "ButtonsNode"
         
-        buttonOne.physicsBody?.categoryBitMask = PhysicsCategories.buttonDoor
-        buttonOne.physicsBody?.collisionBitMask = 0
-        buttonOne.physicsBody?.contactTestBitMask = PhysicsCategories.player
-        
-        buttonTwo.physicsBody = SKPhysicsBody(rectangleOf: buttonOne.size)
-        
-        buttonTwo.physicsBody?.affectedByGravity = false
-        buttonTwo.physicsBody?.isDynamic = false
-        buttonTwo.physicsBody?.friction = 0
-        
-        buttonTwo.physicsBody?.categoryBitMask = PhysicsCategories.buttonDoor
-        buttonTwo.physicsBody?.collisionBitMask = 0
-        buttonTwo.physicsBody?.contactTestBitMask = PhysicsCategories.player
-        
-        buttonThree.physicsBody = SKPhysicsBody(rectangleOf: buttonOne.size)
-        
-        buttonThree.physicsBody?.affectedByGravity = false
-        buttonThree.physicsBody?.isDynamic = false
-        buttonThree.physicsBody?.friction = 0
-        
-        buttonThree.physicsBody?.categoryBitMask = PhysicsCategories.buttonDoor
-        buttonThree.physicsBody?.collisionBitMask = 0
-        buttonThree.physicsBody?.contactTestBitMask = PhysicsCategories.player
+        self.addChild(buttonOne)
+        self.addChild(buttonTwo)
+        self.addChild(buttonThree)
     }
     
     private func setPosition() {
-        self.buttonOne.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        self.buttonTwo.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        self.buttonThree.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
         self.buttonOne.position = CGPoint(x: 0, y: 0)
         self.buttonTwo.position = CGPoint(x: 250, y: 0)
         self.buttonThree.position = CGPoint(x: 500, y: 0)
