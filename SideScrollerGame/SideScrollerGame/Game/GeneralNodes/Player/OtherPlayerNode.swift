@@ -1,4 +1,5 @@
 import Foundation
+import SpriteKit
 import CoreGraphics
 import Combine
 
@@ -63,6 +64,14 @@ class OtherPlayerNode: PlayerNode {
 
         // Certifique-se de que a textura está sempre atualizada com base no estado
         updateTexture(for: playerInfo.textureState)
+    }
+    
+    override func didBegin(_ contact: SKPhysicsContact) {
+        
+    }
+    
+    override func didEnd(_ contact: SKPhysicsContact) {
+        
     }
     
     // Função para atualizar a textura com base no estado do jogador

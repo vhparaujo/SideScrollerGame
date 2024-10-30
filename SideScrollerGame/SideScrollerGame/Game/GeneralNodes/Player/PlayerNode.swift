@@ -116,8 +116,9 @@ class PlayerNode: SKSpriteNode {
                 isMovingRight = true
                 playerInfo.facingRight = true
             case .jump:
-                if isGrounded && !playerInfo.action {
+                  if !isJumping {
                     isJumping = true
+                    handleJump()
                 }
             case .action:
                 handleActionKeyPress()
@@ -151,7 +152,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleActionKeyPress() {
-
+        
         if let box = boxRef {
             if !box.isGrabbed {
                 playerInfo.action = true
@@ -222,7 +223,6 @@ class PlayerNode: SKSpriteNode {
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
-        handleJump()
         handleDeath()
         
         var desiredVelocity: CGFloat = 0.0
@@ -291,14 +291,16 @@ class PlayerNode: SKSpriteNode {
             playerInfo.isDying = false
         }
     }
-
+    
     private func handleJump() {
-        if isJumping && isGrounded {
-            isGrounded = false
-            physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+        if !playerInfo.action && isGrounded {
+            guard let dyVelocity = physicsBody?.velocity.dy else { return }
+            if dyVelocity <= 0.0 {
+                physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                isGrounded = false
+            }
             changeState(to: .jumpingL)
-           
-            isJumping = false
+
         }
     }
     
@@ -327,9 +329,10 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             
-            if !isJumping {
-                isGrounded = true
-            }
+            isJumping = false
+            isGrounded = true
+            
+            print(isJumping)
             
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
@@ -337,8 +340,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.spawnPoint {
-          if let spanwPointNode = otherBody.node as? SpawnPointNode {
-              mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
+            if let spanwPointNode = otherBody.node as? SpawnPointNode {
+                mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
             }
         }
         
@@ -357,8 +360,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            GameViewModel.shared.transitionScene(to: .first(.future))
-//            mpManager.gameFinished = true
+            //            GameViewModel.shared.transitionScene(to: .first(.future))
+            mpManager.gameFinished = true
         }
     }
     
@@ -367,7 +370,7 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
-            
+                        
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }

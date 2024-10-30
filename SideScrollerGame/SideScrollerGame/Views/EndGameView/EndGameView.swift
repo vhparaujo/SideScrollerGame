@@ -29,6 +29,7 @@ struct EndGameView: View {
             .frame(maxWidth: 300, maxHeight: 100)
             .onTapGesture {
                 mpManager.gameFinished = false
+                mpManager.endMatch()
             }
    
         }
