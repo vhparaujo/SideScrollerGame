@@ -283,6 +283,13 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isDying {
             triggerDeath()
         }
+        
+        if isOnFan {
+            self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
+            self.physicsBody?.affectedByGravity = false
+        } else {
+            self.physicsBody?.affectedByGravity = true
+        }
     }
     
     private func handleDeath() {
