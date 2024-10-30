@@ -51,13 +51,13 @@ class PlatformNode: SKSpriteNode {
         if movingRight {
             self.position.x += distance
             if self.position.x >= maxX {
-                self.position.x = maxX
+//                self.position.x = maxX
                 movingRight = false
             }
         } else {
             self.position.x -= distance
             if self.position.x <= minX {
-                self.position.x = minX
+//                self.position.x = minX
                 movingRight = true
             }
         }
