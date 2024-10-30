@@ -1,5 +1,6 @@
 import SpriteKit
 import Combine
+import SwiftUI
 
 class PlayerNode: SKSpriteNode {
     
@@ -13,7 +14,7 @@ class PlayerNode: SKSpriteNode {
     let jumpImpulse: CGFloat = 7700.0
     
     var playerInfo = PlayerInfo(
-        textureState: .idle,
+        textureState: .idleR,
         facingRight: true,
         action: false,
         isDying: false,
@@ -49,15 +50,16 @@ class PlayerNode: SKSpriteNode {
         self.playerEra = playerEra
         self.mpManager = mpManager
         
-        let textureName = playerEra == .present ? "player-idle-present-1" : "player-idle-future-1"
+        let textureName = playerEra == .present ? "player-present-walk-right-1" : "player-future-walk-right-1"
         let texture = SKTexture(imageNamed: textureName)
+        
         super.init(texture: texture, color: .clear, size: texture.size())
         self.zPosition = 1
-        self.setScale(4)
+        self.setScale(0.25)
         
         setupPhysicsBody()
         setupBindings()
-        changeState(to: .idle)
+        changeState(to: .idleR)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -121,7 +123,6 @@ class PlayerNode: SKSpriteNode {
             case .action:
                 handleActionKeyPress()
             case .bringToPresent:
-                // Handle bring to present logic if needed
                 bringBoxToPresent = true
             case .climb:
                 canClimb = isOnLadder
@@ -177,44 +178,31 @@ class PlayerNode: SKSpriteNode {
         playerInfo.action = false
     }
     
-    private func updatePlayerOrientation() {
-        guard !playerInfo.action else { return }
-        if playerInfo.facingRight {
-            xScale = abs(xScale)
-        } else {
-            xScale = -abs(xScale)
-        }
-    }
-    
     func checkForNearbyBox() -> BoxNode? {
-        let pickUpRange: CGFloat = 150
-        let pickUpRangeHeight: CGFloat = self.frame.height * 0.98
+//        let pickUpRangeX: CGFloat = self.frame.width * 2
+ 
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
-            
             if let box = node as? BoxNode {
-                
-                let distanceToBox = abs(box.position.x - self.position.x)
-                let distanceHeithgToBox = abs(box.position.y - self.position.y)
-                if distanceToBox <= pickUpRange, distanceHeithgToBox <= pickUpRangeHeight{
-                    if (self.xScale > 0 && box.position.x > self.position.x) ||
-                        (self.xScale < 0 && box.position.x < self.position.x) {
-                        return box  // Retorna a caixa se estiver dentro do alcance e à frente do jogador
-                    }
+                let pickUpRangeY: CGFloat = box.frame.height * 0.98
+                let pickUpRangeX: CGFloat = box.frame.width * 0.9
+
+                let distanceXToBox = box.position.x - self.position.x
+                let distanceYToBox = abs(box.position.y - self.position.y)
+
+                if abs(distanceXToBox) <= pickUpRangeX, distanceYToBox <= pickUpRangeY {
+                    return box
                 }
             }
         }
         return nil
     }
     
-    
-    
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
         handleDeath()
-        updatePlayerOrientation()
         
         var desiredVelocity: CGFloat = 0.0
         
@@ -243,11 +231,20 @@ class PlayerNode: SKSpriteNode {
         // Update animation state
         if playerInfo.action {
             changeState(to: .grabbing)
-        } else if desiredVelocity != 0 {
-            changeState(to: .running)
-        } else {
-            changeState(to: .idle)
+        } else if !isGrounded && isMovingLeft{
+            changeState(to: .jumpingL)
+        }else if !isGrounded && isMovingRight{
+            changeState(to: .jumpingR)
+        }else if desiredVelocity != 0 && isMovingRight{
+            changeState(to: .runningR)
+        } else if desiredVelocity != 0 && isMovingLeft {
+            changeState(to: .runningL)
+        }else if playerInfo.facingRight{
+            changeState(to: .idleR)
+        }else if !playerInfo.facingRight{
+            changeState(to: .idleL)
         }
+      
         
         // Handle ladder movement
         if isOnLadder {
@@ -328,7 +325,9 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.Death {
-            triggerDeath()
+            GameViewModel.shared.fadeInDeath {
+                self.triggerDeath()
+            }
         }
         
         if otherCategory == PhysicsCategories.ladder {
@@ -362,6 +361,10 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
+        }
+        
+        if otherCategory == PhysicsCategories.nextScene {
+            mpManager.endMatch()
         }
     }
     

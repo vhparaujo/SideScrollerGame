@@ -14,7 +14,7 @@ class MultiplayerManager: NSObject {
     var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
+    var gameStartInfo: GameStartInfo = .init(local: .init(isStartPressed: .no), other: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
@@ -107,18 +107,20 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match and cleans up resources.
     func endMatch() {
-        gameStartInfo.localPlayerStartInfo.eraSelection = nil
-        gameStartInfo.localPlayerStartInfo.isStartPressed = .no
+        gameStartInfo.local.eraSelection = nil
+        gameStartInfo.local.isStartPressed = .no
         
         myMatch?.disconnect()
         myMatch = nil
         
+        gameFinished = true
         playingGame = false
         choosingEra = false
         matchAvailable = true
         localPlayer = nil
         otherPlayerInfo.value = nil
-      
+        gameStartInfo.local.eraSelection = nil
+        gameStartInfo.other.eraSelection = nil
         opponent = nil
         GKAccessPoint.shared.isActive = true
     }
@@ -135,7 +137,7 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: PlayerStartInfo){
-        gameStartInfo.localPlayerStartInfo = content
+        gameStartInfo.local = content
         
         do {
             let data = encode(content: content)

@@ -10,6 +10,11 @@ import SpriteKit
 
 struct GameView: View {    
     @StateObject var viewModel: GameViewModel = .shared
+    var currentSceneType: SceneType? {
+        didSet {
+            self.viewModel.currentSceneType = currentSceneType!
+        }
+    }
     
     var body: some View {
         GeometryReader { geometry in

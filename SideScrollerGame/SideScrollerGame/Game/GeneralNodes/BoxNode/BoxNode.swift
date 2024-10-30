@@ -13,11 +13,12 @@ class BoxNode: SKSpriteNode {
 
     init(mpManager: MultiplayerManager = .shared) {
         self.mpManager = mpManager
-        let texture = SKTexture(imageNamed: "Box") // Replace with your box texture
+        let imageNamed = mpManager.gameStartInfo.local.eraSelection == .present ? "box-present-small" : "box-future-small"
+        let texture = SKTexture(imageNamed: imageNamed)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
         self.zPosition = 1
-        self.setScale(4)
+        self.setScale(0.4)
         setupPhysicsBody()
     }
 

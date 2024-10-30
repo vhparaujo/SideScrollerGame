@@ -11,10 +11,9 @@ struct ContentView: View {
     @State var mpManager = MultiplayerManager.shared
     
     var body: some View {
-//        if mpManager.gameStartInfo.localPlayerStartInfo.isStartPressed == .yes && mpManager.gameStartInfo.otherPlayerStartInfo.isStartPressed == .yes {
-//            if mpManager.gameStartInfo.localPlayerStartInfo.eraSelection != nil {
+//        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes {
 //        GameView()
-//            }
+//            
 //            
 //        }else if mpManager.choosingEra {
 //            ChoosePerspectiveView(playerStartInfo: .init( isStartPressed: .no))
@@ -22,8 +21,14 @@ struct ContentView: View {
 //            JoinGameView()
 //        }
 
-        GameView()
-
+//        GameView(currentSceneType: .first(.future))
+        
+        if !mpManager.gameFinished {
+            GameView()
+         } else {
+             EndGameView()
+         }
+    
     }
 }
 
