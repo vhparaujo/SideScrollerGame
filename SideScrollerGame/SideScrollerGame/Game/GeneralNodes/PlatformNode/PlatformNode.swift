@@ -16,12 +16,16 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
     var movingRight: Bool = true
     var minX: CGFloat
     var maxX: CGFloat
+    var platformXMaxPosition: CGFloat
+    var platformXMinPosition: CGFloat
 
     private var previousPosition: CGPoint = .zero // Store previous position
 
     init(minX: CGFloat, maxX: CGFloat, position: CGPoint, moveSpeed: CGFloat) {
         self.minX = minX
         self.maxX = maxX
+        self.platformXMaxPosition = position.x + maxX
+        self.platformXMinPosition = platformXMaxPosition - maxX
         
         self.moveSpeed = moveSpeed
         
@@ -56,8 +60,20 @@ class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
         previousPosition = self.position
 
         // Move the platform
-        print(distance)
-        
+        if movingRight {
+            self.position.x += distance
+            
+            if self.position.x >= platformXMaxPosition {
+                self.position.x = platformXMaxPosition
+                movingRight = false
+            }
+        } else {
+            self.position.x -= distance
+            if self.position.x <= platformXMinPosition {
+                self.position.x = platformXMinPosition
+                movingRight = true
+            }
+        }
     }
 
     // Function to get movement delta
