@@ -11,11 +11,15 @@ struct ContentView: View {
     @State var mpManager = MultiplayerManager.shared
     
     var body: some View {
-        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes && !mpManager.gameFinished{
+        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes &&
+            !mpManager.gameFinished{
         GameView()
             
             
-        }else if mpManager.gameFinished {
+        }else if mpManager.gameFinished &&
+                    !mpManager.choosingEra &&
+                    mpManager.gameStartInfo.local.isStartPressed == .yes &&
+                    mpManager.gameStartInfo.other.isStartPressed == .yes {
             EndGameView()
             
         }else if mpManager.choosingEra {
