@@ -20,7 +20,7 @@ class GameViewModel: ObservableObject {
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
             case .first:
-                return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: MultiplayerManager.shared.gameStartInfo.localPlayerStartInfo.eraSelection ?? .future)
+            return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: MultiplayerManager.shared.gameStartInfo.local.eraSelection ?? .future)
         }
     }
     

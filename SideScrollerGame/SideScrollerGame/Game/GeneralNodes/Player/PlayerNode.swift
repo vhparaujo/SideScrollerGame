@@ -278,7 +278,7 @@ class PlayerNode: SKSpriteNode {
                 physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
                 isGrounded = false
             }
-            changeState(to: .jumping)
+            changeState(to: .jumpingL)
 
         }
     }
