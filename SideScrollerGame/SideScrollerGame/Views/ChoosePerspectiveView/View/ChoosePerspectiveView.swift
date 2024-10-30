@@ -39,14 +39,12 @@ struct ChoosePerspectiveView: View {
                         playerStartInfo.isStartPressed = .yes
                         mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     }
-                    
                 } label: {
                     if mpManager.gameStartInfo.local.isStartPressed == .yes {
                         Text("Cancel")
                     }else{
                         Text("Ready")
                     }
-                  
                 }
             }
         }

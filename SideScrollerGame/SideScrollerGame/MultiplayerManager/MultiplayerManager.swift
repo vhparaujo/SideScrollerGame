@@ -7,10 +7,6 @@ class MultiplayerManager: NSObject {
     
     static var shared = MultiplayerManager()
     
-//    private override init() {
-//        super.init()
-//    }
-    
     var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
