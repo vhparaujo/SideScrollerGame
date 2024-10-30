@@ -14,7 +14,7 @@ class MultiplayerManager: NSObject {
     var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(local: .init(, isStartPressed: .no), other: .init(isStartPressed: .no))
+    var gameStartInfo: GameStartInfo = .init(local: .init(isStartPressed: .no), other: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
