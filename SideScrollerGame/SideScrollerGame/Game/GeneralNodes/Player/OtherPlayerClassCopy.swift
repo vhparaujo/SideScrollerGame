@@ -21,37 +21,14 @@ class OtherPlayerNode: SKSpriteNode {
         position: .zero
     )
     
-    private var isMovingLeft = false
-    private var isMovingRight = false
-    
     private var isGrounded = false
-    private var isJumping = false
-    weak var currentPlatform: PlatformNode?
-    
-    // Box interaction
-    weak var boxRef: BoxNode?
-    private var boxOffset: CGFloat = 0.0
-    
-    weak var elevatorRef: ElevatorNode?
-    
-    
-    var bringBoxToPresent = false
-    // Ladder interaction
-    var isOnLadder = false
-    var canClimb = false
-    var canDescend = false
-    
-    // Fan interaction
-    var isOnFan = false
-    
+
     let currentActionKey = "PlayerAnimation"
     
-    private var targetPosition: CGPoint?
-    private var targetVelocity: CGVector?
-    private var interpolationSpeed: CGFloat = 10.0
     private var updateTimer: Timer = .init()
     
     private var lastState: PlayerTextureState = .idleR
+    
     
     init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
         self.playerEra = playerEra
