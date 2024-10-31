@@ -283,6 +283,16 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isDying {
             triggerDeath()
         }
+        
+        //fan logic
+        if isOnFan {
+            self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
+            self.physicsBody?.affectedByGravity = false
+            print("Entrou no isOnFan Update")
+        } else {
+            self.physicsBody?.affectedByGravity = true
+            print("Entrou no else isOnFan Update")
+        }
     }
     
     private func handleDeath() {
@@ -331,9 +341,7 @@ class PlayerNode: SKSpriteNode {
             
             isJumping = false
             isGrounded = true
-            
-            print(isJumping)
-            
+                        
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
@@ -356,6 +364,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.fan {
+            print("DidBegin - isOnFan", isOnFan)
             isOnFan = true
         }
         
@@ -382,6 +391,8 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
+            print("DidEnd - isOnFan", isOnFan)
+
         }
         
         if otherCategory == PhysicsCategories.nextScene {

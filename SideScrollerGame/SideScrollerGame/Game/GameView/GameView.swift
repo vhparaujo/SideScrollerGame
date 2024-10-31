@@ -8,7 +8,7 @@
 import SwiftUI
 import SpriteKit
 
-struct GameView: View {    
+struct GameView: View {
     @StateObject var viewModel: GameViewModel = .shared
     var currentSceneType: SceneType? {
         didSet {
@@ -32,5 +32,6 @@ struct GameView: View {
 }
 
 enum SceneType: Hashable {
-    case first
+    case first(PlayerEra)
+    case second(PlayerEra)
 }

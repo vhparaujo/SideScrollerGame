@@ -1,14 +1,16 @@
 //
-//  FisstScene.swift
+//  SecondScene.swift
 //  SideScrollerGame
 //
-//  Created by Eduardo on 03/10/24.
+//  Created by Victor Hugo Pacheco Araujo on 24/10/24.
 //
 
 import SpriteKit
 
-class FirstScene: SKScene, SKPhysicsContactDelegate {
+class SecondScene: SKScene, SKPhysicsContactDelegate {
     var playerEra: PlayerEra!
+    
+    var platforms: [PlatformNodeProtocol] = []
     
     var mpManager: MultiplayerManager
     
@@ -25,9 +27,9 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var fadeNode: SKSpriteNode!
     
-    private var lastUpdateTime: TimeInterval = 0 
+    private var lastUpdateTime: TimeInterval = 0
         
-    var firstSceneGeneralBoxes: [BoxNode] = []
+    var secondSceneGeneralBoxes: [BoxNode] = []
 
     init(size: CGSize, mpManager: MultiplayerManager = .shared, playerEra: PlayerEra) {
         self.playerEra = playerEra
@@ -41,22 +43,18 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
-        self.name = "firstScene"
+        self.name = "secondScene"
         self.backgroundColor = .clear
         
         physicsWorld.contactDelegate = self
         
         let mapBuilder = MapBuilder(scene: self)
-        mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
+        mapBuilder.embedScene(fromFileNamed: MapTexture.secondScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
         tileMapHeight = mapBuilder.tileMapHeight
         
         setupBackground()
         setupCamera()
-        
-        let teste = ButtonsNode(playerEra: self.playerEra)
-        teste.position = CGPoint(x: 280, y: 0)
-        self.addChild(teste)
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -69,13 +67,13 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         newBox.id = id
         newBox.name = "\(newBox.id)"
         addChild(newBox)
-        firstSceneGeneralBoxes.append(newBox)
+        secondSceneGeneralBoxes.append(newBox)
     }
     
     func addBoxesToArray(){
         if playerNode.bringBoxToPresent && playerEra == .future, let box = playerNode.boxRef{
-            if !self.firstSceneGeneralBoxes.contains(box){
-                self.firstSceneGeneralBoxes.append(box)
+            if !self.secondSceneGeneralBoxes.contains(box){
+                self.secondSceneGeneralBoxes.append(box)
                 mpManager.sendInfoToOtherPlayers(content: .init(position: box.position, id: box.id, isGrabbed: false))
                 playerNode.bringBoxToPresent = false
             }
@@ -94,7 +92,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         
-        for box in firstSceneGeneralBoxes {
+        for box in secondSceneGeneralBoxes {
             box.update(deltaTime: deltaTime)
         }
         
@@ -103,6 +101,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         // Update the other player if it exists
         otherPlayer.update(deltaTime: deltaTime)
+        
+        for platform in platforms {
+            platform.update(deltaTime: deltaTime)
+        }
     }
     
     func updateBoxes(){
@@ -200,7 +202,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setupBackground() {
-        self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
+        self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.secondScene.textures(for: playerEra))
         
         self.addChild(parallaxBackground!)
     }
