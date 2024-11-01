@@ -19,7 +19,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode = SKCameraNode()
     
     var previousCameraXPosition: CGFloat = 0.0
-    var platform: PlatformNode!
     
     var tileMapWidth: CGFloat = 0.0
     var tileMapHeight: CGFloat = 0.0
@@ -28,12 +27,9 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 
         
-    
-    
-    
     var firstSceneGeneralBoxes: [BoxNode] = []
 
-    init(size: CGSize, mpManager: MultiplayerManager, playerEra: PlayerEra) {
+    init(size: CGSize, mpManager: MultiplayerManager = .shared, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
         super.init(size: size)
@@ -50,13 +46,17 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         
-        let mapBuilder = MapBuilder(scene: self, mpManager: mpManager)
+        let mapBuilder = MapBuilder(scene: self)
         mapBuilder.embedScene(fromFileNamed: MapTexture.firstScene.textures(for: playerEra))
         tileMapWidth = mapBuilder.tileMapWidth
         tileMapHeight = mapBuilder.tileMapHeight
         
         setupBackground()
         setupCamera()
+        
+        let teste = ButtonsNode(playerEra: self.playerEra)
+        teste.position = CGPoint(x: 280, y: 0)
+        self.addChild(teste)
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -64,7 +64,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     override func keyDown(with event: NSEvent) {}
     
     func addBoxWithoutSendingToOthers(position: CGPoint, id: UUID = .init()){
-        let newBox = BoxNode(mpManager: mpManager)
+        let newBox = BoxNode()
         newBox.position = position
         newBox.id = id
         newBox.name = "\(newBox.id)"
@@ -107,7 +107,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     func updateBoxes(){
         if playerEra == .present {
-            for box in mpManager.firstSceneGeneralBoxes {
+            for box in mpManager.scenesGeneralBoxes {
                 if !self.children.contains(where: { node in
                     "\(box.value.id)" == node.name
                 }){
@@ -137,15 +137,15 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
-        if otherCategory == PhysicsCategories.box {
-            if let boxNode = otherBody.node as? BoxNode {
-                // Only set boxRef to nil if it's the same box the player was interacting with
-                if playerNode.boxRef === boxNode {
-                    playerNode.boxRef?.disableMovement()
-                    playerNode.boxRef = nil
-                }
-            }
-        }
+//        if otherCategory == PhysicsCategories.box {
+//            if let boxNode = otherBody.node as? BoxNode {
+//                // Only set boxRef to nil if it's the same box the player was interacting with
+//                if playerNode.boxRef === boxNode {
+//                    playerNode.boxRef?.disableMovement()
+//                    playerNode.boxRef = nil
+//                }
+//            }
+//        }
         
         let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
         let otherBox = boxBody.categoryBitMask

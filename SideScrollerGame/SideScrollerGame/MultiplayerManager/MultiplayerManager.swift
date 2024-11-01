@@ -4,10 +4,12 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    var localPlayer: PlayerInfo? 
+    static var shared = MultiplayerManager()
+    
+    var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
     
-    var gameStartInfo: GameStartInfo = .init(localPlayerStartInfo: .init(isStartPressed: .no), otherPlayerStartInfo: .init(isStartPressed: .no))
+    var gameStartInfo: GameStartInfo = .init(local: .init(isStartPressed: .no), other: .init(isStartPressed: .no))
     
     // Game interface state
     var matchAvailable = false
@@ -15,12 +17,13 @@ class MultiplayerManager: NSObject {
     var choosingEra = false
     var myMatch: GKMatch? = nil
     var automatch = false
+    var gameFinished = false
     
     // Match information
     var opponent: GKPlayer? = nil
     
     //boxes
-    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:]
+    var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
     
 
     //spawnPoint
@@ -47,7 +50,6 @@ class MultiplayerManager: NSObject {
     override init() {
         super.init()
         authenticateLocalPlayer()
-        
     }
     
     var rootViewController: NSViewController? {
@@ -91,7 +93,6 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
-//        playingGame = true
         choosingEra = true
         myMatch = match
         myMatch?.delegate = self
@@ -99,18 +100,18 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match and cleans up resources.
     func endMatch() {
-        gameStartInfo.localPlayerStartInfo.eraSelection = nil
-        gameStartInfo.localPlayerStartInfo.isStartPressed = .no
-        
+        gameStartInfo.local.eraSelection = nil
+        gameStartInfo.local.isStartPressed = .no
         myMatch?.disconnect()
         myMatch = nil
-        
+        gameFinished = true
         playingGame = false
         choosingEra = false
         matchAvailable = true
         localPlayer = nil
         otherPlayerInfo.value = nil
-      
+        gameStartInfo.local.eraSelection = nil
+        gameStartInfo.other.eraSelection = nil
         opponent = nil
         GKAccessPoint.shared.isActive = true
     }
@@ -127,7 +128,7 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: PlayerStartInfo){
-        gameStartInfo.localPlayerStartInfo = content
+        gameStartInfo.local = content
         
         do {
             let data = encode(content: content)
@@ -138,7 +139,7 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: BoxTeletransport){
-        self.firstSceneGeneralBoxes[content.id] = content
+        self.scenesGeneralBoxes[content.id] = content
         
         do {
             let data = encode(content: content)

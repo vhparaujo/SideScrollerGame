@@ -11,13 +11,14 @@ class BoxNode: SKSpriteNode {
     var id = UUID()
     var mpManager: MultiplayerManager
 
-    init(mpManager: MultiplayerManager) {
+    init(mpManager: MultiplayerManager = .shared) {
         self.mpManager = mpManager
-        let texture = SKTexture(imageNamed: "Box") // Replace with your box texture
+        let imageNamed = mpManager.gameStartInfo.local.eraSelection == .present ? "box-present-small" : "box-future-small"
+        let texture = SKTexture(imageNamed: imageNamed)
         super.init(texture: texture, color: .clear, size: texture.size())
         self.name = "Box"
         self.zPosition = 1
-        self.setScale(4)
+        self.setScale(0.4)
         setupPhysicsBody()
     }
 
@@ -29,7 +30,7 @@ class BoxNode: SKSpriteNode {
         if isGrabbed {
             mpManager.sendInfoToOtherPlayers(content: .init(position: self.position, id: self.id, isGrabbed: self.isGrabbed))
          
-        }else if let posX =  mpManager.firstSceneGeneralBoxes[self.id]?.position {
+        }else if let posX =  mpManager.scenesGeneralBoxes[self.id]?.position {
 //            self.disableMovement()
             self.position.x = posX.x
         }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EndGameView: View {
+    @Bindable var mpManager = MultiplayerManager.shared
+
     var body: some View {
         VStack {
             
@@ -26,7 +28,8 @@ struct EndGameView: View {
             .padding()
             .frame(maxWidth: 300, maxHeight: 100)
             .onTapGesture {
-                
+                mpManager.gameFinished = false
+                mpManager.endMatch()
             }
    
         }

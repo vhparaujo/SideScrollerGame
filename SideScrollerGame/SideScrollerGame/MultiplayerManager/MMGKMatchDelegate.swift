@@ -19,9 +19,11 @@ extension MultiplayerManager: GKMatchDelegate {
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
             }
-            
-        default:
+        case .disconnected:
             self.endMatch()
+        default:
+//            self.endMatch()
+            break
         }
     }
     
@@ -45,10 +47,10 @@ extension MultiplayerManager: GKMatchDelegate {
             self.otherPlayerInfo.value = dataReceived
             
         }else if let dataReceived: PlayerStartInfo = decode(matchData: data) {
-            self.gameStartInfo.otherPlayerStartInfo = dataReceived
+            self.gameStartInfo.other = dataReceived
             
         }else if let dataReceived: BoxTeletransport = decode(matchData: data) {
-            self.firstSceneGeneralBoxes[dataReceived.id] = dataReceived
+            self.scenesGeneralBoxes[dataReceived.id] = dataReceived
 
         }else if let dataReceived: CGPoint = decode(matchData: data) {
             self.spawnpoint = dataReceived
