@@ -264,10 +264,8 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .runningL)
         }else if playerInfo.facingRight{
             changeState(to: .idleR)
-            print("right")
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
-            print("left")
         }
         
         // Handle ladder movement
