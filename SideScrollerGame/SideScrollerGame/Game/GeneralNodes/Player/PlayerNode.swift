@@ -135,8 +135,10 @@ class PlayerNode: SKSpriteNode {
         switch action {
             case .moveLeft:
                 isMovingLeft = false
+            playerInfo.facingRight = false
             case .moveRight:
                 isMovingRight = false
+            playerInfo.facingRight = true
             case .action:
                 handleActionKeyRelease()
             case .bringToPresent:
@@ -262,10 +264,11 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .runningL)
         }else if playerInfo.facingRight{
             changeState(to: .idleR)
+            print("right")
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
+            print("left")
         }
-        print(playerInfo.facingRight)
         
         // Handle ladder movement
         if isOnLadder {
@@ -307,7 +310,12 @@ class PlayerNode: SKSpriteNode {
                 physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
                 isGrounded = false
             }
-            changeState(to: .jumpingL)
+            switch playerInfo.facingRight{
+            case true:
+                changeState(to: .jumpingR)
+            case false:
+                changeState(to: .jumpingL)
+            }
 
         }
     }
