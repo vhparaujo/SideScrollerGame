@@ -7,20 +7,32 @@
 
 import SpriteKit
 
-class PlatformNode: SKSpriteNode {
+protocol PlatformNodeProtocol {
+    func update(deltaTime: TimeInterval)
+}
+
+class PlatformNode: SKSpriteNode, PlatformNodeProtocol {
     var moveSpeed: CGFloat = 100.0 // Adjust speed as needed
     var movingRight: Bool = true
     var minX: CGFloat
     var maxX: CGFloat
+    var platformXMaxPosition: CGFloat
+    var platformXMinPosition: CGFloat
 
     private var previousPosition: CGPoint = .zero // Store previous position
 
-    init(minX: CGFloat, maxX: CGFloat) {
+    init(minX: CGFloat, maxX: CGFloat, position: CGPoint, moveSpeed: CGFloat) {
         self.minX = minX
         self.maxX = maxX
-
+        self.platformXMaxPosition = position.x + maxX
+        self.platformXMinPosition = platformXMaxPosition - maxX
+        
+        self.moveSpeed = moveSpeed
+        
         let texture = SKTexture(imageNamed: "platform") // Replace with your platform image
         super.init(texture: texture, color: .clear, size: texture.size())
+        self.position = position
+        
         self.zPosition = 0 // Adjust as needed
 
         // Set up physics body
@@ -50,14 +62,15 @@ class PlatformNode: SKSpriteNode {
         // Move the platform
         if movingRight {
             self.position.x += distance
-            if self.position.x >= maxX {
-//                self.position.x = maxX
+            
+            if self.position.x >= platformXMaxPosition {
+                self.position.x = platformXMaxPosition
                 movingRight = false
             }
         } else {
             self.position.x -= distance
-            if self.position.x <= minX {
-//                self.position.x = minX
+            if self.position.x <= platformXMinPosition {
+                self.position.x = platformXMinPosition
                 movingRight = true
             }
         }

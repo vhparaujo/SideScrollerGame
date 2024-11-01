@@ -4,12 +4,7 @@ import Combine
 
 @Observable
 class MultiplayerManager: NSObject {
-    
     static var shared = MultiplayerManager()
-    
-//    private override init() {
-//        super.init()
-//    }
     
     var localPlayer: PlayerInfo?
     var otherPlayerInfo: CurrentValueSubject<PlayerInfo?, Never> = CurrentValueSubject(nil)
@@ -28,7 +23,7 @@ class MultiplayerManager: NSObject {
     var opponent: GKPlayer? = nil
     
     //boxes
-    var firstSceneGeneralBoxes: [UUID: BoxTeletransport] = [:]
+    var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
     
 
     //spawnPoint
@@ -55,7 +50,6 @@ class MultiplayerManager: NSObject {
     override init() {
         super.init()
         authenticateLocalPlayer()
-        
     }
     
     var rootViewController: NSViewController? {
@@ -99,7 +93,6 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
-//        playingGame = true
         choosingEra = true
         myMatch = match
         myMatch?.delegate = self
@@ -109,10 +102,8 @@ class MultiplayerManager: NSObject {
     func endMatch() {
         gameStartInfo.local.eraSelection = nil
         gameStartInfo.local.isStartPressed = .no
-        
         myMatch?.disconnect()
         myMatch = nil
-        
         gameFinished = true
         playingGame = false
         choosingEra = false
@@ -148,7 +139,7 @@ class MultiplayerManager: NSObject {
     }
     
     func sendInfoToOtherPlayers(content: BoxTeletransport){
-        self.firstSceneGeneralBoxes[content.id] = content
+        self.scenesGeneralBoxes[content.id] = content
         
         do {
             let data = encode(content: content)

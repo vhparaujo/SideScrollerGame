@@ -19,7 +19,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode = SKCameraNode()
     
     var previousCameraXPosition: CGFloat = 0.0
-    var platform: PlatformNode!
     
     var tileMapWidth: CGFloat = 0.0
     var tileMapHeight: CGFloat = 0.0
@@ -28,9 +27,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     private var lastUpdateTime: TimeInterval = 0 
         
-    
-    
-    
     var firstSceneGeneralBoxes: [BoxNode] = []
 
     init(size: CGSize, mpManager: MultiplayerManager = .shared, playerEra: PlayerEra) {
@@ -57,6 +53,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
+        
+        let teste = ButtonsNode(playerEra: self.playerEra)
+        teste.position = CGPoint(x: 280, y: 0)
+        self.addChild(teste)
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -107,7 +107,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     func updateBoxes(){
         if playerEra == .present {
-            for box in mpManager.firstSceneGeneralBoxes {
+            for box in mpManager.scenesGeneralBoxes {
                 if !self.children.contains(where: { node in
                     "\(box.value.id)" == node.name
                 }){

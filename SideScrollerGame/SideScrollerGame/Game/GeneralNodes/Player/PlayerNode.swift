@@ -73,8 +73,8 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = false
         physicsBody?.categoryBitMask = PhysicsCategories.player
-        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan
-        physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
+        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan | PhysicsCategories.buttonDoor | PhysicsCategories.fanBase
+        physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall | PhysicsCategories.fanBase
         physicsBody?.friction = 0.0
         physicsBody?.restitution = 0.0
         physicsBody?.mass = 10.0
@@ -116,8 +116,9 @@ class PlayerNode: SKSpriteNode {
                 isMovingRight = true
                 playerInfo.facingRight = true
             case .jump:
-                if isGrounded && !playerInfo.action {
+                  if !isJumping {
                     isJumping = true
+                    handleJump()
                 }
             case .action:
                 handleActionKeyPress()
@@ -134,8 +135,10 @@ class PlayerNode: SKSpriteNode {
         switch action {
             case .moveLeft:
                 isMovingLeft = false
+            playerInfo.facingRight = false
             case .moveRight:
                 isMovingRight = false
+            playerInfo.facingRight = true
             case .action:
                 handleActionKeyRelease()
             case .bringToPresent:
@@ -151,7 +154,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleActionKeyPress() {
-
+        
         if let box = boxRef {
             if !box.isGrabbed {
                 playerInfo.action = true
@@ -163,6 +166,27 @@ class PlayerNode: SKSpriteNode {
         if let elevator = elevatorRef {
             playerInfo.action = true
             elevator.moveManual()
+        }
+        
+        if let buttons = self.scene?.childNode(withName: "ButtonsNode") as? ButtonsNode {
+            for child in buttons.children {
+                if let buttonNode = child as? ButtonNode {
+                    if buttonNode.intersects(self) {
+                        if buttonNode.name == "button-one" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
+                        if buttonNode.name == "button-two" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
+                        if buttonNode.name == "button-three" {
+                            buttonNode.buttonPressed.toggle()
+                            break
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -201,7 +225,6 @@ class PlayerNode: SKSpriteNode {
     func update(deltaTime: TimeInterval) {
         self.boxRef = checkForNearbyBox()
         sendPlayerInfoToOthers()
-        handleJump()
         handleDeath()
         
         var desiredVelocity: CGFloat = 0.0
@@ -244,7 +267,6 @@ class PlayerNode: SKSpriteNode {
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
         }
-      
         
         // Handle ladder movement
         if isOnLadder {
@@ -262,6 +284,14 @@ class PlayerNode: SKSpriteNode {
         if playerInfo.isDying {
             triggerDeath()
         }
+        
+        //fan logic
+        if isOnFan {
+            self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
+            self.physicsBody?.affectedByGravity = false
+        } else {
+            self.physicsBody?.affectedByGravity = true
+        }
     }
     
     private func handleDeath() {
@@ -270,14 +300,21 @@ class PlayerNode: SKSpriteNode {
             playerInfo.isDying = false
         }
     }
-
+    
     private func handleJump() {
-        if isJumping && isGrounded {
-            isGrounded = false
-            physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-            changeState(to: .jumpingL)
-           
-            isJumping = false
+        if !playerInfo.action && isGrounded {
+            guard let dyVelocity = physicsBody?.velocity.dy else { return }
+            if dyVelocity <= 0.0 {
+                physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
+                isGrounded = false
+            }
+            switch playerInfo.facingRight{
+            case true:
+                changeState(to: .jumpingR)
+            case false:
+                changeState(to: .jumpingL)
+            }
+
         }
     }
     
@@ -306,18 +343,17 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             
-            if !isJumping {
-                isGrounded = true
-            }
-            
+            isJumping = false
+            isGrounded = true
+                        
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
         }
         
         if otherCategory == PhysicsCategories.spawnPoint {
-          if let spanwPointNode = otherBody.node as? SpawnPointNode {
-              mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
+            if let spanwPointNode = otherBody.node as? SpawnPointNode {
+                mpManager.sendInfoToOtherPlayers(content: spanwPointNode.position)
             }
         }
         
@@ -336,8 +372,8 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            GameViewModel.shared.transitionScene(to: .first(.future))
-//            mpManager.gameFinished = true
+            //            GameViewModel.shared.transitionScene(to: .first(.future))
+            mpManager.gameFinished = true
         }
     }
     
@@ -346,7 +382,7 @@ class PlayerNode: SKSpriteNode {
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
-            
+                        
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }
