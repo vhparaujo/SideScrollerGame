@@ -93,7 +93,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         // Calculate deltaTime if needed
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
-        
+        print(deltaTime)
         for box in firstSceneGeneralBoxes {
             box.update(deltaTime: deltaTime)
         }
