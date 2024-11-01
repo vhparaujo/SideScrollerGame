@@ -113,8 +113,8 @@ class MapBuilder {
                             addBox(position: tilePositionInScene)
                         case "Ladder":
                             addLadder(position: tilePositionInScene)
-                        case "fan":
-                            addFan(position: tilePositionInScene)
+                        case "fanBase":
+                            addFanBase(position: tilePositionInScene)
                         case "Player":
                             addPlayer(position: tilePositionInScene)
                         case "OtherPlayer":
@@ -299,9 +299,9 @@ class MapBuilder {
         }
     }
     
-    func addFan(position: CGPoint) {
+    func addFanBase(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newFan = Fan()
+            let newFan = fanBase()
             newFan.position = position
             scene.addChild(newFan)
         }
