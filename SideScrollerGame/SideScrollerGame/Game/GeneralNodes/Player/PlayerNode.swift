@@ -265,7 +265,7 @@ class PlayerNode: SKSpriteNode {
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
         }
-      
+        print(playerInfo.facingRight)
         
         // Handle ladder movement
         if isOnLadder {
@@ -288,10 +288,8 @@ class PlayerNode: SKSpriteNode {
         if isOnFan {
             self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
             self.physicsBody?.affectedByGravity = false
-            print("Entrou no isOnFan Update")
         } else {
             self.physicsBody?.affectedByGravity = true
-            print("Entrou no else isOnFan Update")
         }
     }
     
@@ -364,7 +362,6 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.fan {
-            print("DidBegin - isOnFan", isOnFan)
             isOnFan = true
         }
         
@@ -391,8 +388,6 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
-            print("DidEnd - isOnFan", isOnFan)
-
         }
         
         if otherCategory == PhysicsCategories.nextScene {
