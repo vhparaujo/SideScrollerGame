@@ -13,9 +13,9 @@ struct ContentView: View {
     var body: some View {
 //        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes &&
 //            !mpManager.gameFinished{
-//        GameView()
-//            
-//            
+        GameView()
+            
+            
 //        }else if mpManager.gameFinished &&
 //                    !mpManager.choosingEra &&
 //                    mpManager.gameStartInfo.local.isStartPressed == .yes &&
@@ -27,9 +27,7 @@ struct ContentView: View {
 //        }else{
 //            JoinGameView()
 //        }
-//
-        
-        GameView()
+    
     }
 }
 
