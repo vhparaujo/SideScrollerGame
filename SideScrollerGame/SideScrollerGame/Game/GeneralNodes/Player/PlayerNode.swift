@@ -135,8 +135,10 @@ class PlayerNode: SKSpriteNode {
         switch action {
             case .moveLeft:
                 isMovingLeft = false
+            playerInfo.facingRight = false
             case .moveRight:
                 isMovingRight = false
+            playerInfo.facingRight = true
             case .action:
                 handleActionKeyRelease()
             case .bringToPresent:
@@ -262,10 +264,11 @@ class PlayerNode: SKSpriteNode {
             changeState(to: .runningL)
         }else if playerInfo.facingRight{
             changeState(to: .idleR)
+            print("right")
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
+            print("left")
         }
-      
         
         // Handle ladder movement
         if isOnLadder {
@@ -288,10 +291,8 @@ class PlayerNode: SKSpriteNode {
         if isOnFan {
             self.physicsBody?.applyForce(CGVector(dx: 0, dy: 400))
             self.physicsBody?.affectedByGravity = false
-            print("Entrou no isOnFan Update")
         } else {
             self.physicsBody?.affectedByGravity = true
-            print("Entrou no else isOnFan Update")
         }
     }
     
@@ -309,7 +310,12 @@ class PlayerNode: SKSpriteNode {
                 physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
                 isGrounded = false
             }
-            changeState(to: .jumpingL)
+            switch playerInfo.facingRight{
+            case true:
+                changeState(to: .jumpingR)
+            case false:
+                changeState(to: .jumpingL)
+            }
 
         }
     }
@@ -364,7 +370,6 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.fan {
-            print("DidBegin - isOnFan", isOnFan)
             isOnFan = true
         }
         
@@ -391,8 +396,6 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.fan {
             isOnFan = false
-            print("DidEnd - isOnFan", isOnFan)
-
         }
         
         if otherCategory == PhysicsCategories.nextScene {

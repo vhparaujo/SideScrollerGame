@@ -48,7 +48,6 @@ class PlatformNodeY: SKSpriteNode, PlatformNodeProtocol {
     func update(deltaTime: TimeInterval) {
         // Calculate the distance the platform will move
         let distance = moveSpeed * CGFloat(deltaTime)
-        //        print(deltaTime)
         // Store the previous position
         previousPosition = self.position
         
