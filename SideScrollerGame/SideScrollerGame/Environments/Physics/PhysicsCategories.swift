@@ -22,4 +22,5 @@ struct PhysicsCategories {
     static let fan: UInt32 = 0x1 << 9
     static let nextScene: UInt32 = 0x1 << 10
     static let buttonDoor: UInt32 = 0x1 << 11
+    static let fanBase: UInt32 = 0x1 << 12
 }

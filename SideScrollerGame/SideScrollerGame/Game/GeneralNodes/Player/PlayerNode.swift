@@ -73,8 +73,8 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = false
         physicsBody?.categoryBitMask = PhysicsCategories.player
-        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan | PhysicsCategories.buttonDoor
-        physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall
+        physicsBody?.contactTestBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.wall | PhysicsCategories.ladder | PhysicsCategories.fan | PhysicsCategories.buttonDoor | PhysicsCategories.fanBase
+        physicsBody?.collisionBitMask = PhysicsCategories.ground | PhysicsCategories.box | PhysicsCategories.platform | PhysicsCategories.wall | PhysicsCategories.fanBase
         physicsBody?.friction = 0.0
         physicsBody?.restitution = 0.0
         physicsBody?.mass = 10.0
