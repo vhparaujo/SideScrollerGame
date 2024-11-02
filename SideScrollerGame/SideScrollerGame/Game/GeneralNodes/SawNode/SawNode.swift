@@ -13,11 +13,28 @@ class SawNode: SKNode {
     var range: CGFloat
     
     lazy var saw: SKSpriteNode = {
-        let bodyTexture = SKTexture(imageNamed: "\(playerEra == .present ? "saw-present" : "saw-future")-1")
-        return SKSpriteNode(texture: bodyTexture, color: .red, size: CGSize(width: 200, height: 200))
+        let sawTexture = SKTexture(imageNamed: "\(playerEra == .present ? "present-saw-blade" : "future-saw-blade")-1")
+        let saw = SKSpriteNode(texture: sawTexture, size: sawTexture.size())
+        
+        saw.physicsBody = SKPhysicsBody(rectangleOf: saw.size)
+        
+        saw.physicsBody?.affectedByGravity = false
+        saw.physicsBody?.isDynamic = false
+        saw.physicsBody?.friction = 0
+        
+        saw.physicsBody?.categoryBitMask = PhysicsCategories.Death
+        saw.physicsBody?.collisionBitMask = 0
+        saw.physicsBody?.contactTestBitMask = PhysicsCategories.player
+        
+        return saw
     }()
     
-    init(playerEra: PlayerEra, speed: CGFloat = 0, range: CGFloat = 0) {
+    lazy var sawBase: SKSpriteNode = {
+        let baseTexture = SKTexture(imageNamed: "\(playerEra == .present ? "present-saw-base" : "future-saw-base")-1")
+        return SKSpriteNode(texture: baseTexture, size: baseTexture.size())
+    }()
+    
+    init(playerEra: PlayerEra, speed: CGFloat = 100, range: CGFloat = 400) {
         self.playerEra = playerEra
         self.sawSpeed = speed
         self.range = range
@@ -33,27 +50,24 @@ class SawNode: SKNode {
     
     private func setup() {
         setPosition()
-        setPhysicsBody()
         
-        self.addChild(saw)
+        self.addChild(sawBase)
+        sawBase.addChild(saw)
+        
         
         moveSaw()
     }
     
-    private func setPhysicsBody() {
-        saw.physicsBody = SKPhysicsBody(rectangleOf: saw.size)
-        
-        saw.physicsBody?.affectedByGravity = false
-        saw.physicsBody?.isDynamic = false
-        saw.physicsBody?.friction = 0
-        
-        saw.physicsBody?.categoryBitMask = PhysicsCategories.Death
-        saw.physicsBody?.collisionBitMask = 0
-        saw.physicsBody?.contactTestBitMask = PhysicsCategories.player
-    }
-    
     private func setPosition() {
+        self.sawBase.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.sawBase.zPosition = 1
+        
         self.saw.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.saw.position = CGPoint(x: 0, y: self.sawBase.size.height / 2)
+        self.saw.zPosition = -1
+        
+        self.sawBase.xScale = 0.4
+        self.sawBase.yScale = 0.4
     }
     
     private func moveSaw() {
@@ -79,7 +93,11 @@ class SawNode: SKNode {
         let repeatMovement = SKAction.repeatForever(moveSequence)
         
         // Executa a animação de movimento
-        saw.run(repeatMovement)
+        sawBase.run(repeatMovement)
+        
+        let cut = SKAction.rotate(byAngle: .pi, duration: 0.4)
+        
+        saw.run(.repeatForever(cut))
     }
 }
 

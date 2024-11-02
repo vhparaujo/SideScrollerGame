@@ -54,8 +54,8 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         setupBackground()
         setupCamera()
         
-        let teste = ButtonsNode(playerEra: self.playerEra)
-        teste.position = CGPoint(x: 280, y: 0)
+        let teste = SawNode(playerEra: self.playerEra)
+        teste.position = CGPoint(x: 570, y: 0)
         self.addChild(teste)
     }
     
