@@ -204,6 +204,7 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
     func setupBackground() {
         self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.secondScene.textures(for: playerEra))
         
+        parallaxBackground.zPosition = -10
         self.addChild(parallaxBackground!)
     }
 }

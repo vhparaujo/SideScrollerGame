@@ -24,12 +24,9 @@ class MultiplayerManager: NSObject {
     
     //boxes
     var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
-    
 
     //spawnPoint
     var spawnpoint: CGPoint = .zero
-    
-   
     
     /// The name of the match.
     var matchName: String {
