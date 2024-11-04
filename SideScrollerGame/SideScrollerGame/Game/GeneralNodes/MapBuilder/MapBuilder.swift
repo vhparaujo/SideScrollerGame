@@ -215,7 +215,7 @@ class MapBuilder {
     
     func addPlatform7(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 0, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 200)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -223,7 +223,7 @@ class MapBuilder {
     
     func addPlatform8(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 300)
+            let newPlatform = PlatformNode(minX: 600, maxX: 800, position: position, moveSpeed: 300)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -231,7 +231,7 @@ class MapBuilder {
     
     func addPlatform9(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 500)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -239,7 +239,7 @@ class MapBuilder {
     
     func addPlatform10(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 250)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -247,7 +247,7 @@ class MapBuilder {
     
     func addPlatform11(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }

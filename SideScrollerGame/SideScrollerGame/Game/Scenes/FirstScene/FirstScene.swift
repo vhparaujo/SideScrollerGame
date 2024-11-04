@@ -25,10 +25,10 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     
     var fadeNode: SKSpriteNode!
     
-    private var lastUpdateTime: TimeInterval = 0 
-        
+    private var lastUpdateTime: TimeInterval = 0
+    
     var firstSceneGeneralBoxes: [BoxNode] = []
-
+    
     init(size: CGSize, mpManager: MultiplayerManager = .shared, playerEra: PlayerEra) {
         self.playerEra = playerEra
         self.mpManager = mpManager
@@ -53,7 +53,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
-    
+        
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -189,6 +189,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
     func setupBackground() {
         self.parallaxBackground = ParallaxBackground(mapHeight: self.tileMapHeight, screenSize: self.size, background: BackgroundTexture.firstScene.textures(for: playerEra))
         
+        parallaxBackground.zPosition = -10
         self.addChild(parallaxBackground!)
     }
 }
