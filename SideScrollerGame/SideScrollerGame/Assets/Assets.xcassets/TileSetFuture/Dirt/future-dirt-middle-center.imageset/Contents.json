@@ -1,8 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "future-dirt-middle-center.pdf",
-      "idiom" : "universal"
+      "filename" : "future-dirt-middle-center.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
