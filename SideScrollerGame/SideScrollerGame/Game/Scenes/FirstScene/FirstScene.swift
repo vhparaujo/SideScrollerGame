@@ -53,10 +53,7 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
-        
-        let teste = ButtonsNode(playerEra: self.playerEra)
-        teste.position = CGPoint(x: 280, y: 0)
-        self.addChild(teste)
+    
     }
     
     override func keyUp(with event: NSEvent) {}
@@ -136,16 +133,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
-        
-//        if otherCategory == PhysicsCategories.box {
-//            if let boxNode = otherBody.node as? BoxNode {
-//                // Only set boxRef to nil if it's the same box the player was interacting with
-//                if playerNode.boxRef === boxNode {
-//                    playerNode.boxRef?.disableMovement()
-//                    playerNode.boxRef = nil
-//                }
-//            }
-//        }
         
         let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
         let otherBox = boxBody.categoryBitMask
