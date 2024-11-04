@@ -111,8 +111,8 @@ class MapBuilder {
                             addElevator(position: tilePositionInScene)
                         case "Box":
                             addBox(position: tilePositionInScene)
-                        case "Ladder":
-                            addLadder(position: tilePositionInScene)
+//                        case "Ladder":
+//                            addLadder(position: tilePositionInScene)
                         case "fanBase":
                             addFanBase(position: tilePositionInScene)
                         case "Player":
