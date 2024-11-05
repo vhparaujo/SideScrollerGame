@@ -21,7 +21,7 @@ class OtherPlayerNode: SKSpriteNode {
 //        position: .zero,
 //        readyToNextScene: false
 //    )
-    var playerInfo: PlayerInfo?
+    var playerInfo: PlayerInfo
     
     private var isGrounded = false
 
@@ -37,7 +37,14 @@ class OtherPlayerNode: SKSpriteNode {
       
         if let info = mpManager.otherPlayerInfo.value{
                self.playerInfo = info
-           }
+        }else{
+            self.playerInfo = .init(textureState: .idleR,
+                    facingRight: true,
+                    action: false,
+                    isDying: false,
+                    position: .zero,
+                    readyToNextScene: false)
+        }
       
         self.playerEra = playerEra
         self.mpManager = mpManager
