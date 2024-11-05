@@ -372,8 +372,13 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            //            GameViewModel.shared.transitionScene(to: .first(.future))
-            mpManager.gameFinished = true
+            
+            if GameViewModel.shared.currentSceneType == .first(playerEra) {
+                GameViewModel.shared.transitionScene(to: .second(playerEra))
+            }else{
+                mpManager.gameFinished = true
+                mpManager.endMatch()
+            }
         }
     }
     
@@ -396,9 +401,6 @@ class PlayerNode: SKSpriteNode {
             isOnFan = false
         }
         
-        if otherCategory == PhysicsCategories.nextScene {
-            mpManager.endMatch()
-        }
     }
     
     func triggerDeath() {
