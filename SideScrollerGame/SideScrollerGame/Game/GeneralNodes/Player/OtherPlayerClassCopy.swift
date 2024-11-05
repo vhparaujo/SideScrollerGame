@@ -13,13 +13,15 @@ class OtherPlayerNode: SKSpriteNode {
     let moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 7700.0
     
-    var playerInfo = PlayerInfo(
-        textureState: .idleR,
-        facingRight: true,
-        action: false,
-        isDying: false,
-        position: .zero
-    )
+//    var playerInfo = PlayerInfo(
+//        textureState: .idleR,
+//        facingRight: true,
+//        action: false,
+//        isDying: false,
+//        position: .zero,
+//        readyToNextScene: false
+//    )
+    var playerInfo: PlayerInfo
     
     private var isGrounded = false
 
@@ -31,6 +33,19 @@ class OtherPlayerNode: SKSpriteNode {
     
     
     init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
+        
+      
+        if let info = mpManager.otherPlayerInfo.value{
+               self.playerInfo = info
+        }else{
+            self.playerInfo = .init(textureState: .idleR,
+                    facingRight: true,
+                    action: false,
+                    isDying: false,
+                    position: .zero,
+                    readyToNextScene: false)
+        }
+      
         self.playerEra = playerEra
         self.mpManager = mpManager
         
