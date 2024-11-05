@@ -373,7 +373,7 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.nextScene {
             
-            if GameViewModel.shared.currentSceneType == .first(playerEra) {
+            if Test.scene == .first(playerEra) {
                 GameViewModel.shared.transitionScene(to: .second(playerEra))
             }else{
                 mpManager.gameFinished = true
