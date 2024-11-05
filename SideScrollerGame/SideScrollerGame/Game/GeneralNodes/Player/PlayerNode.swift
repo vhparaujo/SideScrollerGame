@@ -396,8 +396,11 @@ class PlayerNode: SKSpriteNode {
     }
     
     func transition(){
-        let transition = SKTransition.fade(withDuration: 1.0)
-        scene?.view?.presentScene(SecondScene(size: scene?.size ?? .init(width: 1920, height: 1080), playerEra: playerEra),transition: transition)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            let transition = SKTransition.fade(withDuration: 1.0)
+            self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
+        }
+
     }
     func didEnd(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
