@@ -8,7 +8,7 @@
 import SpriteKit
 
 enum MapTexture {
-    case firstScene, secondScene
+    case firstScene, secondScene, thirdScene
     
     func textures(for era: PlayerEra) -> String {
         switch (self, era) {
@@ -20,6 +20,10 @@ enum MapTexture {
             return "SecondPresentScene"
         case (.secondScene, .future):
             return "SecondFutureScene"
+        case (.thirdScene, .present):
+            return "ThirdPresentScene"
+        case (.thirdScene, .future):
+            return "ThirdFutureScene"
         }
     }
 }
