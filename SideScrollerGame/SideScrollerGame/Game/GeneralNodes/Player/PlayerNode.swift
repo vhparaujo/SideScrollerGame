@@ -18,7 +18,8 @@ class PlayerNode: SKSpriteNode {
         facingRight: true,
         action: false,
         isDying: false,
-        position: .zero
+        position: .zero,
+        readyToNextScene: false
     )
     
     private var isMovingLeft = false
@@ -372,16 +373,25 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
+            playerInfo.readyToNextScene = true
             
-            if Test.scene == .first(playerEra) {
-                GameViewModel.shared.transitionScene(to: .second(playerEra))
-            }else{
-                mpManager.gameFinished = true
-                mpManager.endMatch()
+            if playerInfo.readyToNextScene && ((mpManager.otherPlayerInfo.value?.readyToNextScene) != nil){
+                
+                if SceneValue.scene == .first(playerEra) {
+                    transition()
+                    
+                }else{
+                    mpManager.gameFinished = true
+                    mpManager.endMatch()
+                }
             }
         }
     }
     
+    func transition(){
+        let transition = SKTransition.fade(withDuration: 1.0)
+        scene?.view?.presentScene(SecondScene(size: scene?.size ?? .init(width: 1920, height: 1080), playerEra: playerEra),transition: transition)
+    }
     func didEnd(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask

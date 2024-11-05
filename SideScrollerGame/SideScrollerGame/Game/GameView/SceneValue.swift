@@ -7,6 +7,6 @@
 
 import Foundation
 
-class Test {
+class SceneValue {
     static var scene = SceneType.first(.future)
 }

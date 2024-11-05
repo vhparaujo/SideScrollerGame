@@ -18,7 +18,8 @@ class OtherPlayerNode: SKSpriteNode {
         facingRight: true,
         action: false,
         isDying: false,
-        position: .zero
+        position: .zero,
+        readyToNextScene: false
     )
     
     private var isGrounded = false

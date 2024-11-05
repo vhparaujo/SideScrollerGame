@@ -15,6 +15,7 @@ struct PlayerInfo: Codable {
     var action: Bool
     var isDying: Bool
     var position: CGPoint
+    var readyToNextScene: Bool
 }
 
 struct GameStartInfo: Codable{
