@@ -107,44 +107,44 @@ class MapBuilder {
                         case "SpawnPoint":
                             addSpawnPoint(position: tilePositionInScene, size: tileSize)
                             
-                        case "Elevator":
-                            addElevator(position: tilePositionInScene)
-                        case "Box":
-                            addBox(position: tilePositionInScene)
+//                        case "Elevator":
+//                            addElevator(position: tilePositionInScene)
+//                        case "Box":
+//                            addBox(position: tilePositionInScene)
 //                        case "Ladder":
 //                            addLadder(position: tilePositionInScene)
-                        case "fanBase":
-                            addFanBase(position: tilePositionInScene)
+//                        case "fanBase":
+//                            addFanBase(position: tilePositionInScene)
                         case "Player":
                             addPlayer(position: tilePositionInScene)
                         case "OtherPlayer":
                             addOtherPlayer(position: tilePositionInScene)
-                        case "Saw":
-                            addSaw(position: tilePositionInScene)
+//                        case "Saw":
+//                            addSaw(position: tilePositionInScene)
                         case "NextScene":
                             addNextSceneNode(position: tilePositionInScene, size: tileSize)
-                        case "platform1":
-                            addPlatform1(position: tilePositionInScene)
-                        case "platform2":
-                            addPlatform2(position: tilePositionInScene)
-                        case "platform3":
-                            addPlatform3(position: tilePositionInScene)
-                        case "platform4":
-                            addPlatform4(position: tilePositionInScene)
-                        case "platform5":
-                            addPlatform5(position: tilePositionInScene)
-                        case "platform6":
-                            addPlatform6(position: tilePositionInScene)
-                        case "platform7":
-                            addPlatform7(position: tilePositionInScene)
-                        case "platform8":
-                            addPlatform8(position: tilePositionInScene)
-                        case "platform9":
-                            addPlatform9(position: tilePositionInScene)
-                        case "platform10":
-                            addPlatform10(position: tilePositionInScene)
-                        case "platform11":
-                            addPlatform11(position: tilePositionInScene)
+//                        case "platform1":
+//                            addPlatform1(position: tilePositionInScene)
+//                        case "platform2":
+//                            addPlatform2(position: tilePositionInScene)
+//                        case "platform3":
+//                            addPlatform3(position: tilePositionInScene)
+//                        case "platform4":
+//                            addPlatform4(position: tilePositionInScene)
+//                        case "platform5":
+//                            addPlatform5(position: tilePositionInScene)
+//                        case "platform6":
+//                            addPlatform6(position: tilePositionInScene)
+//                        case "platform7":
+//                            addPlatform7(position: tilePositionInScene)
+//                        case "platform8":
+//                            addPlatform8(position: tilePositionInScene)
+//                        case "platform9":
+//                            addPlatform9(position: tilePositionInScene)
+//                        case "platform10":
+//                            addPlatform10(position: tilePositionInScene)
+//                        case "platform11":
+//                            addPlatform11(position: tilePositionInScene)
                             
                         default:
                             // Default physics body for other tiles
@@ -260,6 +260,9 @@ class MapBuilder {
         } else if let scene = scene as? SecondScene {
             let newSpawnPoint = SpawnPointNode(size: size, position: position)
             scene.addChild(newSpawnPoint)
+        } else if let scene = scene as? ThirdScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
         }
     }
     
@@ -273,6 +276,14 @@ class MapBuilder {
                 scene.addChild(newBox)
             }
         } else if let scene = scene as? SecondScene {
+            if scene.playerEra == .future {
+                let newBox = BoxNode()
+                newBox.position = position
+                newBox.id = .init()
+                newBox.name = "\(newBox.id)"
+                scene.addChild(newBox)
+            }
+        } else if let scene = scene as? ThirdScene {
             if scene.playerEra == .future {
                 let newBox = BoxNode()
                 newBox.position = position
@@ -316,6 +327,10 @@ class MapBuilder {
             scene.playerNode = PlayerNode(playerEra: scene.playerEra)
             scene.playerNode.position = position
             scene.addChild(scene.playerNode)
+        } else if let scene = scene as? ThirdScene {
+            scene.playerNode = PlayerNode(playerEra: scene.playerEra)
+            scene.playerNode.position = position
+            scene.addChild(scene.playerNode)
         }
     }
     
@@ -346,6 +361,19 @@ class MapBuilder {
             scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
             scene.otherPlayer.position = position
             scene.addChild(scene.otherPlayer)
+        } else if let scene = scene as? ThirdScene {
+            var otherPlayerEra: PlayerEra
+            
+            if scene.playerEra == .present {
+                otherPlayerEra = .future
+            } else {
+                otherPlayerEra = .present
+            }
+            
+            guard scene.otherPlayer == nil else { return }
+            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
+            scene.otherPlayer.position = position
+            scene.addChild(scene.otherPlayer)
         }
     }
     
@@ -362,6 +390,9 @@ class MapBuilder {
             let nextSceneNode = NextSceneNode(size: size, position: position)
             scene.addChild(nextSceneNode)
         } else if let scene = scene as? SecondScene {
+            let nextSceneNode = NextSceneNode(size: size, position: position)
+            scene.addChild(nextSceneNode)
+        } else if let scene = scene as? ThirdScene {
             let nextSceneNode = NextSceneNode(size: size, position: position)
             scene.addChild(nextSceneNode)
         }
