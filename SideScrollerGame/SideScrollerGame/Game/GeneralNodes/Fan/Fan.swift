@@ -10,7 +10,7 @@ import SpriteKit
 class Fan: SKSpriteNode {
     
     init() {
-        let texture = SKTexture(imageNamed: "fan-animation-action-lines-1") // Replace with your box texture
+        let texture = SKTexture(imageNamed: "fan-animation-action-lines-1")
         super.init(texture: texture, color: .clear, size: CGSize(width: 150, height: 1000))
         self.name = "fan"
         self.zPosition = 1

@@ -13,13 +13,9 @@ class GameViewModel: ObservableObject {
     @Published var currentSceneType: SceneType
     @Published var opacity: Double = 1.0
     
-    init(currentSceneType: SceneType = .first(.future)) {
+    init(currentSceneType: SceneType = .third(.future)) {
         self.currentSceneType = currentSceneType
     }
-    
-//    func switchToSecondScene(playerEra: PlayerEra) {
-//        currentSceneType = .second(playerEra)
-//    }
     
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
@@ -27,6 +23,8 @@ class GameViewModel: ObservableObject {
             return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
         case .second(let playerEra):
             return SecondScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
+        case .third(let playerEra):
+            return ThirdScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
         }
     }
     
