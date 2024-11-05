@@ -375,7 +375,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.nextScene {
             playerInfo.readyToNextScene = true
             
-            if playerInfo.readyToNextScene && ((mpManager.otherPlayerInfo.value?.readyToNextScene) != nil){
+            if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
                 
                 if SceneValue.scene == .first(playerEra) {
                     transition()
