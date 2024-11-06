@@ -304,7 +304,7 @@ class MapBuilder {
     
     func addLadder(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newLadder = Ladder()
+            let newLadder = Ladder(size: CGSize(width: 80, height: 900))
             newLadder.position = position
             scene.addChild(newLadder)
         }
