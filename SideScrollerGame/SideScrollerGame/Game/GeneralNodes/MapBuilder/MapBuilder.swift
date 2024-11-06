@@ -97,6 +97,10 @@ class MapBuilder {
                             tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
                             tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
                             tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
+                            
+                        case "wallBehindLadder":
+                            tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
+                            tilePhysicsNode.physicsBody?.isDynamic = false
                         case "Death":
                             // Create the physics body for death tiles
                             tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
@@ -107,45 +111,45 @@ class MapBuilder {
                         case "SpawnPoint":
                             addSpawnPoint(position: tilePositionInScene, size: tileSize)
                             
-//                        case "Elevator":
-//                            addElevator(position: tilePositionInScene)
-//                        case "Box":
-//                            addBox(position: tilePositionInScene)
-//                        case "Ladder":
-//                            addLadder(position: tilePositionInScene)
-//                        case "fanBase":
-//                            addFanBase(position: tilePositionInScene)
+                        case "Elevator":
+                            addElevator(position: tilePositionInScene)
+                        case "Box":
+                            addBox(position: tilePositionInScene)
+                        case "Ladder":
+                            addLadder(position: tilePositionInScene)
+                        case "fanBase":
+                            addFanBase(position: tilePositionInScene)
                         case "Player":
                             addPlayer(position: tilePositionInScene)
                         case "OtherPlayer":
                             addOtherPlayer(position: tilePositionInScene)
-//                        case "Saw":
-//                            addSaw(position: tilePositionInScene)
+                        case "Saw":
+                            addSaw(position: tilePositionInScene)
                         case "NextScene":
                             addNextSceneNode(position: tilePositionInScene, size: tileSize)
-//                        case "platform1":
-//                            addPlatform1(position: tilePositionInScene)
-//                        case "platform2":
-//                            addPlatform2(position: tilePositionInScene)
-//                        case "platform3":
-//                            addPlatform3(position: tilePositionInScene)
-//                        case "platform4":
-//                            addPlatform4(position: tilePositionInScene)
-//                        case "platform5":
-//                            addPlatform5(position: tilePositionInScene)
-//                        case "platform6":
-//                            addPlatform6(position: tilePositionInScene)
-//                        case "platform7":
-//                            addPlatform7(position: tilePositionInScene)
-//                        case "platform8":
-//                            addPlatform8(position: tilePositionInScene)
-//                        case "platform9":
-//                            addPlatform9(position: tilePositionInScene)
-//                        case "platform10":
-//                            addPlatform10(position: tilePositionInScene)
-//                        case "platform11":
-//                            addPlatform11(position: tilePositionInScene)
-                            
+                        case "platform1":
+                            addPlatform1(position: tilePositionInScene)
+                        case "platform2":
+                            addPlatform2(position: tilePositionInScene)
+                        case "platform3":
+                            addPlatform3(position: tilePositionInScene)
+                        case "platform4":
+                            addPlatform4(position: tilePositionInScene)
+                        case "platform5":
+                            addPlatform5(position: tilePositionInScene)
+                        case "platform6":
+                            addPlatform6(position: tilePositionInScene)
+                        case "platform7":
+                            addPlatform7(position: tilePositionInScene)
+                        case "platform8":
+                            addPlatform8(position: tilePositionInScene)
+                        case "platform9":
+                            addPlatform9(position: tilePositionInScene)
+                        case "platform10":
+                            addPlatform10(position: tilePositionInScene)
+                        case "platform11":
+                            addPlatform11(position: tilePositionInScene)
+          
                         default:
                             // Default physics body for other tiles
                             break
