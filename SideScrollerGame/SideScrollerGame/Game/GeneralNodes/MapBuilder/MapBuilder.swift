@@ -145,7 +145,7 @@ class MapBuilder {
                             addPlatform10(position: tilePositionInScene)
                         case "platform11":
                             addPlatform11(position: tilePositionInScene)
-          
+                            
                         default:
                             // Default physics body for other tiles
                             break

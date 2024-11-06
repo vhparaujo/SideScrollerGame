@@ -202,21 +202,26 @@ class PlayerNode: SKSpriteNode {
         playerInfo.action = false
     }
     
-    func checkForNearbyBox() -> BoxNode? {
-//        let pickUpRangeX: CGFloat = self.frame.width * 2
+    func checkForNearbyObject<T:SKNode>(type: T.Type) -> T? {
  
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
-            if let box = node as? BoxNode {
-                let pickUpRangeY: CGFloat = box.frame.height * 0.98
-                let pickUpRangeX: CGFloat = box.frame.width * 0.9
-
-                let distanceXToBox = box.position.x - self.position.x
-                let distanceYToBox = abs(box.position.y - self.position.y)
-
-                if abs(distanceXToBox) <= pickUpRangeX, distanceYToBox <= pickUpRangeY {
-                    return box
+            if let object = node as? T {
+                
+                var pickUpRangeY: CGFloat = object.frame.height * 0.98
+                var pickUpRangeX: CGFloat = object.frame.width * 0.9
+                
+                if ((object.name?.contains("elevator")) != nil){
+                    pickUpRangeX = 200 * 0.9
+                    pickUpRangeY = 200 * 0.98
+                }
+                
+                let distanceXToObject = object.position.x - self.position.x
+                let distanceYToObject = abs(object.position.y - self.position.y)
+                
+                if abs(distanceXToObject) <= pickUpRangeX, distanceYToObject <= pickUpRangeY {
+                    return object
                 }
             }
         }
@@ -224,11 +229,14 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-     
+        
         if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
             transition()
         }
-        self.boxRef = checkForNearbyBox()
+        
+        self.boxRef = checkForNearbyObject(type: BoxNode.self)
+        self.elevatorRef = checkForNearbyObject(type: ElevatorNode.self)
+        
         sendPlayerInfoToOthers()
         handleDeath()
         
