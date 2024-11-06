@@ -24,7 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		283801672C9B42A400A91EDA /* SideScrollerGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SideScrollerGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		283801672C9B42A400A91EDA /* Germinare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Germinare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B51DFF22CA1CE8C002DC7F6 /* SideScrollerGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SideScrollerGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B51DFFF2CA1CEB5002DC7F6 /* SideScrollerGameTestsUI.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SideScrollerGameTestsUI.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -98,7 +98,7 @@
 		283801682C9B42A400A91EDA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				283801672C9B42A400A91EDA /* SideScrollerGame.app */,
+				283801672C9B42A400A91EDA /* Germinare.app */,
 				9B51DFF22CA1CE8C002DC7F6 /* SideScrollerGameTests.xctest */,
 				9B51DFFF2CA1CEB5002DC7F6 /* SideScrollerGameTestsUI.xctest */,
 			);
@@ -127,7 +127,7 @@
 			packageProductDependencies = (
 			);
 			productName = SideScrollerGame;
-			productReference = 283801672C9B42A400A91EDA /* SideScrollerGame.app */;
+			productReference = 283801672C9B42A400A91EDA /* Germinare.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9B51DFF12CA1CE8C002DC7F6 /* SideScrollerGameTests */ = {
@@ -431,7 +431,8 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Victor.SideScrollerGame;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = Germinare;
+				PRODUCT_NAME = Germinare;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Victor Hugo";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -468,7 +469,8 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Victor.SideScrollerGame;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = Germinare;
+				PRODUCT_NAME = Germinare;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Victor Hugo";
 				SWIFT_EMIT_LOC_STRINGS = YES;
