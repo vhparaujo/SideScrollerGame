@@ -208,12 +208,17 @@ class PlayerNode: SKSpriteNode {
         
         for node in nearbyNodes {
             if let object = node as? T {
-                let pickUpRangeY: CGFloat = object.frame.height * 0.98
-                let pickUpRangeX: CGFloat = object.frame.width * 0.9
+                
+                var pickUpRangeY: CGFloat = object.frame.height * 0.98
+                var pickUpRangeX: CGFloat = object.frame.width * 0.9
+                
+                if ((object.name?.contains("elevator")) != nil){
+                    pickUpRangeX = 200 * 0.9
+                    pickUpRangeY = 200 * 0.98
+                }
                 
                 let distanceXToObject = object.position.x - self.position.x
                 let distanceYToObject = abs(object.position.y - self.position.y)
-              
                 
                 if abs(distanceXToObject) <= pickUpRangeX, distanceYToObject <= pickUpRangeY {
                     return object

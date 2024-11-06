@@ -21,8 +21,8 @@ struct GameView: View {
             VStack {
                 SpriteView(scene: viewModel.createScene(size: CGSize(width: 1920, height: 1080))/*, debugOptions: [.showsPhysics]*/)
                     .ignoresSafeArea()
-                    .id(viewModel.currentSceneType) // Force refresh when the scene type changes
-                    .opacity(viewModel.opacity)      // Use opacity to control fade in/out
+                    .id(viewModel.currentSceneType) 
+                    .opacity(viewModel.opacity)
                     .background(.black)
             }
         }
