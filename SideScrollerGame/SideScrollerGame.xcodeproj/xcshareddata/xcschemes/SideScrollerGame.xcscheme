@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "283801662C9B42A400A91EDA"
-               BuildableName = "SideScrollerGame.app"
+               BuildableName = "Germinare.app"
                BlueprintName = "SideScrollerGame"
                ReferencedContainer = "container:SideScrollerGame.xcodeproj">
             </BuildableReference>
@@ -69,7 +69,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "283801662C9B42A400A91EDA"
-            BuildableName = "SideScrollerGame.app"
+            BuildableName = "Germinare.app"
             BlueprintName = "SideScrollerGame"
             ReferencedContainer = "container:SideScrollerGame.xcodeproj">
          </BuildableReference>
@@ -86,7 +86,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "283801662C9B42A400A91EDA"
-            BuildableName = "SideScrollerGame.app"
+            BuildableName = "Germinare.app"
             BlueprintName = "SideScrollerGame"
             ReferencedContainer = "container:SideScrollerGame.xcodeproj">
          </BuildableReference>
