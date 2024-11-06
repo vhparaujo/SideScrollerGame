@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-
-
 struct ChoosePerspectiveView: View {
     @Bindable var mpManager: MultiplayerManager = .shared
     @State var playerStartInfo: PlayerStartInfo
-    
-    
+
     var body: some View {
-        VStack{
+        
+        VStack {
             
             Image("ChoosePerspective")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .padding(.top)
                 .padding()
             
@@ -27,11 +27,14 @@ struct ChoosePerspectiveView: View {
                     if perspective == PlayerEra.future {
                         ZStack {
                             Image("FutureChoose")
-                                .scaleEffect(0.7)
+                                .resizable()
+                                .scaleEffect(0.5)
+                                .aspectRatio(contentMode: .fit)
                             VStack {
                                 Image("player-future-idle-left-1")
-                                    .scaledToFit()
+                                    .resizable()
                                     .scaleEffect(0.35)
+                                    .aspectRatio(contentMode: .fit)
                             }
                             .offset(y: -50)
                         }
@@ -39,14 +42,18 @@ struct ChoosePerspectiveView: View {
                             self.playerStartInfo.eraSelection = perspective
                             mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                         }
-                    }else {
+                    } else {
                         ZStack {
                             Image("PresentChoose")
-                                .scaleEffect(0.7)
+                                .resizable()
+                                .scaleEffect(0.5)
+
+                                .aspectRatio(contentMode: .fit)
                             VStack {
                                 Image("player-present-idle-right-1")
-                                    .scaledToFit()
+                                    .resizable()
                                     .scaleEffect(0.32)
+                                    .aspectRatio(contentMode: .fit)
                             }
                             .offset(y: -38)
                         }
@@ -64,23 +71,18 @@ struct ChoosePerspectiveView: View {
                     if mpManager.gameStartInfo.local.isStartPressed == .yes {
                         playerStartInfo.isStartPressed = .no
                         mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
-                    }else{
+                    } else {
                         playerStartInfo.isStartPressed = .yes
                         mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
                     }
                 } label: {
-                    if mpManager.gameStartInfo.local.isStartPressed == .yes {
-                        Text("Cancel")
-                    }else{
-                        Text("Ready")
-                    }
+                    Text(mpManager.gameStartInfo.local.isStartPressed == .yes ? "Cancel" : "Ready")
                 }
             }
         }
         .padding()
     }
 }
-
 
 #Preview {
     ChoosePerspectiveView(mpManager: .init(), playerStartInfo: .init(isStartPressed: .no))
