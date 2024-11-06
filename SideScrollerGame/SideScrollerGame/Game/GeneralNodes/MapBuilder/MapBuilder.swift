@@ -97,10 +97,6 @@ class MapBuilder {
                             tilePhysicsNode.physicsBody?.categoryBitMask = PhysicsCategories.wall
                             tilePhysicsNode.physicsBody?.contactTestBitMask = PhysicsCategories.player | PhysicsCategories.box
                             tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.player | PhysicsCategories.box
-                            
-                        case "wallBehindLadder":
-                            tilePhysicsNode.physicsBody = createRoundedRectanglePhysicsBody(tileSize: tileSize)
-                            tilePhysicsNode.physicsBody?.isDynamic = false
                         case "Death":
                             // Create the physics body for death tiles
                             tilePhysicsNode.physicsBody = SKPhysicsBody(rectangleOf: tileSize)
@@ -308,7 +304,7 @@ class MapBuilder {
     
     func addLadder(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newLadder = Ladder()
+            let newLadder = Ladder(size: CGSize(width: 80, height: 900))
             newLadder.position = position
             scene.addChild(newLadder)
         }

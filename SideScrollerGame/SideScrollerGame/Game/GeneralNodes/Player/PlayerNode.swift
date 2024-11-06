@@ -224,11 +224,8 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        print(playerInfo.readyToNextScene, "player")
-        print(mpManager.otherPlayerInfo.value?.readyToNextScene, "other")
-        
+     
         if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
-            print("opa")
             transition()
         }
         self.boxRef = checkForNearbyBox()
