@@ -53,7 +53,6 @@ class FirstScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
-        
     }
     
     override func keyUp(with event: NSEvent) {}
