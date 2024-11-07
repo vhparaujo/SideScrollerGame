@@ -65,7 +65,8 @@ class ElevatorNode: SKNode {
     init(playerEra: PlayerEra, mode: ElevatorMode, maxHeight: CGFloat) {
         self.playerEra = playerEra
         self.mode = mode
-        self.maxHeight = maxHeight
+        self.maxHeight = maxHeight * factor
+
         
         super.init()
         
@@ -101,7 +102,6 @@ class ElevatorNode: SKNode {
     
     func moveManual() {
         elevatorContainer.removeAction(forKey: "moveDown")
-        maxHeight = maxHeight * factor
         
         if elevatorContainer.position.y < maxHeight {
             let moveUpAction = SKAction.moveBy(x: 0, y: 10, duration: 0.05)
