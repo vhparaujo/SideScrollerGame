@@ -14,7 +14,7 @@ class ElevatorNode: SKNode {
         let factor = 0.76
         
         let firstUnderPlatform = underPlatform
-        firstUnderPlatform.position = CGPoint(x: 0, y: 0)
+        firstUnderPlatform.position = CGPoint(x: 0, y: 40)
         container.addChild(firstUnderPlatform)
         
         let secondUnderPlatform = SKSpriteNode(texture: firstUnderPlatform.texture, size: firstUnderPlatform.size)
@@ -32,25 +32,27 @@ class ElevatorNode: SKNode {
       
     lazy var underPlatform: SKSpriteNode = {
         let bodyTexture = SKTexture(imageNamed: playerEra == .present ? "elevator-middle" : "elevator-future-middle")
-        return SKSpriteNode(texture: bodyTexture, size: CGSize(width: 185, height: 200))
+        return SKSpriteNode(texture: bodyTexture, size: CGSize(width: 185 * factor, height: 200 * factor))
     }()
     
     lazy var elevatorPlatform: SKSpriteNode = {
         let platformTexture = SKTexture(imageNamed: playerEra == .present ? "elevator-top" : "elevator-future-top")
-        let platform = SKSpriteNode(texture: platformTexture, size: CGSize(width: 200, height: 50))
+        let platform = SKSpriteNode(texture: platformTexture, size: CGSize(width: 200 * factor, height: 50 * factor))
         
-        maxHeight -= platformTexture.size().height / 2
+//        maxHeight -= platformTexture.size().height / 2
         return platform
     }()
     
     lazy var elevatorBodyButton: SKSpriteNode = {
         let buttonTexture = SKTexture(imageNamed: playerEra == .present ? "elevator-bottom-off" : "elevator-future-bottom-off")
-        return SKSpriteNode(texture: buttonTexture, size: CGSize(width: 200, height: 150))
+        return SKSpriteNode(texture: buttonTexture, size: CGSize(width: 200 * factor, height: 150 * factor))
     }()
     
     var isMovingUp = false
     var maxHeight: CGFloat
     var minHeight: CGFloat = 0
+    
+    var factor = 1.0
 
     init(playerEra: PlayerEra, mode: ElevatorMode, maxHeight: CGFloat) {
         self.playerEra = playerEra
@@ -68,9 +70,8 @@ class ElevatorNode: SKNode {
     
     private func setup() {
         self.name = "elevator\(UUID())"
+        
         setPhysicsBody()
-
-        addChild(elevatorContainer)
         
         if mode == .automatic {
             moveAutomatic()
@@ -132,7 +133,7 @@ class ElevatorNode: SKNode {
         elevatorPlatform.physicsBody?.categoryBitMask = PhysicsCategories.ground
         elevatorPlatform.physicsBody?.collisionBitMask = PhysicsCategories.player
         elevatorPlatform.physicsBody?.contactTestBitMask = PhysicsCategories.player
-        elevatorPlatform.position.y = 130
+        elevatorPlatform.position.y += 90
     }
     
     private func setupMoveButton() {
@@ -144,10 +145,9 @@ class ElevatorNode: SKNode {
         elevatorBodyButton.physicsBody?.categoryBitMask = PhysicsCategories.moveButton
         elevatorBodyButton.physicsBody?.collisionBitMask = 0
         elevatorBodyButton.physicsBody?.contactTestBitMask = PhysicsCategories.player
-        
         elevatorBodyButton.position.y += 35
         
-        
+        addChild(elevatorContainer)
         addChild(elevatorBodyButton)
     }
 }
