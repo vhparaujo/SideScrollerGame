@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let window = NSApplication.shared.windows.first {
             self.window = window
             window.delegate = self
-            window.collectionBehavior = [.fullScreenPrimary]
+            window.collectionBehavior = [.fullScreenAuxiliary,.fullScreenPrimary]
             configureWindow(window)
             window.toggleFullScreen(nil)
         }
@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private func configureWindow(_ window: NSWindow) {
         // Remove window controls
-//        window.standardWindowButton(.closeButton)?.isHidden = true
+        window.standardWindowButton(.closeButton)?.isHidden = true
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.titleVisibility = .hidden
@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func setPresentationOptions() {
         let options: NSApplication.PresentationOptions = [
             .hideDock,
-            .hideMenuBar,
+//            .hideMenuBar,
 //            .disableProcessSwitching, // Disable Command + Tab
             .disableHideApplication
         ]
