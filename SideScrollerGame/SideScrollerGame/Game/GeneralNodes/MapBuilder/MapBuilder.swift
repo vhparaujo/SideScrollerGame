@@ -169,6 +169,8 @@ class MapBuilder {
     
     func addImage(position: CGPoint) {
         if let scene = scene as? FirstScene {
+            let newImage = ImageSpriteNode(position: position)
+            scene.addChild(newImage)
         }
     }
     
