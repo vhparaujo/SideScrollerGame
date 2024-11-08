@@ -145,6 +145,8 @@ class MapBuilder {
                             addPlatform10(position: tilePositionInScene)
                         case "platform11":
                             addPlatform11(position: tilePositionInScene)
+                        case "shiftKeyMap":
+                            addImage(position: tilePositionInScene)
                             
                         default:
                             // Default physics body for other tiles
@@ -163,6 +165,11 @@ class MapBuilder {
         tileNode.removeFromParent()
         // Add the tile node to the scene
         scene.addChild(tileNode)
+    }
+    
+    func addImage(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+        }
     }
     
     func addPlatform1(position: CGPoint) {
