@@ -12,7 +12,7 @@ class ElevatorNode: SKNode {
     
     lazy var elevatorLever: SKSpriteNode = {
         let interruptorTexture = SKTexture(imageNamed: playerEra == .present ? "elevator-lever" : "elevator-future-lever")
-        let interruptor = SKSpriteNode(texture: interruptorTexture, size: CGSize(width: objectWidth * factor, height: objectHeight * 0.25 * factor))
+        let interruptor = SKSpriteNode(texture: interruptorTexture, size: CGSize(width: objectWidth * 0.3 * factor, height: objectHeight * 0.1 * factor))
         
         return interruptor
     }()
@@ -59,9 +59,12 @@ class ElevatorNode: SKNode {
     var maxHeight: CGFloat
     var minHeight: CGFloat = 0
     
-    var factor = 0.7
+    let maxLever = 40.0
+    let minLever = -2.0
+    
+    var factor = 0.8
     var objectHeight = 200.0
-    var objectWidth = 200.0
+    var objectWidth = 250.0
 
     init(playerEra: PlayerEra, mode: ElevatorMode, maxHeight: CGFloat) {
         self.playerEra = playerEra
@@ -89,8 +92,6 @@ class ElevatorNode: SKNode {
             setupMoveButton()
         }
     }
-    
-    
 
     private func moveAutomatic() {
         let moveUp = SKAction.moveBy(x: 0, y: underPlatform.size.height, duration: 5)
@@ -100,6 +101,8 @@ class ElevatorNode: SKNode {
         
         elevatorContainer.run(.repeatForever(sequence))
     }
+    
+    
     
     func moveManual() {
         elevatorContainer.removeAction(forKey: "moveDown")
@@ -116,6 +119,23 @@ class ElevatorNode: SKNode {
             }
             let sequence = SKAction.sequence([moveUpAction, limitAction])
             elevatorContainer.run(.repeatForever(sequence), withKey: "manualMove")
+            
+        }
+        
+        elevatorLever.removeAction(forKey: "moveLeverDown")
+   
+        
+        if elevatorLever.position.y < maxLever {
+            let moveUpAction = SKAction.moveBy(x: 0, y: 10, duration: 0.05)
+            let limitAction = SKAction.run { [weak self] in
+                guard let self = self else { return }
+                if self.elevatorLever.position.y >= maxLever {
+                    self.elevatorLever.position.y = maxLever
+                    self.elevatorLever.removeAction(forKey: "moveLeverDown")
+                }
+            }
+            let leverSequence = SKAction.sequence([moveUpAction, limitAction])
+            elevatorLever.run(.repeatForever(leverSequence), withKey: "moveLeverDown")
         }
     }
     
@@ -135,6 +155,19 @@ class ElevatorNode: SKNode {
         
         let sequence = SKAction.sequence([moveDownAction, setTextureOffAction])
         elevatorContainer.run(sequence, withKey: "moveDown")
+        
+        
+        
+        elevatorLever.removeAction(forKey: "manualMove")
+                
+        let currentLeverPostion = elevatorLever.position
+        let leverDistance = abs(currentLeverPostion.y - minLever)
+        let leverMoveDuration = TimeInterval(leverDistance / 200)
+        let moveLeverDownAction = SKAction.move(to: CGPoint(x: currentLeverPostion.x, y: minLever), duration: leverMoveDuration)
+        
+        let leverSequence = SKAction.sequence([moveLeverDownAction])
+        elevatorLever.run(leverSequence, withKey: "moveLeverDown")
+        
     }
     
     private func setPhysicsBody() {
@@ -158,6 +191,8 @@ class ElevatorNode: SKNode {
         
         elevatorPlatform.position.y = m2 * factor + b2
         
+        elevatorLever.position.y = 0
+        elevatorLever.position.x = 1
     }
 
 
@@ -175,6 +210,7 @@ class ElevatorNode: SKNode {
         
         addChild(elevatorContainer)
         addChild(elevatorBodyButton)
+        addChild(elevatorLever)
     }
 }
 
