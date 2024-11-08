@@ -1,4 +1,5 @@
 import SpriteKit
+import SwiftUI
 
 enum ElevatorMode {
     case automatic
@@ -137,7 +138,8 @@ class ElevatorNode: SKNode {
     }
     
     private func setPhysicsBody() {
-        
+        factor = 1
+    
         elevatorPlatform.physicsBody = SKPhysicsBody(rectangleOf: elevatorPlatform.size)
         elevatorPlatform.physicsBody?.affectedByGravity = false
         elevatorPlatform.physicsBody?.isDynamic = false
@@ -146,12 +148,17 @@ class ElevatorNode: SKNode {
         elevatorPlatform.physicsBody?.collisionBitMask = PhysicsCategories.player
         elevatorPlatform.physicsBody?.contactTestBitMask = PhysicsCategories.player
 
-        let m = 70.0
-        let b = 20 - m * 0.8
-
+        let m:CGFloat = 70
+        let b:CGFloat = 20 - m * 0.8
+        
         elevatorBodyButton.position.y = m * factor + b
+        
+        let m2:CGFloat = 100
+        let b2:CGFloat = 80 - m2 * 0.8
+        
+        elevatorPlatform.position.y = m2 * factor + b2
 
-        elevatorPlatform.position.y = elevatorBodyButton.position.y + ((elevatorBodyButton.frame.height / 2) )
+        
     }
 
 
@@ -170,4 +177,8 @@ class ElevatorNode: SKNode {
         addChild(elevatorContainer)
         addChild(elevatorBodyButton)
     }
+}
+
+#Preview{
+    ContentView()
 }
