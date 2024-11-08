@@ -145,7 +145,7 @@ class ThirdScene: SKScene, SKPhysicsContactDelegate {
         
         // Determine which body is the player and which is the box
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
-        let otherCategory = otherBody.categoryBitMask
+        _ = otherBody.categoryBitMask
     
     }
     
@@ -153,7 +153,7 @@ class ThirdScene: SKScene, SKPhysicsContactDelegate {
         playerNode.didEnd(contact)
         
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
-        let otherCategory = otherBody.categoryBitMask
+        _ = otherBody.categoryBitMask
         
         let boxBody = (contact.bodyA.categoryBitMask == PhysicsCategories.box) ? contact.bodyB : contact.bodyA
         let otherBox = boxBody.categoryBitMask

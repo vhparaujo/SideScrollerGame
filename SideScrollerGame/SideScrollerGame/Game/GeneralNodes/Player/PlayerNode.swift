@@ -117,7 +117,7 @@ class PlayerNode: SKSpriteNode {
                 isMovingRight = true
                 playerInfo.facingRight = true
             case .jump:
-                  if !isJumping {
+                if !isJumping {
                     isJumping = true
                     handleJump()
                 }
@@ -136,10 +136,10 @@ class PlayerNode: SKSpriteNode {
         switch action {
             case .moveLeft:
                 isMovingLeft = false
-            playerInfo.facingRight = false
+                playerInfo.facingRight = false
             case .moveRight:
                 isMovingRight = false
-            playerInfo.facingRight = true
+                playerInfo.facingRight = true
             case .action:
                 handleActionKeyRelease()
             case .bringToPresent:
@@ -203,7 +203,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func checkForNearbyObject<T:SKNode>(type: T.Type) -> T? {
- 
+        
         let nearbyNodes = self.scene?.children ?? []
         
         for node in nearbyNodes {
@@ -315,19 +315,15 @@ class PlayerNode: SKSpriteNode {
     }
     
     private func handleJump() {
-        if !playerInfo.action && isGrounded {
-            guard let dyVelocity = physicsBody?.velocity.dy else { return }
-            if dyVelocity <= 0.0 {
-                physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
-                isGrounded = false
-            }
+        if !playerInfo.action {
+            self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             switch playerInfo.facingRight{
-            case true:
-                changeState(to: .jumpingR)
-            case false:
-                changeState(to: .jumpingL)
+                case true:
+                    changeState(to: .jumpingR)
+                case false:
+                    changeState(to: .jumpingL)
             }
-
+            
         }
     }
     
@@ -357,8 +353,7 @@ class PlayerNode: SKSpriteNode {
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
             
             isJumping = false
-            isGrounded = true
-                        
+            
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = otherBody.node as? PlatformNode
             }
@@ -406,14 +401,14 @@ class PlayerNode: SKSpriteNode {
             let transition = SKTransition.fade(withDuration: 1.0)
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
         }
-
+        
     }
     func didEnd(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
         
         if otherCategory == PhysicsCategories.ground || otherCategory == PhysicsCategories.box || otherCategory == PhysicsCategories.platform {
-                        
+            
             if otherCategory == PhysicsCategories.platform {
                 currentPlatform = nil
             }

@@ -97,9 +97,6 @@ class OtherPlayerNode: SKSpriteNode {
         if self.position != mpManager.otherPlayerInfo.value?.position {
             self.position = mpManager.otherPlayerInfo.value?.position ?? .zero
         }
-       
-       
-
         // Certifique-se de que a textura está sempre atualizada com base no estado
         updateTexture(for: playerInfo.textureState)
     }
@@ -118,6 +115,7 @@ class OtherPlayerNode: SKSpriteNode {
     }
     
     func updateTexture(for state: PlayerTextureState) {
+        
         switch state {
         case .runningR:
             if lastState != state{
@@ -126,7 +124,7 @@ class OtherPlayerNode: SKSpriteNode {
             }
         case .runningL:
             if lastState != state{
-                changeState(to: .runningR)
+                changeState(to: .runningL)
                 self.lastState = state
             }
         case .idleR:
@@ -166,7 +164,7 @@ class OtherPlayerNode: SKSpriteNode {
     }
     
     func changeState(to newState: PlayerTextureState) {
-        guard playerInfo.textureState != newState else { return }
+
         playerInfo.textureState = newState
         
         removeAction(forKey: currentActionKey)

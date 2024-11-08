@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             configureWindow(window)
             window.toggleFullScreen(nil)
         }
-
+        
         setPresentationOptions()
     }
 

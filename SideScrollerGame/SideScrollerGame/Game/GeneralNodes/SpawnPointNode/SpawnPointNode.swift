@@ -9,7 +9,7 @@ import SpriteKit
 
 class SpawnPointNode: SKSpriteNode {
     init(size: CGSize, position: CGPoint) {
-        super.init(texture: nil, color: .green, size: size)
+        super.init(texture: nil, color: .clear, size: size)
         self.position = position
         self.setupPhysicsBody()
     }
