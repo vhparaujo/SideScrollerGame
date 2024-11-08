@@ -138,7 +138,7 @@ class ElevatorNode: SKNode {
     }
     
     private func setPhysicsBody() {
-        factor = 1
+        factor = 0.8
     
         elevatorPlatform.physicsBody = SKPhysicsBody(rectangleOf: elevatorPlatform.size)
         elevatorPlatform.physicsBody?.affectedByGravity = false
@@ -154,10 +154,9 @@ class ElevatorNode: SKNode {
         elevatorBodyButton.position.y = m * factor + b
         
         let m2:CGFloat = 100
-        let b2:CGFloat = 80 - m2 * 0.8
+        let b2:CGFloat = m2 * 0.00008
         
         elevatorPlatform.position.y = m2 * factor + b2
-
         
     }
 
