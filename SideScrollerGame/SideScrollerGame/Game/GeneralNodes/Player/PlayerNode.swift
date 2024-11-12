@@ -212,7 +212,7 @@ class PlayerNode: SKSpriteNode {
                 var pickUpRangeY: CGFloat = object.frame.height * 0.98
                 var pickUpRangeX: CGFloat = object.frame.width * 0.9
                 
-                if ((object.name?.contains("elevator")) != nil){
+                if object.name!.contains("elevator"){
                     pickUpRangeX = 200 * 0.9
                     pickUpRangeY = 200 * 0.98
                 }
@@ -229,7 +229,6 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        
         if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
             transition()
         }
@@ -432,4 +431,8 @@ class PlayerNode: SKSpriteNode {
     func triggerDeath() {
         playerInfo.isDying = true
     }
+}
+
+#Preview{
+    ContentView()
 }
