@@ -152,9 +152,16 @@ class OtherPlayerNode: SKSpriteNode {
                 changeState(to: .climbing)
                 self.lastState = state
             }
-        case .grabbing:
-            changeState(to: .grabbing)
-            self.lastState = state
+        case .grabbingR:
+            if lastState != state {
+                changeState(to: .grabbingR)
+                self.lastState = state
+            }
+        case .grabbingL:
+            if lastState != state {
+                changeState(to: .grabbingL)
+                self.lastState = state
+            }
         case .hurt:
             if lastState != state{
                 changeState(to: .hurt)

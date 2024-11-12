@@ -266,12 +266,16 @@ class PlayerNode: SKSpriteNode {
         
         // Update animation state
         if playerInfo.action {
-            changeState(to: .grabbing)
-        } else if !isGrounded && isMovingLeft{
+            if playerInfo.textureState != .grabbingR && !playerInfo.facingRight {
+                changeState(to: .grabbingL)
+            } else if playerInfo.textureState != .grabbingL {
+                changeState(to: .grabbingR)
+            }
+        }else if !isGrounded && isMovingLeft {
             changeState(to: .jumpingL)
-        }else if !isGrounded && isMovingRight{
+        }else if !isGrounded && isMovingRight {
             changeState(to: .jumpingR)
-        }else if desiredVelocity != 0 && isMovingRight{
+        }else if desiredVelocity != 0 && isMovingRight {
             changeState(to: .runningR)
         } else if desiredVelocity != 0 && isMovingLeft {
             changeState(to: .runningL)
