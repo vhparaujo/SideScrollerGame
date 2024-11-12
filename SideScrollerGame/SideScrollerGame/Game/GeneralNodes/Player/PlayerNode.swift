@@ -389,9 +389,10 @@ class PlayerNode: SKSpriteNode {
             if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
                 
                 if SceneValue.scene == .first(playerEra) {
-                    mpManager.gameFinished = true
-                    mpManager.endMatch()
-                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self.mpManager.gameFinished = true
+                        self.mpManager.endMatch()
+                    }
                 }else{
                     mpManager.gameFinished = true
                     mpManager.endMatch()
