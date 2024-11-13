@@ -79,9 +79,9 @@ class GameControllerManager {
             }
         }
         
-        NSEvent.addLocalMonitorForEvents(matching: [.keyDown,.keyUp]) { event in
-            return nil
-        }
+//        NSEvent.addLocalMonitorForEvents(matching: [.keyDown,.keyUp]) { event in
+//            return nil
+//        }
     }
     
     // Function to change the key mapping

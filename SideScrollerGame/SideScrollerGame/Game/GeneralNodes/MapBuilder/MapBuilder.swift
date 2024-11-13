@@ -113,8 +113,8 @@ class MapBuilder {
                             addBox(position: tilePositionInScene)
                         case "Ladder":
                             addLadder(position: tilePositionInScene)
-                        case "fan":
-                            addFan(position: tilePositionInScene)
+                        case "fanBase":
+                            addFanBase(position: tilePositionInScene)
                         case "Player":
                             addPlayer(position: tilePositionInScene)
                         case "OtherPlayer":
@@ -145,6 +145,8 @@ class MapBuilder {
                             addPlatform10(position: tilePositionInScene)
                         case "platform11":
                             addPlatform11(position: tilePositionInScene)
+                        case "shiftKeyMap":
+                            addImage(position: tilePositionInScene)
                             
                         default:
                             // Default physics body for other tiles
@@ -163,6 +165,13 @@ class MapBuilder {
         tileNode.removeFromParent()
         // Add the tile node to the scene
         scene.addChild(tileNode)
+    }
+    
+    func addImage(position: CGPoint) {
+        if let scene = scene as? FirstScene {
+            let newImage = ImageSpriteNode(position: position)
+            scene.addChild(newImage)
+        }
     }
     
     func addPlatform1(position: CGPoint) {
@@ -215,7 +224,7 @@ class MapBuilder {
     
     func addPlatform7(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 0, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 200)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -223,7 +232,7 @@ class MapBuilder {
     
     func addPlatform8(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 300)
+            let newPlatform = PlatformNode(minX: 600, maxX: 800, position: position, moveSpeed: 300)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -231,7 +240,7 @@ class MapBuilder {
     
     func addPlatform9(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 500)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -239,7 +248,7 @@ class MapBuilder {
     
     func addPlatform10(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 250)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -247,7 +256,7 @@ class MapBuilder {
     
     func addPlatform11(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -258,6 +267,9 @@ class MapBuilder {
             let newSpawnPoint = SpawnPointNode(size: size, position: position)
             scene.addChild(newSpawnPoint)
         } else if let scene = scene as? SecondScene {
+            let newSpawnPoint = SpawnPointNode(size: size, position: position)
+            scene.addChild(newSpawnPoint)
+        } else if let scene = scene as? ThirdScene {
             let newSpawnPoint = SpawnPointNode(size: size, position: position)
             scene.addChild(newSpawnPoint)
         }
@@ -280,6 +292,14 @@ class MapBuilder {
                 newBox.name = "\(newBox.id)"
                 scene.addChild(newBox)
             }
+        } else if let scene = scene as? ThirdScene {
+            if scene.playerEra == .future {
+                let newBox = BoxNode()
+                newBox.position = position
+                newBox.id = .init()
+                newBox.name = "\(newBox.id)"
+                scene.addChild(newBox)
+            }
         }
     }
     
@@ -293,15 +313,15 @@ class MapBuilder {
     
     func addLadder(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newLadder = Ladder()
+            let newLadder = Ladder(size: CGSize(width: 80, height: 900))
             newLadder.position = position
             scene.addChild(newLadder)
         }
     }
     
-    func addFan(position: CGPoint) {
+    func addFanBase(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newFan = Fan()
+            let newFan = fanBase()
             newFan.position = position
             scene.addChild(newFan)
         }
@@ -313,6 +333,10 @@ class MapBuilder {
             scene.playerNode.position = position
             scene.addChild(scene.playerNode)
         } else if let scene = scene as? SecondScene {
+            scene.playerNode = PlayerNode(playerEra: scene.playerEra)
+            scene.playerNode.position = position
+            scene.addChild(scene.playerNode)
+        } else if let scene = scene as? ThirdScene {
             scene.playerNode = PlayerNode(playerEra: scene.playerEra)
             scene.playerNode.position = position
             scene.addChild(scene.playerNode)
@@ -346,6 +370,19 @@ class MapBuilder {
             scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
             scene.otherPlayer.position = position
             scene.addChild(scene.otherPlayer)
+        } else if let scene = scene as? ThirdScene {
+            var otherPlayerEra: PlayerEra
+            
+            if scene.playerEra == .present {
+                otherPlayerEra = .future
+            } else {
+                otherPlayerEra = .present
+            }
+            
+            guard scene.otherPlayer == nil else { return }
+            scene.otherPlayer = OtherPlayerNode(playerEra: otherPlayerEra)
+            scene.otherPlayer.position = position
+            scene.addChild(scene.otherPlayer)
         }
     }
     
@@ -362,6 +399,9 @@ class MapBuilder {
             let nextSceneNode = NextSceneNode(size: size, position: position)
             scene.addChild(nextSceneNode)
         } else if let scene = scene as? SecondScene {
+            let nextSceneNode = NextSceneNode(size: size, position: position)
+            scene.addChild(nextSceneNode)
+        } else if let scene = scene as? ThirdScene {
             let nextSceneNode = NextSceneNode(size: size, position: position)
             scene.addChild(nextSceneNode)
         }

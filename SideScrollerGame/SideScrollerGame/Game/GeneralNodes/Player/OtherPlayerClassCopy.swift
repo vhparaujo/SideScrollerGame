@@ -13,13 +13,15 @@ class OtherPlayerNode: SKSpriteNode {
     let moveSpeed: CGFloat = 500.0
     let jumpImpulse: CGFloat = 7700.0
     
-    var playerInfo = PlayerInfo(
-        textureState: .idleR,
-        facingRight: true,
-        action: false,
-        isDying: false,
-        position: .zero
-    )
+//    var playerInfo = PlayerInfo(
+//        textureState: .idleR,
+//        facingRight: true,
+//        action: false,
+//        isDying: false,
+//        position: .zero,
+//        readyToNextScene: false
+//    )
+    var playerInfo: PlayerInfo
     
     private var isGrounded = false
 
@@ -31,6 +33,19 @@ class OtherPlayerNode: SKSpriteNode {
     
     
     init(playerEra: PlayerEra, mpManager: MultiplayerManager = .shared) {
+        
+      
+        if let info = mpManager.otherPlayerInfo.value{
+               self.playerInfo = info
+        }else{
+            self.playerInfo = .init(textureState: .idleR,
+                    facingRight: true,
+                    action: false,
+                    isDying: false,
+                    position: .zero,
+                    readyToNextScene: false)
+        }
+      
         self.playerEra = playerEra
         self.mpManager = mpManager
         
@@ -82,9 +97,6 @@ class OtherPlayerNode: SKSpriteNode {
         if self.position != mpManager.otherPlayerInfo.value?.position {
             self.position = mpManager.otherPlayerInfo.value?.position ?? .zero
         }
-       
-       
-
         // Certifique-se de que a textura está sempre atualizada com base no estado
         updateTexture(for: playerInfo.textureState)
     }
@@ -103,6 +115,7 @@ class OtherPlayerNode: SKSpriteNode {
     }
     
     func updateTexture(for state: PlayerTextureState) {
+        
         switch state {
         case .runningR:
             if lastState != state{
@@ -111,7 +124,7 @@ class OtherPlayerNode: SKSpriteNode {
             }
         case .runningL:
             if lastState != state{
-                changeState(to: .runningR)
+                changeState(to: .runningL)
                 self.lastState = state
             }
         case .idleR:
@@ -139,9 +152,16 @@ class OtherPlayerNode: SKSpriteNode {
                 changeState(to: .climbing)
                 self.lastState = state
             }
-        case .grabbing:
-            changeState(to: .grabbing)
-            self.lastState = state
+        case .grabbingR:
+            if lastState != state {
+                changeState(to: .grabbingR)
+                self.lastState = state
+            }
+        case .grabbingL:
+            if lastState != state {
+                changeState(to: .grabbingL)
+                self.lastState = state
+            }
         case .hurt:
             if lastState != state{
                 changeState(to: .hurt)
@@ -151,7 +171,7 @@ class OtherPlayerNode: SKSpriteNode {
     }
     
     func changeState(to newState: PlayerTextureState) {
-        guard playerInfo.textureState != newState else { return }
+
         playerInfo.textureState = newState
         
         removeAction(forKey: currentActionKey)

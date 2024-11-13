@@ -9,13 +9,13 @@ import SpriteKit
 enum PlayerTextureState: Codable {
     case runningR
     case runningL
-    
     case idleR
     case idleL
     case jumpingL
     case jumpingR
     case climbing
-    case grabbing
+    case grabbingR
+    case grabbingL
     case hurt
     
     func textures(for era: PlayerEra) -> [SKTexture] {
@@ -31,7 +31,7 @@ enum PlayerTextureState: Codable {
             return SKSpriteNode.loadTextures(prefix: "player-future-walk-left", count: 45)
             //idle
         case (.idleR, .present):
-            return SKSpriteNode.loadTextures(prefix: "player-present-idle-left", count: 1)
+            return SKSpriteNode.loadTextures(prefix: "player-present-idle-right", count: 1)
         case (.idleL, .present):
             return SKSpriteNode.loadTextures(prefix: "player-present-idle-left", count: 1)
         case (.idleR, .future):
@@ -53,10 +53,14 @@ enum PlayerTextureState: Codable {
         case (.climbing, .future):
             return SKSpriteNode.loadTextures(prefix: "player-climb-future", count: 3)
             
-        case (.grabbing, .present):
-            return SKSpriteNode.loadTextures(prefix: "player-grab-present", count: 2)
-        case (.grabbing, .future):
-            return SKSpriteNode.loadTextures(prefix: "player-grab-future", count: 2)
+        case (.grabbingR, .present):
+            return SKSpriteNode.loadTextures(prefix: "player-present-push-right", count: 4)
+        case (.grabbingR, .future):
+            return SKSpriteNode.loadTextures(prefix: "player-future-push-right", count: 4)
+        case (.grabbingL, .present):
+            return SKSpriteNode.loadTextures(prefix: "player-present-push-left", count: 4)
+        case (.grabbingL, .future):
+            return SKSpriteNode.loadTextures(prefix: "player-future-push-left", count: 4)
             
         case (.hurt, .present):
             return SKSpriteNode.loadTextures(prefix: "player-hurt-present", count: 2)
@@ -75,7 +79,7 @@ enum PlayerTextureState: Codable {
             return 1/50
         case .climbing:
             return 0.2
-        case .grabbing:
+        case .grabbingR, .grabbingL:
             return 0.1
         case .hurt:
             return 0.1

@@ -24,12 +24,9 @@ class MultiplayerManager: NSObject {
     
     //boxes
     var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
-    
 
     //spawnPoint
     var spawnpoint: CGPoint = .zero
-    
-   
     
     /// The name of the match.
     var matchName: String {
@@ -50,7 +47,6 @@ class MultiplayerManager: NSObject {
     override init() {
         super.init()
         authenticateLocalPlayer()
-        
     }
     
     var rootViewController: NSViewController? {
@@ -94,7 +90,6 @@ class MultiplayerManager: NSObject {
     /// Starts a match.
     func startMatch(match: GKMatch) {
         GKAccessPoint.shared.isActive = false
-//        playingGame = true
         choosingEra = true
         myMatch = match
         myMatch?.delegate = self
@@ -104,10 +99,8 @@ class MultiplayerManager: NSObject {
     func endMatch() {
         gameStartInfo.local.eraSelection = nil
         gameStartInfo.local.isStartPressed = .no
-        
         myMatch?.disconnect()
         myMatch = nil
-        
         gameFinished = true
         playingGame = false
         choosingEra = false

@@ -21,9 +21,10 @@ class PlatformNodeY: SKSpriteNode, PlatformNodeProtocol {
         
         self.moveSpeed = moveSpeed
         
-        let texture = SKTexture(imageNamed: "platform") // Replace with your platform image
+        let texture = SKTexture(imageNamed: "automatic-platform-future-1") // Replace with your platform image
         super.init(texture: texture, color: .clear, size: texture.size())
         self.position = position
+        self.setScale(0.3)
         
         self.zPosition = 0 // Adjust as needed
         
@@ -39,16 +40,37 @@ class PlatformNodeY: SKSpriteNode, PlatformNodeProtocol {
         self.physicsBody?.restitution = 0.0
         
         self.previousPosition = self.position // Initialize previous position
+        
+        changeAnimation()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func changeAnimation() {
+        // Crie as texturas da animação
+        let textures = [
+            SKTexture(imageNamed: "automatic-platform-future-1"),
+            SKTexture(imageNamed: "automatic-platform-future-2"),
+            SKTexture(imageNamed: "automatic-platform-future-3"),
+            SKTexture(imageNamed: "automatic-platform-future-4"),
+            SKTexture(imageNamed: "automatic-platform-future-5")
+        ]
+        
+        // Crie a ação de animação com uma duração para cada frame
+        let animationAction = SKAction.animate(with: textures, timePerFrame: 0.1)
+        
+        // Repita a animação indefinidamente
+        let repeatAction = SKAction.repeatForever(animationAction)
+        
+        // Execute a ação de animação no nó
+        self.run(repeatAction, withKey: "PlatformsAnimation")
+    }
+    
     func update(deltaTime: TimeInterval) {
         // Calculate the distance the platform will move
         let distance = moveSpeed * CGFloat(deltaTime)
-        //        print(deltaTime)
         // Store the previous position
         previousPosition = self.position
         
