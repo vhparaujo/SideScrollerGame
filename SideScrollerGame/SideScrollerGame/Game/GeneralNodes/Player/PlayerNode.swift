@@ -384,10 +384,7 @@ class PlayerNode: SKSpriteNode {
             if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
                 
                 if SceneValue.scene == .first(playerEra) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        self.mpManager.gameFinished = true
-                        self.mpManager.endMatch()
-                    }
+                    transition()
                 }else{
                     mpManager.gameFinished = true
                     mpManager.endMatch()
@@ -430,8 +427,4 @@ class PlayerNode: SKSpriteNode {
     func triggerDeath() {
         playerInfo.isDying = true
     }
-}
-
-#Preview{
-    ContentView()
 }
