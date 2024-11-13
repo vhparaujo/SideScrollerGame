@@ -1,6 +1,7 @@
 import SpriteKit
 import Combine
 import SwiftUI
+import Foundation
 
 class PlayerNode: SKSpriteNode {
     
@@ -37,10 +38,11 @@ class PlayerNode: SKSpriteNode {
     
     
     var bringBoxToPresent = false
+    
     // Ladder interaction
-    var isOnLadder = false
     var canClimb = false
-    var canDescend = false
+    var goingUp = false
+    var goingDown = false
     
     // Fan interaction
     var isOnFan = false
@@ -110,47 +112,47 @@ class PlayerNode: SKSpriteNode {
     
     private func handleKeyPress(action: GameActions) {
         switch action {
-            case .moveLeft:
-                isMovingLeft = true
-                playerInfo.facingRight = false
-            case .moveRight:
-                isMovingRight = true
-                playerInfo.facingRight = true
-            case .jump:
-                if !isJumping {
-                    isJumping = true
-                    handleJump()
-                }
-            case .action:
-                handleActionKeyPress()
-            case .bringToPresent:
-                bringBoxToPresent = true
-            case .climb:
-                canClimb = isOnLadder
-            case .down:
-                canDescend = isOnLadder
+        case .moveLeft:
+            isMovingLeft = true
+            playerInfo.facingRight = false
+        case .moveRight:
+            isMovingRight = true
+            playerInfo.facingRight = true
+        case .jump:
+            if !isJumping {
+                isJumping = true
+                handleJump()
+            }
+        case .action:
+            handleActionKeyPress()
+        case .bringToPresent:
+            bringBoxToPresent = true
+        case .climb:
+            goingUp = true
+        case .down:
+            goingDown = true
         }
     }
     
     private func handleKeyRelease(action: GameActions) {
         switch action {
-            case .moveLeft:
-                isMovingLeft = false
-                playerInfo.facingRight = false
-            case .moveRight:
-                isMovingRight = false
-                playerInfo.facingRight = true
-            case .action:
-                handleActionKeyRelease()
-            case .bringToPresent:
-                // Handle bring to present logic if needed
-                bringBoxToPresent = false
-            case .climb:
-                canClimb = false
-            case .down:
-                canDescend = false
-            case .jump:
-                break
+        case .moveLeft:
+            isMovingLeft = false
+            playerInfo.facingRight = false
+        case .moveRight:
+            isMovingRight = false
+            playerInfo.facingRight = true
+        case .action:
+            handleActionKeyRelease()
+        case .bringToPresent:
+            // Handle bring to present logic if needed
+            bringBoxToPresent = false
+        case .climb:
+            goingUp = false
+        case .down:
+            goingDown = false
+        case .jump:
+            break
         }
     }
     
@@ -283,17 +285,11 @@ class PlayerNode: SKSpriteNode {
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
         }
-        
-        // Handle ladder movement
-        if isOnLadder {
-            physicsBody?.affectedByGravity = false
-            if canClimb {
-                position.y += 300 * CGFloat(deltaTime)
-            } else if canDescend {
-                position.y -= 300 * CGFloat(deltaTime)
+     
+        if canClimb {
+            if goingUp {
+                self.physicsBody?.applyForce(CGVector(dx: 0, dy: 17500))
             }
-        } else {
-            physicsBody?.affectedByGravity = true
         }
         
         // Handle death and respawn
@@ -321,10 +317,10 @@ class PlayerNode: SKSpriteNode {
         if !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             switch playerInfo.facingRight{
-                case true:
-                    changeState(to: .jumpingR)
-                case false:
-                    changeState(to: .jumpingL)
+            case true:
+                changeState(to: .jumpingR)
+            case false:
+                changeState(to: .jumpingL)
             }
             
         }
@@ -375,7 +371,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.ladder {
-            isOnLadder = true
+            canClimb = true
         }
         
         if otherCategory == PhysicsCategories.fan {
@@ -419,7 +415,10 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.ladder {
-            isOnLadder = false
+            canClimb = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1 ) {
+                self.physicsBody?.velocity.dy = 0
+            }
         }
         
         if otherCategory == PhysicsCategories.fan {

@@ -28,8 +28,11 @@ class Ladder: SKNode {
     
     private func setupPhysicsBody() {
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
-        self.physicsBody?.isDynamic = false
+        self.physicsBody?.isDynamic = true
+        self.physicsBody?.affectedByGravity = false
         self.physicsBody?.categoryBitMask = PhysicsCategories.ladder
+        self.physicsBody?.collisionBitMask = 0x0
+        self.physicsBody?.contactTestBitMask = PhysicsCategories.player
     }
     
     private func setupLadder(height: CGFloat) {
