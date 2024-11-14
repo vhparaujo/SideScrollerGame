@@ -106,13 +106,16 @@ class MapBuilder {
                             tilePhysicsNode.physicsBody?.collisionBitMask = PhysicsCategories.none
                         case "SpawnPoint":
                             addSpawnPoint(position: tilePositionInScene, size: tileSize)
-                            
                         case "Elevator":
                             addElevator(position: tilePositionInScene)
+                        case "ElevatorAutomatic":
+                            addElevatorAutomatic(position: tilePositionInScene)
                         case "Box":
                             addBox(position: tilePositionInScene)
                         case "Ladder":
                             addLadder(position: tilePositionInScene)
+                        case "ladder2":
+                            addLadder2(position: tilePositionInScene)
                         case "fanBase":
                             addFanBase(position: tilePositionInScene)
                         case "Player":
@@ -145,6 +148,12 @@ class MapBuilder {
                             addPlatform10(position: tilePositionInScene)
                         case "platform11":
                             addPlatform11(position: tilePositionInScene)
+                        case "platform12":
+                            addPlatform12(position: tilePositionInScene)
+                        case "platform13":
+                            addPlatform13(position: tilePositionInScene)
+                        case "platform14":
+                            addPlatform14(position: tilePositionInScene)
                         case "shiftKeyMap":
                             addImage(position: tilePositionInScene)
                             
@@ -262,6 +271,30 @@ class MapBuilder {
         }
     }
     
+    func addPlatform12(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform13(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
+    func addPlatform14(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
+            scene.platforms.append(newPlatform)
+            scene.addChild(newPlatform)
+        }
+    }
+    
     func addSpawnPoint(position: CGPoint, size: CGSize) {
         if let scene = scene as? FirstScene {
             let newSpawnPoint = SpawnPointNode(size: size, position: position)
@@ -311,9 +344,25 @@ class MapBuilder {
         }
     }
     
+    func addElevatorAutomatic(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newElavator =  ElevatorNode(playerEra: .present, mode: .manual, maxHeight: 400)
+            newElavator.position = position
+            scene.addChild(newElavator)
+        }
+    }
+    
     func addLadder(position: CGPoint) {
         if let scene = scene as? SecondScene {
             let newLadder = Ladder(size: CGSize(width: 80, height: 900))
+            newLadder.position = position
+            scene.addChild(newLadder)
+        }
+    }
+    
+    func addLadder2(position: CGPoint) {
+        if let scene = scene as? SecondScene {
+            let newLadder = Ladder(size: CGSize(width: 80, height: 500))
             newLadder.position = position
             scene.addChild(newLadder)
         }

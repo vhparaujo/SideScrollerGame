@@ -37,9 +37,9 @@ class Ladder: SKNode {
     
     private func setupLadder(height: CGFloat) {
         // Carregar as texturas dos assets
-        let topTexture = SKTexture(imageNamed: "stairs-future-top")
-        let middleTexture = SKTexture(imageNamed: "stairs-future-middle")
-        let bottomTexture = SKTexture(imageNamed: "stairs-future-bottom")
+        let topTexture = SKTexture(imageNamed: "stairs-present-top")
+        let middleTexture = SKTexture(imageNamed: "stairs-present-middle")
+        let bottomTexture = SKTexture(imageNamed: "stairs-present-bottom")
         
         // Alturas dos segmentos
         let middleHeight = middleTexture.size().height * 0.3
