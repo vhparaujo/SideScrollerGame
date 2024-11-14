@@ -116,7 +116,7 @@ class MapBuilder {
                             addLadder(position: tilePositionInScene)
                         case "ladder2":
                             addLadder2(position: tilePositionInScene)
-                        case "fanBase":
+                        case "fan":
                             addFanBase(position: tilePositionInScene)
                         case "Player":
                             addPlayer(position: tilePositionInScene)
@@ -233,7 +233,7 @@ class MapBuilder {
     
     func addPlatform7(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 200)
+            let newPlatform = PlatformNode(minX: 100, maxX: 900, position: position, moveSpeed: 200)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
