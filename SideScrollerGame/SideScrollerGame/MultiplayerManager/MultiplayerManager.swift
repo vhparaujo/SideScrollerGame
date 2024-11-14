@@ -20,7 +20,11 @@ class MultiplayerManager: NSObject {
     var gameFinished = false
     
     // Match information
-    var opponent: GKPlayer? = nil
+    var opponent: GKPlayer? = nil {
+        didSet {
+            print(opponent)
+        }
+    }
     
     //boxes
     var scenesGeneralBoxes: [UUID: BoxTeletransport] = [:]
@@ -39,9 +43,7 @@ class MultiplayerManager: NSObject {
     }
     
     /// The opponent's name.
-    var opponentName: String {
-        opponent?.displayName ?? "Invitation Pending"
-    }
+    var opponentName: String?
     
     /// The root view controller of the window.
     override init() {

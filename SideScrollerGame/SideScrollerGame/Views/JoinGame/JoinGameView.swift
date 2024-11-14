@@ -13,7 +13,7 @@ struct JoinGameView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack() {
+            VStack {
                 // Title Image
                 HStack {
                     Image("titleImage")
@@ -26,7 +26,7 @@ struct JoinGameView: View {
                 Spacer()
                 
                 HStack {
-                    Image("playButtonImage")
+                    Image("buttonBackground")
                         .resizable()
                         .scaledToFit()
                         .frame(width: geometry.size.width * 0.2)
@@ -38,16 +38,28 @@ struct JoinGameView: View {
                             }
                             managerMP.choosePlayer()
                         }
+                        .overlay {
+                            Text("Play")
+                                .font(.largeTitle)
+                        }
                     Spacer()
                 }
                 .padding(.horizontal, 20)
+                
                 Spacer()
             }
+            .background(
+                Image("startSceneBackground")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .blur(radius: 3)
+            )
             .padding(.horizontal, 40)
-
+            
         }
     }
 }
+
 #Preview {
-    JoinGameView(managerMP: MultiplayerManager())
+    JoinGameView()
 }

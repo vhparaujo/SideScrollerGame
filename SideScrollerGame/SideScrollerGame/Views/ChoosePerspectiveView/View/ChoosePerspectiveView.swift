@@ -10,7 +10,7 @@ import SwiftUI
 struct ChoosePerspectiveView: View {
     @Bindable var mpManager: MultiplayerManager = .shared
     @State var playerStartInfo: PlayerStartInfo
-
+    
     var body: some View {
         
         VStack {
@@ -25,43 +25,120 @@ struct ChoosePerspectiveView: View {
                 ForEach(PlayerEra.allCases, id: \.self) { perspective in
                     
                     if perspective == PlayerEra.future {
-                        ZStack {
-                            Image("FutureChoose")
-                                .resizable()
-                                .scaleEffect(0.5)
-                                .aspectRatio(contentMode: .fit)
-                            VStack {
-                                Image("player-future-idle-left-1")
-                                    .resizable()
-                                    .scaleEffect(0.35)
-                                    .aspectRatio(contentMode: .fit)
+                        VStack {
+                            if self.playerStartInfo.eraSelection == .future &&  self.mpManager.gameStartInfo.other.eraSelection != .future  {
+                                Text(mpManager.myName)
+                                    .padding()
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(Color.backgroundName)
+                                    }
+                            } else if self.mpManager.gameStartInfo.other.eraSelection == .future &&  self.playerStartInfo.eraSelection != .future {
+                                Text(mpManager.opponentName ?? "Other Player")
+                                    .padding()
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(Color.backgroundName)
+                                    }
+                            } else if self.mpManager.gameStartInfo.other.eraSelection == .future && self.playerStartInfo.eraSelection == .future {
+                                HStack {
+                                    Text(mpManager.myName)
+                                        .padding()
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .foregroundStyle(Color.backgroundName)
+                                        }
+                                    Text(mpManager.opponentName ?? "Other Player")
+                                        .padding()
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .foregroundStyle(Color.backgroundName)
+                                        }
+                                }
                             }
-                            .offset(y: -50)
-                        }
-                        .onTapGesture {
-                            self.playerStartInfo.eraSelection = perspective
-                            mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                            VStack(spacing: 0) {
+                                Image("FutureChoose")
+                                    .resizable()
+                                    .scaleEffect(0.5)
+                                    .aspectRatio(contentMode: .fit)
+                                
+                                    .overlay {
+                                        VStack {
+                                            Text("Future")
+                                                .font(.largeTitle)
+                                                .padding(.top, 280)
+                                        }
+                                    }
+                                
+//                                Image("buttonBackground")
+//                                    .resizable()
+//                                    .scaleEffect(0.25)
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .overlay {
+//                                        Text("Future")
+//                                            .font(.largeTitle)
+//                                    }
+                            }
+                            .onTapGesture {
+                                self.playerStartInfo.eraSelection = perspective
+                                mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                            }
                         }
                     } else {
-                        ZStack {
-                            Image("PresentChoose")
-                                .resizable()
-                                .scaleEffect(0.5)
-
-                                .aspectRatio(contentMode: .fit)
-                            VStack {
-                                Image("player-present-idle-right-1")
-                                    .resizable()
-                                    .scaleEffect(0.32)
-                                    .aspectRatio(contentMode: .fit)
+                        VStack {
+                            if self.playerStartInfo.eraSelection == .present &&  self.mpManager.gameStartInfo.other.eraSelection != .present  {
+                                Text(mpManager.myName)
+                                    .padding()
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(Color.backgroundName)
+                                    }
+                            } else if self.mpManager.gameStartInfo.other.eraSelection == .present &&  self.playerStartInfo.eraSelection != .present {
+                                Text(mpManager.opponentName ?? "Other Player")
+                                    .padding()
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .foregroundStyle(Color.backgroundName)
+                                    }
+                            } else if self.mpManager.gameStartInfo.other.eraSelection == .present && self.playerStartInfo.eraSelection == .present {
+                                HStack {
+                                    Text(mpManager.myName)
+                                        .padding()
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .foregroundStyle(Color.backgroundName)
+                                        }
+                                    Text(mpManager.opponentName ?? "Other Player")
+                                        .padding()
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .foregroundStyle(Color.backgroundName)
+                                        }
+                                }
                             }
-                            .offset(y: -38)
-                        }
-                        .onTapGesture {
-                            self.playerStartInfo.eraSelection = perspective
-                            mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                            VStack(spacing: 0) {
+                                Image("PresentChoose")
+                                    .resizable()
+                                    .scaleEffect(0.5)
+                                    .aspectRatio(contentMode: .fit)
+                                
+                                Image("buttonBackground")
+                                    .resizable()
+                                    .scaleEffect(0.25)
+                                    .aspectRatio(contentMode: .fit)
+                                    .overlay {
+                                        Text("Present")
+                                            .font(.largeTitle)
+                                    }
+                                
+                            }
+                            .onTapGesture {
+                                self.playerStartInfo.eraSelection = perspective
+                                mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                            }
                         }
                     }
+                    
                 }
             }
             
