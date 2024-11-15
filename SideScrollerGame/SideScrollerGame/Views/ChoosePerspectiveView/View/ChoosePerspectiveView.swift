@@ -99,34 +99,9 @@ struct ChoosePerspectiveView: View {
                     }
                 }
             }
-            
-            if isCountingDown {
-                Text("Starting in \(countdown) seconds...")
-                    .font(.headline)
-                    .padding()
-            }
+            startButton()
         }
         .padding()
-        .onChange(of: shouldStopTimer) { _, newValue in
-            if newValue {
-                stopCountdown()
-                shouldStopTimer = false
-            }
-        }
-        .onChange(of: playerStartInfo.eraSelection) { _, newValue in
-            if newValue == mpManager.gameStartInfo.other.eraSelection || mpManager.gameStartInfo.other.eraSelection == nil {
-                shouldStopTimer = true
-            }else if newValue != mpManager.gameStartInfo.other.eraSelection && mpManager.gameStartInfo.other.eraSelection == nil{
-                startCountdown()
-            }
-        }
-        .onChange(of: mpManager.gameStartInfo.other.eraSelection) { _, newValue in
-            if newValue == playerStartInfo.eraSelection || playerStartInfo.eraSelection == nil {
-                shouldStopTimer = true
-            } else if newValue != playerStartInfo.eraSelection && playerStartInfo.eraSelection == nil{
-                startCountdown()
-            }
-        }
         .background {
             Image("startSceneBackground")
                 .resizable()
@@ -172,6 +147,26 @@ struct ChoosePerspectiveView: View {
     
     private func stopCountdown() {
         isCountingDown = false
+    }
+    
+    private func startButton() -> some View {
+        Group {
+            if (mpManager.gameStartInfo.local.eraSelection != mpManager.gameStartInfo.other.eraSelection) && (mpManager.gameStartInfo.local.eraSelection != nil && mpManager.gameStartInfo.other.eraSelection != nil) {
+                
+                Button {
+                    if mpManager.gameStartInfo.local.isStartPressed == .yes {
+                        playerStartInfo.isStartPressed = .no
+                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                    } else {
+                        playerStartInfo.isStartPressed = .yes
+                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                    }
+                } label: {
+                    Text(mpManager.gameStartInfo.local.isStartPressed == .yes ? "Cancel" : "Ready")
+                }
+            }
+        }
+        
     }
 }
 
