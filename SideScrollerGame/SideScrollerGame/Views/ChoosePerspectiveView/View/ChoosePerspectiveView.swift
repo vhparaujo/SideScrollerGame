@@ -116,11 +116,15 @@ struct ChoosePerspectiveView: View {
         .onChange(of: playerStartInfo.eraSelection) { _, newValue in
             if newValue == mpManager.gameStartInfo.other.eraSelection || mpManager.gameStartInfo.other.eraSelection == nil {
                 shouldStopTimer = true
+            }else if newValue != mpManager.gameStartInfo.other.eraSelection && mpManager.gameStartInfo.other.eraSelection == nil{
+                startCountdown()
             }
         }
         .onChange(of: mpManager.gameStartInfo.other.eraSelection) { _, newValue in
             if newValue == playerStartInfo.eraSelection || playerStartInfo.eraSelection == nil {
                 shouldStopTimer = true
+            } else if newValue != playerStartInfo.eraSelection && playerStartInfo.eraSelection == nil{
+                startCountdown()
             }
         }
         .background {
@@ -140,7 +144,6 @@ struct ChoosePerspectiveView: View {
                 .onTapGesture {
                     self.playerStartInfo.eraSelection = perspective
                     mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
-                    startCountdown()
                 }
         }
     }
