@@ -152,8 +152,6 @@ class MapBuilder {
                             addPlatform12(position: tilePositionInScene)
                         case "platform13":
                             addPlatform13(position: tilePositionInScene)
-                        case "platform14":
-                            addPlatform14(position: tilePositionInScene)
                         case "shiftKeyMap":
                             addImage(position: tilePositionInScene)
                             
@@ -273,7 +271,7 @@ class MapBuilder {
     
     func addPlatform12(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
+            let newPlatform = PlatformNode(minX: 100, maxX: 700, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -281,15 +279,7 @@ class MapBuilder {
     
     func addPlatform13(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
-            scene.platforms.append(newPlatform)
-            scene.addChild(newPlatform)
-        }
-    }
-    
-    func addPlatform14(position: CGPoint) {
-        if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 500, position: position, moveSpeed: 400)
+            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
