@@ -16,7 +16,7 @@ class SawNode: SKNode {
         let sawTexture = SKTexture(imageNamed: "\(playerEra == .present ? "present-saw-blade" : "future-saw-blade")-1")
         let saw = SKSpriteNode(texture: sawTexture, size: sawTexture.size())
         
-        saw.physicsBody = SKPhysicsBody(rectangleOf: saw.size)
+        saw.physicsBody = SKPhysicsBody(circleOfRadius: saw.size.width / 2)
         
         saw.physicsBody?.affectedByGravity = false
         saw.physicsBody?.isDynamic = false
