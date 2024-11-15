@@ -112,48 +112,47 @@ class PlayerNode: SKSpriteNode {
     
     private func handleKeyPress(action: GameActions) {
         switch action {
-        case .moveLeft:
-                SceneValue2.shared.scene2 = .second(playerEra)
-            isMovingLeft = true
-            playerInfo.facingRight = false
-        case .moveRight:
-            isMovingRight = true
-            playerInfo.facingRight = true
-        case .jump:
-            if !isJumping {
-                isJumping = true
-                handleJump()
-            }
-        case .action:
-            handleActionKeyPress()
-        case .bringToPresent:
-            bringBoxToPresent = true
-        case .climb:
-            goingUp = true
-        case .down:
-            goingDown = true
+            case .moveLeft:
+                isMovingLeft = true
+                playerInfo.facingRight = false
+            case .moveRight:
+                isMovingRight = true
+                playerInfo.facingRight = true
+            case .jump:
+                if !isJumping {
+                    isJumping = true
+                    handleJump()
+                }
+            case .action:
+                handleActionKeyPress()
+            case .bringToPresent:
+                bringBoxToPresent = true
+            case .climb:
+                goingUp = true
+            case .down:
+                goingDown = true
         }
     }
     
     private func handleKeyRelease(action: GameActions) {
         switch action {
-        case .moveLeft:
-            isMovingLeft = false
-            playerInfo.facingRight = false
-        case .moveRight:
-            isMovingRight = false
-            playerInfo.facingRight = true
-        case .action:
-            handleActionKeyRelease()
-        case .bringToPresent:
-            // Handle bring to present logic if needed
-            bringBoxToPresent = false
-        case .climb:
-            goingUp = false
-        case .down:
-            goingDown = false
-        case .jump:
-            break
+            case .moveLeft:
+                isMovingLeft = false
+                playerInfo.facingRight = false
+            case .moveRight:
+                isMovingRight = false
+                playerInfo.facingRight = true
+            case .action:
+                handleActionKeyRelease()
+            case .bringToPresent:
+                // Handle bring to present logic if needed
+                bringBoxToPresent = false
+            case .climb:
+                goingUp = false
+            case .down:
+                goingDown = false
+            case .jump:
+                break
         }
     }
     
@@ -286,7 +285,7 @@ class PlayerNode: SKSpriteNode {
         }else if !playerInfo.facingRight{
             changeState(to: .idleL)
         }
-     
+        
         if canClimb {
             if goingUp {
                 self.physicsBody?.applyForce(CGVector(dx: 0, dy: 17500))
@@ -318,10 +317,10 @@ class PlayerNode: SKSpriteNode {
         if !playerInfo.action {
             self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: jumpImpulse))
             switch playerInfo.facingRight{
-            case true:
-                changeState(to: .jumpingR)
-            case false:
-                changeState(to: .jumpingL)
+                case true:
+                    changeState(to: .jumpingR)
+                case false:
+                    changeState(to: .jumpingL)
             }
             
         }
@@ -395,6 +394,12 @@ class PlayerNode: SKSpriteNode {
     }
     
     func transition(){
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
+            SceneValue2.shared.scene2 = .second(playerEra)
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let transition = SKTransition.fade(withDuration: 1.0)
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
