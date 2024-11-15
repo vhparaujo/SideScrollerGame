@@ -36,6 +36,7 @@ class PlayerNode: SKSpriteNode {
     
     weak var elevatorRef: ElevatorNode?
     
+    var goToBackToMenu = false
     
     var bringBoxToPresent = false
     
@@ -231,8 +232,11 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
+        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && !goToBackToMenu {
             transition()
+        }else if goToBackToMenu {
+            mpManager.gameFinished = true
+            mpManager.endMatch()
         }
         
         self.boxRef = checkForNearbyObject(type: BoxNode.self)
@@ -380,25 +384,17 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.nextScene {
             playerInfo.readyToNextScene = true
-            
-            if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
-                if SceneValue2.shared.scene2 == .second(playerEra) {
-                    
-                }else{
-                    print("saiu")
-                    mpManager.gameFinished = true
-                    mpManager.endMatch()
-                }
-            }
         }
     }
     
     func transition(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             let transition = SKTransition.fade(withDuration: 1.0)
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
         }
     }
+    
+    
     func didEnd(_ contact: SKPhysicsContact) {
         let otherBody = (contact.bodyA.categoryBitMask == PhysicsCategories.player) ? contact.bodyB : contact.bodyA
         let otherCategory = otherBody.categoryBitMask
