@@ -396,6 +396,7 @@ class PlayerNode: SKSpriteNode {
     
     func transition(){
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.scene?.removeAllChildren()
             let transition = SKTransition.fade(withDuration: 1.0)
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
         }
