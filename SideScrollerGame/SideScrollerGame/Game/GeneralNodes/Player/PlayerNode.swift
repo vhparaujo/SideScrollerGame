@@ -382,9 +382,8 @@ class PlayerNode: SKSpriteNode {
             playerInfo.readyToNextScene = true
             
             if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
-                print(SceneValue2.shared.scene2)
                 if SceneValue2.shared.scene2 == .second(playerEra) {
-                    transition()
+                    
                 }else{
                     print("saiu")
                     mpManager.gameFinished = true
@@ -396,7 +395,6 @@ class PlayerNode: SKSpriteNode {
     
     func transition(){
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.scene?.removeAllChildren()
             let transition = SKTransition.fade(withDuration: 1.0)
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
         }
