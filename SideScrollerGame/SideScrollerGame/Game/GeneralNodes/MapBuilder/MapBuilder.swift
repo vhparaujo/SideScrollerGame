@@ -263,7 +263,7 @@ class MapBuilder {
     
     func addPlatform11(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 600, position: position, moveSpeed: 400)
+            let newPlatform = PlatformNode(minX: 100, maxX: 700, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
@@ -271,7 +271,7 @@ class MapBuilder {
     
     func addPlatform12(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let newPlatform = PlatformNode(minX: 100, maxX: 700, position: position, moveSpeed: 400)
+            let newPlatform = PlatformNode(minX: 50, maxX: 700, position: position, moveSpeed: 400)
             scene.platforms.append(newPlatform)
             scene.addChild(newPlatform)
         }
