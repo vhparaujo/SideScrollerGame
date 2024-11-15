@@ -35,7 +35,7 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         self.playerEra = playerEra
         self.mpManager = mpManager
         super.init(size: size)
-        SceneValue2.shared.scene2 = .third(playerEra)
+        SceneValue2.shared.scene2 = .first(playerEra)
     }
     
     required init?(coder aDecoder: NSCoder) {
