@@ -20,8 +20,10 @@ class GameViewModel: ObservableObject {
     func createScene(size: CGSize) -> SKScene {
         switch currentSceneType {
         case .first(let playerEra):
+                changeScene(to: .first(playerEra))
             return FirstScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
         case .second(let playerEra):
+                changeScene(to: .second(playerEra))
             return SecondScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
         case .third(let playerEra):
             return ThirdScene(size: size, mpManager: MultiplayerManager.shared, playerEra: playerEra)
