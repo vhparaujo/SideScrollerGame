@@ -155,6 +155,9 @@ struct ChoosePerspectiveView: View {
                 timer.invalidate()
                 isCountingDown = false
                 // Take any additional action here when the countdown reaches zero
+                
+                playerStartInfo.isStartPressed = .yes
+                mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
             }
             
             if shouldStopTimer {
