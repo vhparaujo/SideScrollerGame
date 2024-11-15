@@ -382,10 +382,11 @@ class PlayerNode: SKSpriteNode {
             playerInfo.readyToNextScene = true
             
             if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
-                
+                print(SceneValue2.shared.scene2)
                 if SceneValue2.shared.scene2 == .second(playerEra) {
                     transition()
                 }else{
+                    print("saiu")
                     mpManager.gameFinished = true
                     mpManager.endMatch()
                 }
