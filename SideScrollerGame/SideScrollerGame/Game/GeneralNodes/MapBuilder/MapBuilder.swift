@@ -427,7 +427,8 @@ class MapBuilder {
     
     func addSaw(position: CGPoint) {
         if let scene = scene as? SecondScene {
-            let saw = SawNode(playerEra: .present, speed: 200, range: 500)
+            let randomSpeed = CGFloat.random(in: 150...350)
+            let saw = SawNode(playerEra: .present, speed: randomSpeed, range: 500)
             saw.position = position
             scene.addChild(saw)
         }
