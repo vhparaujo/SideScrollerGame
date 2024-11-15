@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes &&
             !mpManager.gameFinished{
-            GameView(viewModel: .init(currentSceneType: .second(mpManager.gameStartInfo.local.eraSelection!)))
+            GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
             
             
         }else if mpManager.gameFinished &&

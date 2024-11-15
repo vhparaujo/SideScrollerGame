@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let options: NSApplication.PresentationOptions = [
             .hideDock,
 //            .hideMenuBar,
-            .disableProcessSwitching, // Disable Command + Tab
+//            .disableProcessSwitching, // Disable Command + Tab
             .disableHideApplication
         ]
         NSApp.presentationOptions = options
