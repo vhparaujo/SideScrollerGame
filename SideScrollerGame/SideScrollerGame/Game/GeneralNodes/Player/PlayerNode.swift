@@ -383,8 +383,8 @@ class PlayerNode: SKSpriteNode {
             
             if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true{
                 
-                if SceneValue.scene == .first(playerEra) {
-                    GameViewModel.shared.changeScene(to: .second(playerEra))
+                if SceneValue2.shared.scene2 == .first(playerEra) {
+                    SceneValue2.shared.scene2 = .second(playerEra)
                     transition()
                 }else{
                     mpManager.gameFinished = true
