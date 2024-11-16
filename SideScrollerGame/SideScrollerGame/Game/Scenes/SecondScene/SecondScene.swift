@@ -35,7 +35,6 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         self.playerEra = playerEra
         self.mpManager = mpManager
         super.init(size: size)
-        self.mpManager.backToMenu = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,6 +55,8 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
+        self.mpManager.backToMenu = true
+
     }
     
     override func keyUp(with event: NSEvent) {}
