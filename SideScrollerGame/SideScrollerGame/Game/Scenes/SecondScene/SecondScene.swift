@@ -55,7 +55,6 @@ class SecondScene: SKScene, SKPhysicsContactDelegate {
         
         setupBackground()
         setupCamera()
-        self.mpManager.backToMenu = true
 
     }
     
