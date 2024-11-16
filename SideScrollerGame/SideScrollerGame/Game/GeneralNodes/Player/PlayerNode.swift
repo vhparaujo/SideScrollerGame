@@ -232,9 +232,9 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && !goToBackToMenu {
+        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && !mpManager.backToMenu {
             transition()
-        }else if goToBackToMenu {
+        }else if mpManager.backToMenu {
             mpManager.gameFinished = true
             mpManager.endMatch()
         }

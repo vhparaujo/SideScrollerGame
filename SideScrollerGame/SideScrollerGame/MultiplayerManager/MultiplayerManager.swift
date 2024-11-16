@@ -18,7 +18,7 @@ class MultiplayerManager: NSObject {
     var myMatch: GKMatch? = nil
     var automatch = false
     var gameFinished = false
-    
+    var backToMenu = false
     // Match information
     var opponent: GKPlayer? = nil {
         didSet {
