@@ -24,12 +24,13 @@ extension MultiplayerManager: GKMatchmakerViewControllerDelegate {
     
     /// Dismisses the matchmaker interface when either player cancels matchmaking.
     func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
+        endMatch()
         viewController.dismiss(true)
     }
     
     /// Reports an error during the matchmaking process.
     func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
-        print("\n\nMatchmaker view controller fails with error: \(error.localizedDescription)")
+        endMatch()
         viewController.dismiss(true)
     }
 }

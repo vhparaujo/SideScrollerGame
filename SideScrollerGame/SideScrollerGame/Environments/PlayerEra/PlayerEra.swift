@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PlayerEra {
+enum PlayerEra: CaseIterable, Codable {
     case present
     case future
 }

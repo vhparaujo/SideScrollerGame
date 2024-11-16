@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "saw-base.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

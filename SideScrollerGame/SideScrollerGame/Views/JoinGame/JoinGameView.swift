@@ -9,19 +9,57 @@ import SwiftUI
 import GameKit
 
 struct JoinGameView: View {
-    @Bindable var managerMP: MultiplayerManager
+    @Bindable var managerMP: MultiplayerManager = .shared
+    
     var body: some View {
-        Button("Start Game"){
-            if managerMP.automatch {
-                // Turn automatch off.
-                GKMatchmaker.shared().cancel()
-                managerMP.automatch = false
+        GeometryReader { geometry in
+            VStack {
+                // Title Image
+                HStack {
+                    Image("titleImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.5)
+                    Spacer()
+                }.padding(.top, 50)
+                Spacer()
+                Spacer()
+                
+                HStack {
+                    Image("buttonBackground")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.2)
+                        .onTapGesture {
+                            if managerMP.automatch {
+                                // Turn automatch off.
+                                GKMatchmaker.shared().cancel()
+                                managerMP.automatch = false
+                            }
+                            managerMP.choosePlayer()
+                        }
+                        .overlay {
+                            Text("Play")
+                                .font(.largeTitle)
+                        }
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer()
             }
-            managerMP.choosePlayer()
-        }.buttonStyle(.borderedProminent)
+            .background(
+                Image("startSceneBackground")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .blur(radius: 3)
+            )
+            .padding(.horizontal, 40)
+            
+        }
     }
 }
 
 #Preview {
-    JoinGameView(managerMP: MultiplayerManager())
+    JoinGameView()
 }

@@ -10,10 +10,10 @@ import Testing
 
 struct GameControllerTest {
     
-    var gameController: GameController
+    var gameController: GameControllerManager
     
     init() async {
-        self.gameController = await GameController()
+        self.gameController = await GameControllerManager()
     }
     
     
@@ -41,7 +41,7 @@ struct GameControllerTest {
                 0:  .moveLeft,  // A key
                 2:  .moveRight, // D key
                 5: .jump,      // random key
-                14: .grab       // E key
+                14: .action       // E key
             ]
         }
         
@@ -59,7 +59,7 @@ struct GameControllerTest {
                 0:  .moveLeft,  // A key
                 2:  .moveRight, // D key
                 49: .jump,      // Space key
-                14: .grab       // E key
+                14: .action       // E key
             ]
         }
         
