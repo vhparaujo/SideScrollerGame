@@ -233,7 +233,7 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && mpManager.backToMenu == false {
+        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == false {
             transition()
         }else if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu {
             mpManager.backToMenu = true
@@ -384,7 +384,7 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.nextScene {
             
-            if ((self.scene as? SecondScene) != nil) && goToBackToMenu {
+            if self.scene is SecondScene {
                 self.goToBackToMenu = true
                 playerInfo.readyToNextScene = true
             }else {
