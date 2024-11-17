@@ -383,10 +383,12 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            playerInfo.readyToNextScene = true
             
             if ((self.scene as? SecondScene) != nil) && goToBackToMenu {
                 self.goToBackToMenu = true
+                playerInfo.readyToNextScene = true
+            }else {
+                playerInfo.readyToNextScene = true
             }
             
         }
