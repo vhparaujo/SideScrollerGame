@@ -233,8 +233,10 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true {
+        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && mpManager.backToMenu == false {
             transition()
+        }else if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu {
+            mpManager.backToMenu = true
         }
         
         self.boxRef = checkForNearbyObject(type: BoxNode.self)
@@ -384,7 +386,7 @@ class PlayerNode: SKSpriteNode {
             playerInfo.readyToNextScene = true
             
             if ((self.scene as? SecondScene) != nil) && goToBackToMenu {
-                mpManager.gameFinished = true
+                self.goToBackToMenu = true
             }
             
         }
@@ -393,8 +395,8 @@ class PlayerNode: SKSpriteNode {
     func transition(){
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             let transition = SKTransition.fade(withDuration: 1.0)
+            
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
-            self.goToBackToMenu = true
         }
     }
     
