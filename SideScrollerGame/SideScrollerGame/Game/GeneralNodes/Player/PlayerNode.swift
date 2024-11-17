@@ -387,8 +387,6 @@ class PlayerNode: SKSpriteNode {
             if ((self.scene as? SecondScene) != nil) {
                 mpManager.backToMenu = true
             }
-                
-            
         }
     }
     

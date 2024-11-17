@@ -34,7 +34,7 @@ class MultiplayerManager: NSObject {
     
     /// The name of the match.
     var matchName: String {
-        "\(opponentName) Match"
+        "\(String(describing: opponentName)) Match"
     }
     
     /// The local player's name.

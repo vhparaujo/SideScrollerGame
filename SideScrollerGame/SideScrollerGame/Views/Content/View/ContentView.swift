@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     @State var mpManager = MultiplayerManager.shared
+    @State var gotoGame: Bool = false
     
     var body: some View {
-        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes &&
-            !mpManager.gameFinished{
-            GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
+        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes && !mpManager.gameFinished && gotoGame {
             
+            GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
             
         }else if mpManager.gameFinished &&
                     !mpManager.choosingEra &&
@@ -23,7 +23,7 @@ struct ContentView: View {
             EndGameView()
             
         }else if mpManager.choosingEra {
-            ChoosePerspectiveView(playerStartInfo: .init( isStartPressed: .no))
+            ChoosePerspectiveView(gotogame: $gotoGame, playerStartInfo: .init( isStartPressed: .no))
         }else{
             JoinGameView()
         }
