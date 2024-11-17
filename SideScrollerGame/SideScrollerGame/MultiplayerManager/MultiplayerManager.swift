@@ -99,8 +99,6 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match and cleans up resources.
     func endMatch() {
-        gameStartInfo.local.eraSelection = nil
-        gameStartInfo.local.isStartPressed = .no
         myMatch?.disconnect()
         myMatch = nil
         gameFinished = true

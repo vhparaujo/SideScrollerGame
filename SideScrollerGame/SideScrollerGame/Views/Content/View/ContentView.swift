@@ -12,19 +12,19 @@ struct ContentView: View {
     @State var gotoGame: Bool = false
     
     var body: some View {
-        if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes && !mpManager.gameFinished && gotoGame {
-            
+        if !mpManager.gameFinished && gotoGame {
+            let _ = print("Entrou no GameView")
             GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
             
-        }else if mpManager.gameFinished &&
+        } else if mpManager.gameFinished &&
                     !mpManager.choosingEra &&
                     mpManager.gameStartInfo.local.isStartPressed == .yes &&
                     mpManager.gameStartInfo.other.isStartPressed == .yes {
             EndGameView()
             
-        }else if mpManager.choosingEra {
+        } else if mpManager.choosingEra {
             ChoosePerspectiveView(gotogame: $gotoGame, playerStartInfo: .init( isStartPressed: .no))
-        }else{
+        } else {
             JoinGameView()
         }
 //        GameView()
