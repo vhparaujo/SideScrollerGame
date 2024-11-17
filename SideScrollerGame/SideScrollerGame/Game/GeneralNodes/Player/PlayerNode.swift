@@ -239,9 +239,7 @@ class PlayerNode: SKSpriteNode {
         }
         
         if playerInfo.readyToNextScene == true && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == true {
-            print("entrou no backToMenu")
             mpManager.gameFinished = true
-            mpManager.backToMenu = true
         }
         
         self.boxRef = checkForNearbyObject(type: BoxNode.self)
