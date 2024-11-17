@@ -11,29 +11,46 @@ struct EndGameView: View {
     @Bindable var mpManager = MultiplayerManager.shared
 
     var body: some View {
-        VStack {
+        GeometryReader { geometry in
+            VStack {
+                // Title Image
+                HStack {
+                    Image("titleImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.5)
+                    Spacer()
+                }.padding(.top, 50)
+                Spacer()
+                Spacer()
+                
+                HStack {
+                    Image("buttonBackground")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.2)
+                        .onTapGesture {
+                            mpManager.gameFinished = false
+                            mpManager.endMatch()
+                        }
+                        .overlay {
+                            Text("Back To Menu")
+                                .font(.largeTitle)
+                        }
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+            .background(
+                Image("startSceneBackground")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .blur(radius: 3)
+            )
+            .padding(.horizontal, 40)
             
-            Text("End Game")
-                .font(.title)
-            Text("Congratulations!!")
-                .font(.title2)
-            
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.blue)
-                Text("Back to menu")
-                    .font(.title)
-                    .bold()
-            }
-            .padding()
-            .frame(maxWidth: 300, maxHeight: 100)
-            .onTapGesture {
-                mpManager.gameFinished = false
-                mpManager.endMatch()
-            }
-            .onAppear {
-                mpManager.endMatch()
-            }
         }
     }
 }
