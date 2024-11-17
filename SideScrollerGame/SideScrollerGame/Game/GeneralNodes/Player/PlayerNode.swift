@@ -233,9 +233,14 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
+
         if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == false {
             transition()
-        }else if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu {
+        }
+        
+        if playerInfo.readyToNextScene == true && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == true {
+            print("entrou no backToMenu")
+            mpManager.gameFinished = true
             mpManager.backToMenu = true
         }
         
