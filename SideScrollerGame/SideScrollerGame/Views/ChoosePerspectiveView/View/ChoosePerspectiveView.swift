@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChoosePerspectiveView: View {
+    @Binding var gotogame: Bool
     @Bindable var mpManager: MultiplayerManager = .shared
     @State var playerStartInfo: PlayerStartInfo
     @State private var countdown: Int = 5
@@ -132,10 +133,8 @@ struct ChoosePerspectiveView: View {
             } else {
                 timer.invalidate()
                 isCountingDown = false
-                // Take any additional action here when the countdown reaches zero
-                
-                playerStartInfo.isStartPressed = .yes
-                mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                countdown = 5
+                gotogame = true
             }
             
             if shouldStopTimer {
@@ -151,25 +150,30 @@ struct ChoosePerspectiveView: View {
     
     private func startButton() -> some View {
         Group {
-            if (mpManager.gameStartInfo.local.eraSelection != mpManager.gameStartInfo.other.eraSelection) && (mpManager.gameStartInfo.local.eraSelection != nil && mpManager.gameStartInfo.other.eraSelection != nil) {
-                
-                Button {
-                    if mpManager.gameStartInfo.local.isStartPressed == .yes {
-                        playerStartInfo.isStartPressed = .no
-                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
-                    } else {
-                        playerStartInfo.isStartPressed = .yes
-                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+            if mpManager.gameStartInfo.local.isStartPressed == .yes && mpManager.gameStartInfo.other.isStartPressed == .yes {
+                //create a timer view of 5 sec
+                Text("Starting in \(countdown)")
+                    .font(.largeTitle)
+                    .onAppear {
+                        startCountdown()
                     }
-                } label: {
-                    Text(mpManager.gameStartInfo.local.isStartPressed == .yes ? "Cancel" : "Ready")
+                
+            }else {
+                if (mpManager.gameStartInfo.local.eraSelection != mpManager.gameStartInfo.other.eraSelection) && (mpManager.gameStartInfo.local.eraSelection != nil && mpManager.gameStartInfo.other.eraSelection != nil) {
+                    
+                    Button {
+                        if mpManager.gameStartInfo.local.isStartPressed == .yes {
+                            playerStartInfo.isStartPressed = .no
+                            mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                        } else {
+                            playerStartInfo.isStartPressed = .yes
+                            mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                        }
+                    } label: {
+                        Text(mpManager.gameStartInfo.local.isStartPressed == .yes ? "Cancel" : "Ready")
+                    }
                 }
             }
         }
-        
     }
-}
-
-#Preview {
-    ChoosePerspectiveView(mpManager: .init(), playerStartInfo: .init(isStartPressed: .no))
 }

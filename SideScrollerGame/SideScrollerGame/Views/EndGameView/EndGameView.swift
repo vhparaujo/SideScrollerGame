@@ -31,7 +31,9 @@ struct EndGameView: View {
                 mpManager.gameFinished = false
                 mpManager.endMatch()
             }
-   
+            .onAppear {
+                mpManager.endMatch()
+            }
         }
     }
 }
