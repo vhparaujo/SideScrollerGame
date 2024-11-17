@@ -34,7 +34,7 @@ class MultiplayerManager: NSObject {
     
     /// The name of the match.
     var matchName: String {
-        "\(String(describing: opponentName)) Match"
+        "\(opponentName) Match"
     }
     
     /// The local player's name.
@@ -99,6 +99,8 @@ class MultiplayerManager: NSObject {
     
     /// Stops the current match and cleans up resources.
     func endMatch() {
+        gameStartInfo.local.eraSelection = nil
+        gameStartInfo.local.isStartPressed = .no
         myMatch?.disconnect()
         myMatch = nil
         gameFinished = true

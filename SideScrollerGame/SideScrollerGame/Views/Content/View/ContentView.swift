@@ -16,11 +16,11 @@ struct ContentView: View {
             let _ = print("Entrou no GameView")
             GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
             
-        } else if mpManager.gameFinished &&
-                    !mpManager.choosingEra &&
-                    mpManager.gameStartInfo.local.isStartPressed == .yes &&
-                    mpManager.gameStartInfo.other.isStartPressed == .yes {
+        } else if mpManager.gameFinished {
             EndGameView()
+                .onAppear {
+                    gotoGame = false
+                }
             
         } else if mpManager.choosingEra {
             ChoosePerspectiveView(gotogame: $gotoGame, playerStartInfo: .init( isStartPressed: .no))

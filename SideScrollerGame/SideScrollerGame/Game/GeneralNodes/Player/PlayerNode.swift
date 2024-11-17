@@ -234,9 +234,6 @@ class PlayerNode: SKSpriteNode {
     func update(deltaTime: TimeInterval) {
         if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && !mpManager.backToMenu {
             transition()
-        }else if mpManager.backToMenu {
-            mpManager.gameFinished = true
-            mpManager.endMatch()
         }
         
         self.boxRef = checkForNearbyObject(type: BoxNode.self)
@@ -384,9 +381,11 @@ class PlayerNode: SKSpriteNode {
         
         if otherCategory == PhysicsCategories.nextScene {
             playerInfo.readyToNextScene = true
+            
             if ((self.scene as? SecondScene) != nil) {
-                mpManager.backToMenu = true
+                mpManager.gameFinished = true
             }
+            
         }
     }
     
