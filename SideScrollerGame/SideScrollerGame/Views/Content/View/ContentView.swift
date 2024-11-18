@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         if !mpManager.gameFinished && gotoGame {
             let _ = print("Entrou no GameView")
-            GameView(viewModel: .init(currentSceneType: .second(mpManager.gameStartInfo.local.eraSelection!)))
+            GameView(viewModel: .init(currentSceneType: .first(mpManager.gameStartInfo.local.eraSelection!)))
             
         } else if mpManager.gameFinished {
             EndGameView()
