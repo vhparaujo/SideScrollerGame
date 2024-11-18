@@ -24,7 +24,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         setPresentationOptions()
         
     }
-
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        NSApplication.shared.terminate(self)
+        return true
+    }
+    
     func windowWillExitFullScreen(_ notification: Notification) {
         // Prevent exiting fullscreen
         if let window = notification.object as? NSWindow {
