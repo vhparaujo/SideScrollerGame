@@ -118,8 +118,11 @@ struct ChoosePerspectiveView: View {
                 .scaleEffect(0.5)
                 .aspectRatio(contentMode: .fit)
                 .onTapGesture {
-                    self.playerStartInfo.eraSelection = perspective
-                    mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                    if !isCountingDown {
+                        self.playerStartInfo.eraSelection = perspective
+                        mpManager.sendInfoToOtherPlayers(content: playerStartInfo)
+                    }
+                    
                 }
         }
     }
