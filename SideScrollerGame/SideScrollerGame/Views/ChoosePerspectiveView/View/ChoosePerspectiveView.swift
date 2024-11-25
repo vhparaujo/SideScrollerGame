@@ -107,7 +107,7 @@ struct ChoosePerspectiveView: View {
             Image("startSceneBackground")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .blur(radius: 3)
+//                .blur(radius: 3)
         }
     }
     

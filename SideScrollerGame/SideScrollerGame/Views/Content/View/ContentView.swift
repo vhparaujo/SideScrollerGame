@@ -27,9 +27,8 @@ struct ContentView: View {
         } else {
             JoinGameView()
         }
-//        GameView()
-
     }
+
 }
 
 #Preview {
