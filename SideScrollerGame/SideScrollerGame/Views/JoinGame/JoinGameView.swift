@@ -40,7 +40,7 @@ struct JoinGameView: View {
                         }
                         .overlay {
                             Text("Play")
-                                .font(.largeTitle)
+                                .font(Font.custom("Lentariso-Bold", size: 20, relativeTo: .title))
                         }
                     Spacer()
                 }
@@ -52,14 +52,13 @@ struct JoinGameView: View {
                 Image("startSceneBackground")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .blur(radius: 3)
             )
             .padding(.horizontal, 40)
-            
         }
     }
 }
 
 #Preview {
     JoinGameView()
+      
 }
