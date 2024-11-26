@@ -27,6 +27,8 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>ATSApplicationFontsPath</key>
+	<string>Font/</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Lentariso-Bd.ttf</string>
