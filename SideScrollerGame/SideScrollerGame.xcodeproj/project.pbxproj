@@ -23,6 +23,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B38300172CF645FA005441CA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Font;
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		283801672C9B42A400A91EDA /* Germinare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Germinare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B51DFF22CA1CE8C002DC7F6 /* SideScrollerGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SideScrollerGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -30,20 +42,37 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		28D0F4992CC1A78100FF9DA6 /* Exceptions for "SideScrollerGame" folder in "SideScrollerGame" target */ = {
+		B38300162CF645C6005441CA /* Exceptions for "SideScrollerGame" folder in "SideScrollerGame" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"Font/Lentariso-Bd.ttf",
+				"Font/Lentariso-BdIt.ttf",
+				"Font/Lentariso-It.ttf",
+				"Font/Lentariso-Re.ttf",
 			);
 			target = 283801662C9B42A400A91EDA /* SideScrollerGame */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		B383001C2CF64631005441CA /* Exceptions for "SideScrollerGame" folder in "Copy Files" phase from "SideScrollerGame" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = B38300172CF645FA005441CA /* CopyFiles */;
+			membershipExceptions = (
+				"Font/Lentariso-Bd.ttf",
+				"Font/Lentariso-BdIt.ttf",
+				"Font/Lentariso-It.ttf",
+				"Font/Lentariso-Re.ttf",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		283801692C9B42A400A91EDA /* SideScrollerGame */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				28D0F4992CC1A78100FF9DA6 /* Exceptions for "SideScrollerGame" folder in "SideScrollerGame" target */,
+				B38300162CF645C6005441CA /* Exceptions for "SideScrollerGame" folder in "SideScrollerGame" target */,
+				B383001C2CF64631005441CA /* Exceptions for "SideScrollerGame" folder in "Copy Files" phase from "SideScrollerGame" target */,
 			);
 			path = SideScrollerGame;
 			sourceTree = "<group>";
@@ -115,6 +144,7 @@
 				283801632C9B42A400A91EDA /* Sources */,
 				283801642C9B42A400A91EDA /* Frameworks */,
 				283801652C9B42A400A91EDA /* Resources */,
+				B38300172CF645FA005441CA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -426,7 +456,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Victor.SideScrollerGame;
 				PRODUCT_MODULE_NAME = Germinare;
 				PRODUCT_NAME = Germinare;
@@ -463,7 +493,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Victor.SideScrollerGame;
 				PRODUCT_MODULE_NAME = Germinare;
 				PRODUCT_NAME = Germinare;

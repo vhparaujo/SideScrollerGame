@@ -64,6 +64,7 @@ class PlayerNode: SKSpriteNode {
         setupPhysicsBody()
         setupBindings()
         changeState(to: .idleR)
+        playerInfo.readyToNextScene = false
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -232,11 +233,13 @@ class PlayerNode: SKSpriteNode {
     }
     
     func update(deltaTime: TimeInterval) {
-        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && !mpManager.backToMenu {
+
+        if playerInfo.readyToNextScene && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == false {
             transition()
-        }else if mpManager.backToMenu {
+        }
+        
+        if playerInfo.readyToNextScene == true && mpManager.otherPlayerInfo.value?.readyToNextScene == true && goToBackToMenu == true {
             mpManager.gameFinished = true
-            mpManager.endMatch()
         }
         
         self.boxRef = checkForNearbyObject(type: BoxNode.self)
@@ -383,11 +386,13 @@ class PlayerNode: SKSpriteNode {
         }
         
         if otherCategory == PhysicsCategories.nextScene {
-            playerInfo.readyToNextScene = true
-            if ((self.scene as? SecondScene) != nil) {
-                mpManager.backToMenu = true
+            
+            if self.scene is SecondScene {
+                self.goToBackToMenu = true
+                playerInfo.readyToNextScene = true
+            }else {
+                playerInfo.readyToNextScene = true
             }
-                
             
         }
     }
@@ -395,6 +400,7 @@ class PlayerNode: SKSpriteNode {
     func transition(){
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             let transition = SKTransition.fade(withDuration: 1.0)
+            
             self.scene?.view?.presentScene(SecondScene(size: self.scene?.size ?? .init(width: 1920, height: 1080), playerEra: self.playerEra),transition: transition)
         }
     }

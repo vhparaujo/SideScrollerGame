@@ -18,11 +18,12 @@ extension MultiplayerManager: GKMatchDelegate {
             // For automatch, set the opponent and load their avatar.
             if match.expectedPlayerCount == 0 {
                 opponent = match.players[0]
+                opponentName = opponent?.displayName
             }
         case .disconnected:
             self.endMatch()
+            
         default:
-//            self.endMatch()
             break
         }
     }

@@ -22,8 +22,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         
         setPresentationOptions()
+        
     }
-
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        NSApplication.shared.terminate(self)
+        return true
+    }
+    
     func windowWillExitFullScreen(_ notification: Notification) {
         // Prevent exiting fullscreen
         if let window = notification.object as? NSWindow {
@@ -52,5 +58,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             .disableHideApplication
         ]
         NSApp.presentationOptions = options
+    }
+    
+    private func startBackgroundTask() {
+        DispatchQueue.global().async {
+            while true {
+                print("Running in background...")
+                Thread.sleep(forTimeInterval: 1)
+            }
+        }
     }
 }

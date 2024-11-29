@@ -32,11 +32,6 @@ class MultiplayerManager: NSObject {
     //spawnPoint
     var spawnpoint: CGPoint = .zero
     
-    /// The name of the match.
-    var matchName: String {
-        "\(opponentName) Match"
-    }
-    
     /// The local player's name.
     var myName: String {
         GKLocalPlayer.local.displayName
@@ -113,6 +108,18 @@ class MultiplayerManager: NSObject {
         gameStartInfo.other.eraSelection = nil
         opponent = nil
         GKAccessPoint.shared.isActive = true
+    }
+    
+    /// Sends player info to other players.
+    func sendInfoToOtherPlayers<T: Codable>(dataToSend: T, updateThisVariable: inout T) {
+//        localPlayer = playerInfo
+        updateThisVariable = dataToSend
+        do {
+            let data = encode(content: dataToSend)
+            try myMatch?.sendData(toAllPlayers: data!, with: .unreliable)
+        } catch {
+            print("Error: \(error.localizedDescription).")
+        }
     }
 
     /// Sends player info to other players.
